@@ -1,9 +1,10 @@
-package kipper;
+package kipper.tools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.awt.event.*;
+import kipper.*;
 
 // This utility generates the code for a "mask" used in collision detection
 // The code goes in your Ship object

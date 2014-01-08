@@ -7,6 +7,7 @@ import java.awt.image.*;
 import java.awt.geom.*;
 import java.awt.Toolkit;
 import java.awt.Dimension;
+import kipper.effects.*;
 import kipper.weapons.*;
 
 public class Enterprise extends Ship {

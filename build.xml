@@ -14,7 +14,7 @@
     <target name="exec">
         <java classpath="bin" classname="kipper.Execute" fork="true" />
     </target>
-    <target name="masktool">
-        <java classpath="bin" classname="MaskMachine" fork="true" />
+    <target name="masker">
+        <java classpath="bin" classname="kipper.tools.MaskMachine" fork="true" />
     </target>
 </project>

@@ -1,4 +1,4 @@
-package kipper;
+package kipper.effects;
 
 // Individual particle matter
 // Use to create explosions with many particles

@@ -1,8 +1,9 @@
-package kipper;
+package kipper.effects;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import kipper.*;
 
 public class Explosion implements Runnable
 {

@@ -1,7 +1,8 @@
-package kipper;
+package kipper.effects;
 
 import java.awt.Graphics;
 import java.awt.Color;
+import kipper.*;
 
 public class ShipExplosion1 extends Explosion {
 	public ShipExplosion1(int x,int y,OuterSpacePanel c){
@@ -9,16 +10,16 @@ public class ShipExplosion1 extends Explosion {
 	}
 	public void initParticles(){
 		shrap = new Debris[getAmount()];
-		
+
 		for(int i=0;i<shrap.length;i++){
 			shrap[i]=new Debris(x, y, Math.toRadians(Util.randRange(0,360)),.65);
 		}
 	}
 	public Color getColor(){
-		return Color.RED;	
+		return Color.RED;
 	}
 	public int getTicks(){
-		return 14;	
+		return 14;
 	}
 	public int getAmount(){
 		return 25;

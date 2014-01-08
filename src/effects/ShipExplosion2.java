@@ -1,17 +1,18 @@
-package kipper;
+package kipper.effects;
 
 import java.awt.Graphics;
 import java.awt.Color;
+import kipper.*;
 
 public class ShipExplosion2 extends Explosion {
 	public ShipExplosion2(int x,int y,OuterSpacePanel c){
 		super(x,y,c);
 	}
 	public Color getColor(){
-		return Color.GREEN;	
+		return Color.GREEN;
 	}
 	public int getTicks(){
-		return 14;	
+		return 14;
 	}
 	public int getAmount(){
 		return 30;

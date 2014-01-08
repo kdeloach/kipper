@@ -7,6 +7,7 @@ import java.awt.Polygon;
 import java.awt.Point;
 import java.awt.Color;
 import kipper.*;
+import kipper.effects.*;
 
 public class SpaceMine extends Bullet
 {

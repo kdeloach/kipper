@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
+import kipper.effects.*;
 import kipper.upgrades.*;
 import kipper.weapons.*;
 
