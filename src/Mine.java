@@ -4,7 +4,8 @@ import java.awt.Dimension;
 import java.awt.Polygon;
 import java.awt.Point;
 
-public abstract class Mine extends Bullet {
+public abstract class Mine extends Bullet
+{
 	
 	// amount of steps to take before resting
 	private int steps;

@@ -21,7 +21,7 @@ public class Shooter extends Weapon {
 	public void draw(Graphics g){
 	}
 	public void fireProjectile(double heading){
-		new BasicBullet(x, y, heading, getDamage(), this );	
+		new Bullet(x, y, heading, getDamage(), this);	
 	}
 	public int getDefaultCooldown(){
 		return 250;	

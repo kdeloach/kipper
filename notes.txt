@@ -166,4 +166,4 @@ January 8, 2014
 - Found backup of kipper project on dioveht.com
 - Added ant build
 - Can now press P to open ship upgrade screen
-- TODO: cannot remove attributes once selected on ship upgrade screen
+- BUG: cannot remove attributes once selected on ship upgrade screen

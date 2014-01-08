@@ -26,8 +26,9 @@ import java.util.ArrayList;
 //		+zone select	- enemies stop spawning and in the BG different zones appear,Spacebar changes zones...
 
 // A standard template all ships can extend
-public abstract class Ship implements Destructable, Controllable, Upgradeable, MouseListener, MouseMotionListener, KeyListener, Runnable {
-
+public abstract class Ship implements
+    Destructable, Controllable, Upgradeable, MouseListener, MouseMotionListener, KeyListener, Runnable
+{
 	// arbitrary dimensions
 	protected int x, y, width, height;
 
@@ -37,11 +38,6 @@ public abstract class Ship implements Destructable, Controllable, Upgradeable, M
 	// speed of ship
 	protected int speed;
 
-	// experience, after you get enough your ship upgrades
-	// health,speed,weapon skill increases
-	// LATER: add table that says how much each attribute increases by foreach level
-	// ex, health increases by 1.6x, speed+1, +1 upgrade slots for current weapon
-	// LATER: CAP exp so users cant become TOO overpowered
 	private int exp;
 
 	// amount of slots
@@ -436,43 +432,35 @@ public abstract class Ship implements Destructable, Controllable, Upgradeable, M
 	/////////////////////
 	// Mouse Controls
 
-	private boolean leftmousedown=false;
-
 	public void mouseEntered(MouseEvent evt){}
 	public void mouseExited(MouseEvent evt){}
 	public void mouseClicked(MouseEvent evt){}
 
-	public void mousePressed(MouseEvent evt){
-		int btn = evt.getButton();
-
-		setMousePressedLocation(evt.getX(),evt.getY());
-
-		if(btn==MouseEvent.BUTTON3&&!disabled){
+	public void mousePressed(MouseEvent evt)
+    {
+		setMousePressedLocation(evt.getX(), evt.getY());
+		if (evt.getButton() == MouseEvent.BUTTON1 && !disabled) {
 			getWeapon().startFiring();
-			return;
-		} else if(btn==MouseEvent.BUTTON1){
-			leftmousedown=true;
 		}
-
-		move(evt.getX(),evt.getY());
 	}
-	public void mouseReleased(MouseEvent evt){
-		int btn = evt.getButton();
 
-		if(btn==MouseEvent.BUTTON3){
+	public void mouseReleased(MouseEvent evt)
+    {
+		if (evt.getButton() == MouseEvent.BUTTON1) {
 			getWeapon().stopFiring();
-		} else if(btn==MouseEvent.BUTTON1){
-			leftmousedown=false;
 		}
 	}
-	public void mouseDragged(MouseEvent evt){
-		if(leftmousedown)
-			move(evt.getX(),evt.getY());
-		setMousePressedLocation(evt.getX(),evt.getY());
+
+	public void mouseDragged(MouseEvent evt)
+    {
+		mouseMoved(evt);
 	}
-	public void mouseMoved(MouseEvent evt){
-		setMouseLocation(evt.getX(),evt.getY());
-		getWeapon().setMouseLocation(evt.getX(),evt.getY());
+
+	public void mouseMoved(MouseEvent evt)
+    {
+		setMouseLocation(evt.getX(), evt.getY());
+		getWeapon().setMouseLocation(evt.getX(), evt.getY());
+        move(evt.getX(), evt.getY());
 	}
 
 	////////////////////////

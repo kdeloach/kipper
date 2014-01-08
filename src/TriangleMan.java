@@ -5,10 +5,10 @@ import java.awt.image.*;
 import java.awt.geom.*;
 
 public class TriangleMan extends Ship {
-	
+
 	public TriangleMan(int x, int y, OuterSpacePanel c){
 		super(x,y,c);
-	
+
 		setSize(75,75);
 		move(getX(),getY());
 
@@ -17,63 +17,64 @@ public class TriangleMan extends Ship {
 		equipWeapon(new Trigun(x,y,0,height/2-5,this));
 		equipWeapon(new Trigun(x,y,0,height/2-5,this));
 		equipWeapon(new Trigun(x,y,0,height/2-5,this));
-		selectWeapon(0);	
-		
+		selectWeapon(0);
+
 		addUpgrade(new RotateAbility(this));
 	}
-	
+
 	public void die(){
-		new ShipExplosion2(x+width/2,y+height/2,osp);	
+		new ShipExplosion2(x+width/2,y+height/2,osp);
 	}
-	
+
 	public void draw(Graphics g){
-		g.setColor(Color.GREEN);	
+		g.setColor(Color.GREEN);
 		g.fillPolygon(
 			new int[]{ x, x+width, x+width },
 			new int[]{ y+height/2, y, y+height },
 			3
 		);
-		
+
 		getWeapon().draw(g);
 	}
-	
+
 	public void think(){
-		/*		
+        /*
+
 		if(osp.getPlayer()==null){
-			getWeapon().stopFiring();	
+			getWeapon().stopFiring();
 		} else {
-		
+
 			// move towards player, but don't get too close
-			
-			
+
+
 			// shoot weapon
 			if(getWeapon()!=null && !getWeapon().isFiring())
-				getWeapon().startFiring();		
-				
+				getWeapon().startFiring();
+
 			// get ready to fire here
 			targetLocation(osp.getPlayer().getX(), osp.getPlayer().getY());
-			
+
 		}
-		*/	
+*/
 	}
-	
+
 	///
-	
+
 	public int getDefaultOrientation(){
-		return Const.RIGHT_TO_LEFT;	
+		return Const.RIGHT_TO_LEFT;
 	}
 	public String getName(){
-		return "Triangle Man";	
+		return "Triangle Man";
 	}
 
 	public int defaultTeam(){
-		return Const.NPC;	
+		return Const.NPC;
 	}
 	public int defaultMaxHp(){
-		return 30;	
+		return 30;
 	}
 	public int getDefaultSpeed(){
-		return 5;	
+		return 5;
 	}
 	// ** generated with MaskMachine ** //
 	public Polygon getDefaultMask(){
@@ -89,23 +90,23 @@ class Trigun extends Weapon {
 	public Trigun(int x, int y, int rx, int ry, Ship s){
 		super(x,y,rx,ry,s);
 		setSize(10,10);
-		
+
 		// weapon abilities
 		addUpgrade(new RotateAbility(this));
 
 		img=Toolkit.getDefaultToolkit().createImage("images/trigun_ico.gif");
 	}
 	public void fireProjectile(double heading){
-		new BasicBullet(x-1, y+height/2, heading, getDamage(), this){
+		new Bullet(x-1, y+height/2, heading, getDamage(), this) {
 			public void draw(Graphics g){
-				g.setColor(Color.GREEN);	
+				g.setColor(Color.GREEN);
 				g.drawOval(getX(), getY(), 1, 1);
 			}
 			public void die(){
 				new BasicExplosion(getX(), getY(), panel()){
 					public Color getColor(){
-						return Color.GREEN;	
-					}	
+						return Color.GREEN;
+					}
 				};
 			}
 		};
@@ -114,14 +115,14 @@ class Trigun extends Weapon {
 		return img;
 	}
 	public int getDefaultDamage(){
-		return 1;	
+		return 1;
 	}
 	public int getDefaultCooldown(){
-		return 500;	
+		return 500;
 	}
 	public void draw(Graphics g){
 
-		g.setColor(Color.RED);	
+		g.setColor(Color.RED);
 		g.fillPolygon(
 			new int[]{ x, x+width, x+width },
 			new int[]{ y+height/2, y, y+height },

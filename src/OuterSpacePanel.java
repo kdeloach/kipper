@@ -6,21 +6,9 @@ import javax.swing.*;
 import java.util.ConcurrentModificationException;
 import java.util.ArrayList;
 
-// This has to be a general panel for the entire game
-// Change BottomPanel, make it apart of OuterSpacePanel
-// Should I have frame update it's components or have have one component
-// Level1Screen'
-// Screen object is added to the frame on loadup
-// When all enemies are dead, show the
-//
-
-// this is our outerspacepanel, static
-// this won't change...it'll load different scenes
-
-public class OuterSpacePanel extends JPanel implements KeyListener, Runnable {
-
-	// window dimensions
-	final static int WIDTH  = 800;
+public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
+{
+	final static int WIDTH = 800;
 	final static int HEIGHT = 400;
 
 	// amount of stars to have in the foreground and background
@@ -30,87 +18,85 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable {
 	Ship player1;
 	ArrayList<Ship> players;
 
-	// current scene, 1 at a time baby
+	// current scene
 	Scene scene;
 
-	// keep track of all bullets fired so they still exist
-	// after enemy kicks the bucket
 	ArrayList<Projectile> bulletList;
 	ArrayList<Explosion> explosionList;
-	//ArrayList<Ship> playerList;
 
-	// current bullet id,used to ID bullets
-	int bulletId=0, explosionId=0, playersId=0;
+	int bulletId = 0;
+    int explosionId = 0;
+    int playersId = 0;
 
-	public OuterSpacePanel(){
+	public OuterSpacePanel()
+    {
 		setSize(getMinumumSize());
 
-		// make some bg stars-static
-		for(int i=0;i<starsbg.length;i++){
-			starsbg[i]=new Point(Random.range(0,getWidth()),Random.range(0,getHeight()));
+		// background stars
+		for (int i = 0; i < starsbg.length; i++) {
+			starsbg[i] = new Point(Random.range(0, getWidth()), Random.range(0, getHeight()));
 		}
 
-		// make some fg stars
-		// intially the same position as the bg stars
-		for(int i=0;i<starsfg.length;i++){
-			starsfg[i]=new Point(starsbg[i].x,starsbg[i].y);
+		/// foreground stars
+		for (int i = 0; i < starsfg.length; i++) {
+			starsfg[i] = new Point(Random.range(0, getWidth()), Random.range(0, getHeight()));
 		}
 
 		bulletList = new ArrayList<Projectile>();
 		explosionList = new ArrayList<Explosion>();
 		players = new ArrayList<Ship>();
 
-		/////////
-
 		player1 = new Enterprise(100,100,this);
 
-		////////
-
-		// make those stars scroll
-		new MarqueeStars(starsfg,this).start();
-
-		// initial Scene -------
-		// ---------------------
 		changeScene(new DemoLevel(this));
-		// ---------------------
 
-		// paint thread
+        new MarqueeStars(starsfg, this).start();
 		new Thread(this).start();
 	}
-	public void run(){
-		while(true){
-			repaint();
 
-			try { Thread.sleep(5); } catch(Exception ie){}
+	public void run()
+    {
+		while (true) {
+			repaint();
+			try {
+                Thread.sleep(5);
+            } catch (Exception ie) {
+            }
 		}
 	}
-	public void paint(Graphics g){
+
+	public void paint(Graphics g)
+    {
 		// bg
 		g.setColor(Color.BLACK);
-		g.fillRect(0,0,getWidth(),getHeight());
+		g.fillRect(0, 0, getWidth(), getHeight());
 
 		// stars (bg-static)
 		g.setColor(Color.GRAY);
-		for(int i=0;i<starsbg.length;i++)
-			g.drawOval(starsbg[i].x,starsbg[i].y,0,0);
+		for (int i = 0; i < starsbg.length; i++) {
+			g.drawOval(starsbg[i].x, starsbg[i].y, 0, 0);
+        }
 
 		// stars fg
 		g.setColor(Color.WHITE);
-		for(int i=0;i<starsfg.length;i++)
-			g.drawOval(starsfg[i].x,starsfg[i].y,2,2);
+		for (int i = 0; i < starsfg.length; i++) {
+			g.drawOval(starsfg[i].x, starsfg[i].y, 2, 2);
+        }
 
 		// paint players
 		try {
-			for(Ship p : players){
-				if(p.isAlive())
+			for (Ship p : players) {
+				if (p.isAlive()) {
 					p.draw(g);
+                }
 			}
-		} catch(ConcurrentModificationException ie){}
+		} catch (ConcurrentModificationException ie) {
+        }
 
 		// paint bullets
 		try {
-			for(Projectile b : bulletList){
-					b.draw(g);
+			for(Projectile b : bulletList) {
+                b.draw(g);
 			}
 		} catch(ConcurrentModificationException ie){}
 		  catch(NullPointerException ie){ System.out.println("whered that bullet go"); }
