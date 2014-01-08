@@ -1,5 +1,7 @@
 package kipper;
 
+import kipper.ships.*;
+
 public class DemoLevel extends Scene {
 
     Ship player;

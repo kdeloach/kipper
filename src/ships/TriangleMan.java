@@ -1,10 +1,11 @@
-package kipper;
+package kipper.ships;
 
 import java.awt.Image;
 import java.awt.Color;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
+import kipper.*;
 import kipper.effects.*;
 import kipper.upgrades.*;
 import kipper.weapons.*;

@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.ConcurrentModificationException;
 import java.util.ArrayList;
+import kipper.ships.*;
 import kipper.effects.*;
 import kipper.weapons.*;
 

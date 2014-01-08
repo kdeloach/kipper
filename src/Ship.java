@@ -374,14 +374,14 @@ public abstract class Ship implements
 
 	/////////////
 
-	final void setSize(int w,int h){
+	public void setSize(int w,int h){
 			this.width=w;
 			this.height=h;
 	}
 	private void setLocation(double x, double y){
 		setLocation((int)x,(int)y);
 	}
-	final void setLocation(int x,int y){
+	public void setLocation(int x,int y){
 		// update mask
 		mask.translate(x-this.x, y-this.y);
 
