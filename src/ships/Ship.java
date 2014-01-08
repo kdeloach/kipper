@@ -100,6 +100,10 @@ public abstract class Ship implements
 
 	////////////
 
+    public Ship()
+    {
+    }
+
 	public Ship(int x,int y,OuterSpacePanel c){
 		this.osp=c;
 

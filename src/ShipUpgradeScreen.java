@@ -22,202 +22,142 @@ public class ShipUpgradeScreen extends Scene {
 
     private Font f = new Font("Arial", Font.PLAIN, 16);
 
+    private Ship nullShip = new NullShip();
+    // Needed because we may have to render information about these abilities before an instance
+    // has been created and attached to the player and dealing with static objects in Java is a nightmare.
+    private Ability[] upgradeInstances = new Ability[Const.UPGRADES_QT];
+
 	public ShipUpgradeScreen(OuterSpacePanel osp)
     {
 		this.osp = osp;
 		player = osp.getPlayer();
 
 		hotspots[slots] = new Rectangle[player.getSlotsAmt()];
-		for(int i=0;i<hotspots[slots].length;i++)
-			hotspots[slots][i] = new Rectangle(player.width+50+100*i, 20, 90, 90);
+		for (int i = 0; i < hotspots[slots].length; i++) {
+			hotspots[slots][i] = new Rectangle(player.width + 50 + 100 * i, 20, 90, 90);
+        }
 
 		// THERE  ARE ONLY 5 UPGRADES ATM
 		int w = 140, h = 50, p = 5;
 		hotspots[upgrades] = new Rectangle[Const.UPGRADES_QT];
-		for(int i=0,y=150,x=0;i<hotspots[upgrades].length;i++,x++){
-			if(player.width+50+(w+p)*x+w >= osp.getWidth()){
-				x=0; y+=h+p;
+		for (int i = 0, y = 150, x = 0; i < hotspots[upgrades].length; i++, x++) {
+			if (player.width + 50 + (w + p) * x + w >= osp.getWidth()) {
+				x = 0;
+                y += h + p;
 			}
-			hotspots[upgrades][i] = new Rectangle(player.width+50+(w+p)*x, y, w, h);
+			hotspots[upgrades][i] = new Rectangle(player.width + 50 + (w + p) * x, y, w, h);
+            upgradeInstances[i] = Ability.createInstance(i, nullShip);
 		}
 	}
 
-    public void createScene() {
+    public void createScene()
+    {
 		player.releaseControl();
 		player.move(player.getWidth()/2+10,player.getHeight()/2+20);
 		osp.addMouseListener(this);
 		osp.addMouseMotionListener(this);
     }
 
-    public void destroyScene() {
+    public void destroyScene()
+    {
 		osp.removeMouseListener(this);
 		osp.removeMouseMotionListener(this);
     }
 
-	public void paint(Graphics g){
-		g.setFont(f);
-
-		// draw empty slots
-		g.setColor(Color.GRAY);
-		for(int i=0;i<hotspots[slots].length;i++)
-			g.fillRoundRect(hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height,15,15);
-
-		for(int i=0;i<hotspots[slots].length;i++){
+	public void paint(Graphics g)
+    {
+		// draw upgrade slots
+		for (int i = 0; i  < hotspots[slots].length; i++) {
+            Rectangle slot = hotspots[slots][i];
+            g.setFont(f);
+            g.setColor(Color.GRAY);
+			g.fillRoundRect(slot.x, slot.y, slot.width, slot.height, 15, 15);
 			g.setColor(Color.LIGHT_GRAY);
-			g.setFont(f);
-			g.drawString("Slot "+(i+1), hotspots[slots][i].x+8*3+2, hotspots[slots][i].y+hotspots[slots][i].height/2);
-			//g.drawRoundRect(hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height,15,15);
-
-			// now fill in those slots if we can
-			if(player.upgrades.get(i)!=null){
+			g.drawString("Slot " + (i + 1), slot.x + 8 * 3 + 2, slot.y + slot.height / 2);
+			if (player.upgrades.get(i) != null) {
 				Ability a = player.upgrades.get(i);
-				if(a instanceof SpeedAbility){
-					SpeedAbility.drawIcon(g,hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height);
-				} else if(a instanceof DamageAbility){
-					DamageAbility.drawIcon(g,hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height);
-				} else if(a instanceof SpreadAbility){
-					SpreadAbility.drawIcon(g,hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height);
-				} else if(a instanceof RecoilAbility){
-					RecoilAbility.drawIcon(g,hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height);
-				} else if(a instanceof RotateAbility){
-					RotateAbility.drawIcon(g,hotspots[slots][i].x,hotspots[slots][i].y,hotspots[slots][i].width,hotspots[slots][i].height);
-				}
+                AbilityIconDrawer drawer = a.getIconDrawer();
+                drawer.drawIcon(g, slot.x, slot.y, slot.width, slot.height);
 			}
 		}
 
-		// draw icons for the upgrades...manually...
-		for(int i=0;i<hotspots[upgrades].length;i++){
+		for (int i = 0; i < hotspots[upgrades].length; i++) {
 			Rectangle r = hotspots[upgrades][i];
-
-			switch(i){
-				case Const.SPEED:
-					SpeedAbility.drawIcon(g,r.x,r.y,r.width,r.height);
-					break;
-				case Const.DAMAGE:
-					DamageAbility.drawIcon(g,r.x,r.y,r.width,r.height);
-					break;
-				case Const.SPREAD:
-					SpreadAbility.drawIcon(g,r.x,r.y,r.width,r.height);
-					break;
-				case Const.RECOIL:
-					RecoilAbility.drawIcon(g,r.x,r.y,r.width,r.height);
-					break;
-				case Const.ROTATE:
-					RotateAbility.drawIcon(g,r.x,r.y,r.width,r.height);
-					break;
-			}
+            AbilityIconDrawer drawer = upgradeInstances[i].getIconDrawer();
+            drawer.drawIcon(g, r.x, r.y, r.width, r.height);
 		}
 
-		if (selected==upgrades) {
+		if (selected == upgrades) {
 			Rectangle r = hotspots[upgrades][selectedIndex];
-			switch(selectedIndex){
-				case Const.SPEED:
-					SpeedAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-					break;
-				case Const.DAMAGE:
-					DamageAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-					break;
-				case Const.SPREAD:
-					SpreadAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-					break;
-				case Const.RECOIL:
-					RecoilAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-					break;
-				case Const.ROTATE:
-					RotateAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-					break;
-			}
-		} else if (selected==slots) {
+            AbilityIconDrawer drawer = upgradeInstances[selectedIndex].getIconDrawer();
+            drawer.drawIcon(g, mouse.x - r.width / 2, mouse.y - r.height / 2, r.width, r.height);
+		} else if (selected == slots) {
 			Rectangle r = hotspots[slots][selectedIndex];
-			//if(player.upgrades.get(i)!=null){
-				Ability a = player.upgrades.get(selectedIndex);
-				if(a instanceof SpeedAbility){
-					SpeedAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-				} else if(a instanceof DamageAbility){
-					DamageAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-				} else if(a instanceof SpreadAbility){
-					SpreadAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-				} else if(a instanceof RecoilAbility){
-					RecoilAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-				} else if(a instanceof RotateAbility){
-					RotateAbility.drawIcon(g,mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height);
-				}
-			//}
+            Ability a = player.upgrades.get(selectedIndex);
+            AbilityIconDrawer drawer = a.getIconDrawer();
+            drawer.drawIcon(g, mouse.x - r.width / 2, mouse.y - r.height / 2, r.width, r.height);
 		}
 	}
 
-	/////
-
-	public void mousePressed(MouseEvent evt){
+	public void mousePressed(MouseEvent evt)
+    {
 		mouse.setLocation(evt.getPoint());
 
 		// if an upgrade is selected
-		for(int i=0;i<hotspots[upgrades].length;i++){
-			if(hotspots[upgrades][i].contains(mouse)){
-				selected=upgrades;
-				selectedIndex=i;
+		for (int i = 0; i < hotspots[upgrades].length; i++) {
+			if (hotspots[upgrades][i].contains(mouse)) {
+				selected = upgrades;
+				selectedIndex = i;
 				return;
 			}
 		}
 
 		// if a slot is selected
-		for(int i=0;i<hotspots[slots].length;i++){
-			if(hotspots[slots][i].contains(mouse)){
-				selected=slots;
-				selectedIndex=i;
+		for (int i = 0; i < hotspots[slots].length; i++) {
+			if (hotspots[slots][i].contains(mouse)) {
+				selected = slots;
+				selectedIndex = i;
 				return;
 			}
 		}
 	}
-	public void mouseReleased(MouseEvent evt){
+
+	public void mouseReleased(MouseEvent evt)
+    {
 		mouse.setLocation(evt.getPoint());
 
-		if (selected==upgrades) {
-			for(int i=0;i<hotspots[slots].length;i++){
-				if(hotspots[slots][i].contains(mouse)){
-					switch(selectedIndex){
-						case Const.SPEED:
-							player.upgrades.set(i, new SpeedAbility(player));
-							break;
-						case Const.DAMAGE:
-							player.upgrades.set(i, new DamageAbility(player));
-							break;
-						case Const.SPREAD:
-							player.upgrades.set(i, new SpreadAbility(player));
-							break;
-						case Const.RECOIL:
-							player.upgrades.set(i, new RecoilAbility(player));
-							break;
-						case Const.ROTATE:
-							player.upgrades.set(i, new RotateAbility(player));
-							break;
-					}
+		if (selected == upgrades) {
+			for (int i = 0; i < hotspots[slots].length; i++) {
+				if (hotspots[slots][i].contains(mouse)) {
+                    player.upgrades.set(i, Ability.createInstance(selectedIndex, player));
 					break;
 				}
 			}
-		} else if (selected==slots){
-			for(int i=0;i<hotspots[slots].length;i++){
-				if(hotspots[slots][i].contains(mouse)){
+		} else if (selected==slots) {
+			for (int i = 0; i < hotspots[slots].length; i++) {
+				if (hotspots[slots][i].contains(mouse)) {
 					Ability a = player.upgrades.get(i);
 					player.upgrades.set(i, player.upgrades.get(selectedIndex));
 					player.upgrades.set(selectedIndex, a);
-
-					selected=Const.NONE;
-					selectedIndex=Const.NONE;
+					selected = Const.NONE;
+					selectedIndex = Const.NONE;
 					return;
 				}
 			}
 			player.upgrades.set(selectedIndex, null);
 		}
 
-		selected=Const.NONE;
-		selectedIndex=Const.NONE;
+		selected = Const.NONE;
+		selectedIndex = Const.NONE;
 	}
-	public void mouseDragged(MouseEvent evt){
+
+	public void mouseDragged(MouseEvent evt)
+    {
 		mouse.setLocation(evt.getPoint());
 	}
 
-    public String name() {
+    public String name()
+    {
         return "upgrade";
     }
 }

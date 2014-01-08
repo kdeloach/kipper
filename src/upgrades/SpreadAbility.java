@@ -16,17 +16,8 @@ public class SpreadAbility extends Ability
 		v.addWeaponListener(new SpreadAbilityWeaponListener(this));
 	}
 
-	public static void drawIcon(Graphics g, int x, int y, int width, int height)
-    {
-		g.setFont(new Font("Arial", Font.PLAIN, 18));
-		g.setColor(getColor());
-		g.fillRoundRect(x,y,width,height,15,15);
-		g.setColor(Color.BLACK);
-		g.drawString(getTitle(), x+width/2-26, y+height/2+5);
-	}
-
-	public static String getTitle() { return "Spread"; }
-	public static Color getColor() { return Color.RED; }
+	@Override public String getTitle() { return "Spread"; }
+	@Override public Color getColor() { return Color.RED; }
 }
 
 class SpreadAbilityWeaponListener extends WeaponListener

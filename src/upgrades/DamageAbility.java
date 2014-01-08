@@ -16,17 +16,8 @@ public class DamageAbility extends Ability
 		v.addWeaponListener(new DamageAbilityWeaponListener(this));
 	}
 
-	public static void drawIcon(Graphics g, int x, int y, int width, int height)
-    {
-		g.setFont(new Font("Arial", Font.PLAIN, 18));
-		g.setColor(getColor());
-		g.fillRoundRect(x,y,width,height,15,15);
-		g.setColor(Color.BLACK);
-		g.drawString(getTitle(), x+width/2-30, y+height/2+5);
-	}
-
-	public static String getTitle() { return "Damage"; }
-	public static Color getColor() { return Color.GREEN; }
+    @Override public String getTitle() { return "Damage"; }
+    @Override public Color getColor() { return Color.GREEN; }
 }
 
 class DamageAbilityWeaponListener extends WeaponListener

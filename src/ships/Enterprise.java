@@ -16,8 +16,9 @@ public class Enterprise extends Ship {
 	// ship sprite
 	Image img;
 
-	public Enterprise(int x,int y,OuterSpacePanel c){
-		super(x,y,c);
+	public Enterprise(int x, int y, OuterSpacePanel c)
+    {
+		super(x, y, c);
 
 		setSize(141,52);
 
