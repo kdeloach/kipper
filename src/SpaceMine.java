@@ -5,12 +5,12 @@ import java.awt.Polygon;
 import java.awt.Point;
 import java.awt.Color;
 
-public class Mine extends Bullet
+public class SpaceMine extends Bullet
 {
 	// amount of steps to take before resting
 	private int steps;
 
-	public Mine(int x, int y, double t, double dmg, Weapon w)
+	public SpaceMine(int x, int y, double t, double dmg, Weapon w)
     {
 		super(x, y, t, dmg, w);
 		steps = getDefaultSteps();
@@ -22,7 +22,7 @@ public class Mine extends Bullet
 		if (steps <= 0) {
 			try {
 				for (Projectile p : weapon.ship.panel().bulletList) {
-					if (p instanceof Mine && p.getId() != getId() && p.intersects(this)) {
+					if (p instanceof SpaceMine && p.getId() != getId() && p.intersects(this)) {
 						p.explode();
 						explode();
 					}

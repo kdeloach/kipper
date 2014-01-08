@@ -3,6 +3,10 @@
         <antcall target="build" />
         <antcall target="run" />
     </target>
+    <target name="clean">
+        <delete dir="bin" quiet="true" />
+        <mkdir dir="bin" />
+    </target>
     <target name="build">
         <javac srcdir="src" destdir="bin" includeAntRuntime="false" />
         <copy todir="bin/assets">

@@ -23,7 +23,7 @@ public class MineLauncher extends Weapon {
 	public void draw(Graphics g){
 	}
 	public void fireProjectile(double heading){
-		new Mine(x, y, heading, getDamage(), this );
+		new SpaceMine(x, y, heading, getDamage(), this );
 	}
 	public int getDefaultCooldown(){
 		return 300;
