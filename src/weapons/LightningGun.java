@@ -41,7 +41,7 @@ public class LightningGun extends Weapon {
 	public void draw(Graphics g){
 	}
 	public void fireProjectile(double heading){
-		new LightningBolt(x, y, heading, getDamage(), this );
+		new Bolt(x, y, heading, getDamage(), this );
 	}
 	public int getDefaultCooldown(){
 		return 200;
