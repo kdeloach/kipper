@@ -10,7 +10,7 @@ public abstract class Bolt implements Projectile, Runnable {
 	protected int branches, length, span;
 	
 	// id of bullet,is set by master panel
-	protected int id, team;
+	protected int id;
 	
 	protected double damage;
 	
@@ -78,9 +78,6 @@ public abstract class Bolt implements Projectile, Runnable {
 	}
 	final public int getSpan(){
 		return span;	
-	}
-	final public int getTeam(){
-		return team;	
 	}
 	final public double getDamage(){
 		return damage;	

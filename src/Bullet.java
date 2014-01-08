@@ -6,7 +6,7 @@ import java.awt.Color;
 public class Bullet implements Projectile, Runnable
 {
 	protected int width, height;
-	private int speed, team;
+	private int speed;
 	private double damage;
 	protected double dx, dy;
 
@@ -87,7 +87,6 @@ public class Bullet implements Projectile, Runnable
 	final public boolean registered(){ return id!=Const.UNREGISTERED; }
 	final public double getDamage(){ return damage; }
 	final public int getSpeed(){ return speed; }
-	final public int getTeam(){ return team; }
 	final public int getX(){ return (int)dx; }
 	final public int getY(){ return (int)dy; }
 	final public int getId(){ return id; }
