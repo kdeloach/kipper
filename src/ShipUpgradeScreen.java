@@ -11,27 +11,21 @@ public class ShipUpgradeScreen extends Scene {
 	Ship player;
 	OuterSpacePanel osp;
 
-	int weapons = 0;
-	int upgrades = 1;
-	int slots = 2;
+	int upgrades = 0;
+	int slots = 1;
 
-	int selected=Const.NONE;
-	int selectedIndex=Const.NONE;
-	Point mouse=new Point();
+	int selected = Const.NONE;
+	int selectedIndex = Const.NONE;
+	Point mouse = new Point();
 
-	Rectangle[][] hotspots = new Rectangle[3][];
+	Rectangle[][] hotspots = new Rectangle[2][];
 
     private Font f = new Font("Arial", Font.PLAIN, 16);
 
-	public ShipUpgradeScreen(OuterSpacePanel osp){
-		this.osp=osp;
+	public ShipUpgradeScreen(OuterSpacePanel osp)
+    {
+		this.osp = osp;
 		player = osp.getPlayer();
-
-		//
-
-		hotspots[weapons] = new Rectangle[player.wpnList.length];
-		for(int i=0;i<hotspots[weapons].length;i++)
-			hotspots[weapons][i] = new Rectangle(10+50*i, osp.getHeight()-50, 40, 40);
 
 		hotspots[slots] = new Rectangle[player.getSlotsAmt()];
 		for(int i=0;i<hotspots[slots].length;i++)
@@ -114,19 +108,7 @@ public class ShipUpgradeScreen extends Scene {
 			}
 		}
 
-		// draw the icons for the weapons
-		// how many weapons are there
-
-		for(int i=0;i<hotspots[weapons].length;i++){
-			if(player.wpnList[i]!=null)
-				g.drawImage(player.wpnList[i].getIcon(),hotspots[weapons][i].x,hotspots[weapons][i].y,hotspots[weapons][i].width,hotspots[weapons][i].height, osp);
-		}
-
-		// draw currently selected item
-		if(selected==weapons){
-			Rectangle r = hotspots[weapons][selectedIndex];
-			g.drawImage(player.wpnList[selectedIndex].getIcon(),mouse.x-r.width/2,mouse.y-r.height/2,r.width,r.height, osp);
-		} else if (selected==upgrades) {
+		if (selected==upgrades) {
 			Rectangle r = hotspots[upgrades][selectedIndex];
 			switch(selectedIndex){
 				case Const.SPEED:
@@ -169,15 +151,6 @@ public class ShipUpgradeScreen extends Scene {
 	public void mousePressed(MouseEvent evt){
 		mouse.setLocation(evt.getPoint());
 
-		// if a weapon is selected
-		for(int i=0;i<hotspots[weapons].length;i++){
-			if(hotspots[weapons][i].contains(mouse)&&player.wpnList[i]!=null){
-				selected=weapons;
-				selectedIndex=i;
-				return;
-			}
-		}
-
 		// if an upgrade is selected
 		for(int i=0;i<hotspots[upgrades].length;i++){
 			if(hotspots[upgrades][i].contains(mouse)){
@@ -199,16 +172,7 @@ public class ShipUpgradeScreen extends Scene {
 	public void mouseReleased(MouseEvent evt){
 		mouse.setLocation(evt.getPoint());
 
-		if(selected==weapons){
-			for(int i=0;i<hotspots[weapons].length;i++){
-				if(hotspots[weapons][i].contains(mouse)){
-					Weapon a = player.wpnList[i];
-					player.wpnList[i] = player.wpnList[selectedIndex];
-					player.wpnList[selectedIndex] = a;
-					break;
-				}
-			}
-		} else if (selected==upgrades) {
+		if (selected==upgrades) {
 			for(int i=0;i<hotspots[slots].length;i++){
 				if(hotspots[slots][i].contains(mouse)){
 					switch(selectedIndex){
