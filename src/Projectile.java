@@ -1,3 +1,5 @@
+package kipper;
+
 public interface Projectile {
 	
 	public int getX();

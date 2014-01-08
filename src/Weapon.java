@@ -1,8 +1,11 @@
+package kipper;
+
 import java.awt.Rectangle;
 import java.awt.Point;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
+import kipper.upgrades.*;
 
 // WEAPONS should be cycled through with the 1-9 keys
 // Weapons can be designed with "natural abilities" and "optional abilities"

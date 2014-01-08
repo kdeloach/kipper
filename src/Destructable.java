@@ -1,3 +1,5 @@
+package kipper;
+
 // Implementing objects CAN BE destroyed
 public interface Destructable {
 	

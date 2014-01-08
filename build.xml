@@ -14,7 +14,7 @@
         </copy>
     </target>
     <target name="run">
-        <java classpath="bin" classname="Execute" fork="true" />
+        <java classpath="bin" classname="kipper.Execute" fork="true" />
     </target>
     <target name="masktool">
         <java classpath="bin" classname="MaskMachine" fork="true" />

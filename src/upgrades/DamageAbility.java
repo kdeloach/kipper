@@ -1,6 +1,9 @@
+package kipper.upgrades;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import kipper.*;
 
 // Increase weapon damage
 public class DamageAbility extends Ability

@@ -1,6 +1,9 @@
+package kipper.upgrades;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import kipper.*;
 
 // Right now only works when applied to a ship
 public class RotateAbility extends Ability

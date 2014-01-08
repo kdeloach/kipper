@@ -1,6 +1,9 @@
+package kipper.upgrades;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import kipper.*;
 
 // Send a ship flying back
 public class RecoilAbility extends Ability
@@ -37,7 +40,7 @@ class RecoilAbilityWeaponListener extends WeaponListener
 
 	public void weaponFired(Weapon w)
     {
-		Ship s = w.ship;
+		Ship s = w.ship();
 
 		// prevents player from moving ship while shooting and in-recoil
 		// HAD to remove this because: theres a bug where you can Fire a recoil-capable weapon,

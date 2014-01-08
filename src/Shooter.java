@@ -1,3 +1,5 @@
+package kipper;
+
 import java.awt.*;
 
 public class Shooter extends Weapon {

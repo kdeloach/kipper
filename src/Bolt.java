@@ -1,3 +1,5 @@
+package kipper;
+
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Dimension;

@@ -1,3 +1,5 @@
+package kipper;
+
 public class Const {
 	final static int NONE = -1;
 	

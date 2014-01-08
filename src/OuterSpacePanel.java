@@ -1,3 +1,5 @@
+package kipper;
+
 import java.awt.image.*;
 import java.awt.geom.*;
 import java.awt.*;
@@ -8,8 +10,8 @@ import java.util.ArrayList;
 
 public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 {
-	final static int WIDTH = 800;
-	final static int HEIGHT = 400;
+	public final static int WIDTH = 800;
+	public final static int HEIGHT = 400;
 
 	// amount of stars to have in the foreground and background
 	Point[] starsbg = new Point[500];

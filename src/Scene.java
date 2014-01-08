@@ -1,3 +1,5 @@
+package kipper;
+
 import java.awt.event.*;
 import java.awt.Graphics;
 

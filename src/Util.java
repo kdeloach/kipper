@@ -1,3 +1,5 @@
+package kipper;
+
 import java.awt.*;
 import java.io.File;
 

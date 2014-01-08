@@ -1,3 +1,5 @@
+package kipper;
+
 // Individual particle matter
 // Use to create explosions with many particles
 public class Debris extends java.awt.Point {

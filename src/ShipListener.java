@@ -1,3 +1,5 @@
+package kipper;
+
 
 public class ShipListener
 {

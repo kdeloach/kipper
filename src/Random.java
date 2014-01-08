@@ -1,3 +1,5 @@
+package kipper;
+
 public class Random {
 	// inclusive lo, inclusive hi
 	static int range(int lo, int hi){

@@ -1,4 +1,7 @@
+package kipper;
+
 import java.awt.*;
+import kipper.upgrades.*;
 
 // WHEN this gun upgrades you get POINTS
 // You can use these points to select how you want to upgrade the weapon

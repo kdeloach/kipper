@@ -1,8 +1,11 @@
+package kipper;
+
 import java.awt.Image;
 import java.awt.Color;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
+import kipper.upgrades.*;
 
 public class TriangleMan extends Ship {
 

@@ -1,4 +1,7 @@
+package kipper;
+
 import java.awt.*;
+import kipper.upgrades.*;
 
 public class MineLauncher extends Weapon {
 

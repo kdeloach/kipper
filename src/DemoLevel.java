@@ -1,3 +1,4 @@
+package kipper;
 
 public class DemoLevel extends Scene {
 

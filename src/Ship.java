@@ -1,7 +1,10 @@
+package kipper;
+
 import java.awt.event.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.ArrayList;
+import kipper.upgrades.*;
 
 // So, ships have a maximum capactiy to hold 10 weapons, however,
 // the BottomPanel only paints the first 5
@@ -30,7 +33,7 @@ public abstract class Ship implements
     Destructable, Controllable, Upgradeable, MouseListener, MouseMotionListener, KeyListener, Runnable
 {
 	// arbitrary dimensions
-	protected int x, y, width, height;
+	public int x, y, width, height;
 
 	// amount of damage taken
 	protected double dmg;
@@ -66,7 +69,7 @@ public abstract class Ship implements
 	protected Point lastHit=new Point();
 
 	// current position of the mouse,destination
-	protected Point destination=new Point(),
+	public Point destination=new Point(),
 									mouse=new Point(),
 									mousePressed=new Point()
 									;

@@ -1,3 +1,5 @@
+package kipper;
+
 import java.awt.Graphics;
 import java.awt.Color;
 

@@ -1,3 +1,5 @@
+package kipper;
+
 import javax.swing.*;
 import javax.swing.JFrame;
 import java.awt.*;
@@ -10,7 +12,7 @@ public class Execute
     {
 		new Execute();
 	}
-    
+
 	public Execute()
     {
 		JFrame frame = new JFrame("kipper");
