@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.Color;
 import kipper.*;
+import kipper.ships.*;
 import kipper.effects.*;
 
 public class Bullet implements Projectile, Runnable

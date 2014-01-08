@@ -1,5 +1,6 @@
 package kipper;
 
+import kipper.ships.*;
 import kipper.weapons.*;
 
 public interface Upgradeable

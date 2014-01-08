@@ -3,6 +3,7 @@ package kipper;
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
+import kipper.ships.*;
 import kipper.weapons.*;
 
 // BottomPanel really isn't a fitting name, should change to...StatusBar later or something

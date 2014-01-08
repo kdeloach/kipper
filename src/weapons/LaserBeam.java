@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import kipper.*;
+import kipper.ships.*;
 import kipper.effects.*;
 
 // LaserBeams are basically 2 points, whereas the first point is x,y
@@ -45,13 +46,13 @@ public class LaserBeam implements Projectile, Runnable
 		new Thread(this).start();
 	}
 
-	final public void explode()
+	public void explode()
     {
 		weapon.ship.panel().unregisterProjectile(this);
 		die();
 	}
 
-	final public void move()
+	public void move()
     {
 		start.x += Const.BULLET_SPEED * Math.cos(theta);
 		start.y += Const.BULLET_SPEED * Math.sin(theta);
@@ -59,7 +60,7 @@ public class LaserBeam implements Projectile, Runnable
 		stop.y  += Const.BULLET_SPEED * Math.sin(theta);
 	}
 
-	final public void run()
+	public void run()
     {
 		while (weapon.ship().panel().contains(getX(), getY())) {
 			Ship o = weapon.ship.panel().intersects(this);
@@ -101,14 +102,14 @@ public class LaserBeam implements Projectile, Runnable
 		return Const.PLAYER;
 	}
 
-	final public boolean registered() { return id != Const.UNREGISTERED; }
-	final public double getDamage(){ return damage; }
-	final public int getSpeed(){ return speed; }
-	final public int getX(){ return (int)start.x; }
-	final public int getY(){ return (int)start.y; }
-	final public int getId(){ return id; }
+	public boolean registered() { return id != Const.UNREGISTERED; }
+	public double getDamage(){ return damage; }
+	public int getSpeed(){ return speed; }
+	public int getX(){ return (int)start.x; }
+	public int getY(){ return (int)start.y; }
+	public int getId(){ return id; }
 
-	final public boolean intersects(Ship s)
+	public boolean intersects(Ship s)
     {
 		if (s.contains((int)start.x, (int)start.y)) {
 			contact = start;
@@ -137,15 +138,15 @@ public class LaserBeam implements Projectile, Runnable
 
 	private void setLocation(int x, int y){ setLocation((double)x, (double)y); }
 
-	final void setLocation(double x, double y)
+	void setLocation(double x, double y)
     {
 		start.setLocation(x,y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
 
-	final public void setId(int k){ id = k; }
+	public void setId(int k){ id = k; }
 
-	final public OuterSpacePanel panel(){ return weapon().ship().panel(); }
-	final public Weapon weapon(){ return weapon; }
-	final public Ship ship(){ return weapon().ship(); }
+	public OuterSpacePanel panel(){ return weapon().ship().panel(); }
+	public Weapon weapon(){ return weapon; }
+	public Ship ship(){ return weapon().ship(); }
 }

@@ -1,5 +1,6 @@
-package kipper;
+package kipper.ships;
 
+import kipper.*;
 
 public class ShipListener
 {

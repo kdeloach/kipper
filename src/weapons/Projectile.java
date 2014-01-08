@@ -1,9 +1,10 @@
 package kipper.weapons;
 
 import kipper.*;
+import kipper.ships.*;
 
-public interface Projectile {
-
+public interface Projectile
+{
 	public int getX();
 	public int getY();
 	public int getId();

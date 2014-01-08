@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.Color;
 import kipper.*;
+import kipper.ships.*;
 
 public abstract class Bolt implements Projectile, Runnable {
 

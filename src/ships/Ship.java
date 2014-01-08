@@ -1,9 +1,10 @@
-package kipper;
+package kipper.ships;
 
 import java.awt.event.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.ArrayList;
+import kipper.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
 
@@ -76,7 +77,7 @@ public abstract class Ship implements
 									;
 
 	// arsenel,cycle with 0-9
-	protected Weapon wpn, wpnList[]=new Weapon[10];
+	public Weapon wpn, wpnList[]=new Weapon[10];
 
 	// master panel, access to other ships and elements
 	protected OuterSpacePanel osp;
@@ -90,7 +91,7 @@ public abstract class Ship implements
 	private ArrayList<Ability> inventory = new ArrayList<Ability>();
 
 	// list of upgrades
-	protected ArrayList<Ability> upgrades;
+	public ArrayList<Ability> upgrades;
 
 	private ArrayList<ShipListener> listeners;
 

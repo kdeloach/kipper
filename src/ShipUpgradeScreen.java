@@ -2,6 +2,7 @@ package kipper;
 
 import java.awt.*;
 import java.awt.event.*;
+import kipper.ships.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
 
