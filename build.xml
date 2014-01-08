@@ -8,7 +8,7 @@
         <mkdir dir="bin" />
     </target>
     <target name="build">
-        <javac srcdir="src" destdir="bin" includeAntRuntime="false" />
+        <javac srcdir="src" destdir="bin" debug="true" includeAntRuntime="false" />
         <copy todir="bin/assets">
             <fileset dir="src/assets"/>
         </copy>

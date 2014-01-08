@@ -282,7 +282,7 @@ public abstract class Ship implements
 		return maxhp;
 	}
 	final public int getSpeed(){
-		return (int)requestAttribute(Ability.SPEED, speed);
+		return speed;
 	}
 	final public int getExperience(){
 		return exp;
@@ -417,16 +417,15 @@ public abstract class Ship implements
 		a.setId(abid++);
 		upgrades.add(a);
 	}
-	final public void addListener(Listener w){
-		listeners.add((ShipListener)w);
-	}
 	final public void addWeaponListener(WeaponListener l){
-		for(Weapon wn : wpnList)
-			if(wn!=null)
-				wn.addListener(l);
+		for (Weapon wn : wpnList) {
+			if (wn != null) {
+				wn.addWeaponListener(l);
+            }
+        }
 	}
 	final public void addShipListener(ShipListener l){
-		addListener(l);
+		listeners.add(l);
 	}
 
 	/////////////////////

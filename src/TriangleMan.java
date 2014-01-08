@@ -14,9 +14,6 @@ public class TriangleMan extends Ship {
 
 		//equipWeapon(new LightningGun(x,y,0,height/2-5,this));
 		equipWeapon(new Trigun(x,y,0,height/2-5,this));
-		equipWeapon(new Trigun(x,y,0,height/2-5,this));
-		equipWeapon(new Trigun(x,y,0,height/2-5,this));
-		equipWeapon(new Trigun(x,y,0,height/2-5,this));
 		selectWeapon(0);
 
 		addUpgrade(new RotateAbility(this));
@@ -90,9 +87,6 @@ class Trigun extends Weapon {
 	public Trigun(int x, int y, int rx, int ry, Ship s){
 		super(x,y,rx,ry,s);
 		setSize(10,10);
-
-		// weapon abilities
-		addUpgrade(new RotateAbility(this));
 
 		img=Toolkit.getDefaultToolkit().createImage("images/trigun_ico.gif");
 	}

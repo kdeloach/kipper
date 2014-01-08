@@ -24,11 +24,11 @@ import java.util.ArrayList;
 // Possibly have special updgrade dropped by boss
 // Upgrades can be used across every weapon
 // To prevent overpowering, some upgrades may take more than 1 slot
-// EXAMPLES of upgrades are: 
+// EXAMPLES of upgrades are:
 //		+speed				- cooldown time is reduced,can shoot bullets faster
 //		+dmg					- bullets do more damage
-//		+spread				- can shoot x more bullets with each fire;MAY increase COOLDOWN time,ex Splitter,Triple Shooter,Quad Cannon			
-//		+explode			- increases shrapenel dmg from bullets,ex 
+//		+spread				- can shoot x more bullets with each fire;MAY increase COOLDOWN time,ex Splitter,Triple Shooter,Quad Cannon
+//		+explode			- increases shrapenel dmg from bullets,ex
 //		+guard				- increases ship defense,used strategically against bosses,enemyDamage*(1/(guard+1))
 //		+rotate				- ability to have gun rotate for more accurate firing
 //		+regen				- ability to regen hp,ex heal [currentLevel] hit points over 30seconds
@@ -43,120 +43,120 @@ import java.util.ArrayList;
 // !!!SOON - start implementing upgrades
 
 public abstract class Weapon implements Upgradeable, Runnable {
-	
+
 	protected int x, y, width, height;
-	
-	// experience of gun, used to determine no. of slots 
+
+	// experience of gun, used to determine no. of slots
 	protected int exp;
-	
+
 	// (default) damage this baby can do
 	private int damage;
-	
+
 	// spread is the amount of bullets you can shoot at once
 	// for some added appeal the game should 'split' the stream of bullets by altering the heading()
 	private int spread=1;
-	
+
 	// percent cooled down
 	protected int percCooled=0;
-	
+
 	// time to cooldown
 	private int cooldown;
-	
+
 	// control variable,keep shooting gun while true
 	// also a control variable to check if thread is still active
 	protected boolean fire=false, fireThreadActive=false;
-	
+
 	// position relative to Ship x&y,this is only set once
 	protected Point rel;
-	
+
 	// position of the mouse
 	protected Point mouse;
-	
+
 	// list of upgrades
 	protected ArrayList<Ability> natural, upgrades;
-	
+
 	private ArrayList<WeaponListener> listeners;
-	
+
 	// owner
 	Ship ship;
 
 	////////////
-	
+
 	public Weapon(int x, int y, int rx, int ry, Ship s){
 		this.x=x+rx;
 		this.y=y+ry;
 		this.ship=s;
 		rel=new Point(rx,ry);
-		
+
 		setLocation(x,y);
-		
+
 		natural=new ArrayList<Ability>();
 		upgrades=new ArrayList<Ability>();
 		listeners = new ArrayList<WeaponListener>();
-		
+
 		mouse=new Point();
 		cooldown=getDefaultCooldown();
 		damage=getDefaultDamage();
 	}
-	
+
 	////////////
-	
+
 	abstract public void fireProjectile(double heading);
 	abstract public void draw(Graphics g);
 	abstract public Image getIcon();
 	abstract public int getDefaultCooldown();
 	abstract public int getDefaultDamage();
-	
+
 	////////////
-	
+
 	final public void startFiring(){
 		// if user releases the mouse real quick,they can
 		// resume shooting without starting a new thread
 		fire=true;
-		
+
 		// if firethread is active,dont start a new thread
 		if(fireThreadActive)
 			return;
-		
+
 		new Thread(this).start();
 		fire=true;
 		fireThreadActive=true;
 	}
 	final public void stopFiring(){
-		fire=false;	
+		fire=false;
 	}
 	final public void run(){
 		while(fire){
-			
+
 			// call every listener
 			for(WeaponListener a : listeners)
 				a.weaponFired(this);
-			
+
 			if(!fire)
 				return;
-				
+
 			// lay down the law
 			int n = getSpread();
 			double h = heading();
-			
+
 			if(n<=1){
 				fireProjectile( h );
 			} else {
 				for(int i=0;i<n;i++)
 					fireProjectile(Math.toRadians( 180*ship.getOrientation()-(90/(n-1)*i-45) ) + h );
 			}
-			
+
 			// catch your breathe
 			while(percCooled<getCooldown()){
-				try{ Thread.sleep(getCooldown()/10); } catch (Exception ie) {}	
+				try{ Thread.sleep(getCooldown()/10); } catch (Exception ie) {}
 				percCooled+=10;
 			}
 			percCooled=0;
 		}
-		
-		fireThreadActive=false;	
+
+		fireThreadActive=false;
 	}
-	
+
 	////////////
 	// Setters
 
@@ -173,22 +173,22 @@ public abstract class Weapon implements Upgradeable, Runnable {
 		mouse.y=y;
 	}
 	final public void setCooldown(int n){
-		cooldown=n;	
+		cooldown=n;
 	}
 	final protected void setSpread(int n){
 		if(n<Const.MIN_SPREAD||n>Const.MAX_SPREAD)
 			throw new IllegalArgumentException("Cannot set spread to "+n+".  Acceptable values are ["+Const.MIN_SPREAD+"-"+Const.MAX_SPREAD+"]");
-		
+
 		spread=n;
 	}
-	
+
 	// LATER: check if exp is enough to levelUp()
 	final public void addExperience(int xp){
 		exp+=xp;
 	}
-	
+
 	private int abid=0;
-	
+
 	final public void addUpgrade(Ability a){
 		addAbility(upgrades,a);
 	}
@@ -199,28 +199,25 @@ public abstract class Weapon implements Upgradeable, Runnable {
 		a.setId(abid++);
 		upgrades.add(a);
 	}
-	final public void addListener(Listener w){
-		listeners.add((WeaponListener)w);
-	}
 	final public void addWeaponListener(WeaponListener l){
-		addListener(l);	
+        listeners.add(l);
 	}
 	final public void addShipListener(ShipListener l){
-		ship.addListener(l);	
+        throw new UnsupportedOperationException();
 	}
-	
+
 	final public void removeAbility(Ability a){
 		for(int i=0;i<upgrades.size();i++){
 			if(upgrades.get(i).getId()==a.getId()){
 				upgrades.remove(i);
-				break;	
+				break;
 			}
 		}
 	}
-	
+
 	////////////
 	// Getters
-	
+
 	final public int getCooldown(){
 		return (int)requestAttribute(Ability.COOLDOWN, cooldown);
 	}
@@ -242,11 +239,11 @@ public abstract class Weapon implements Upgradeable, Runnable {
 	final public double heading(){
 		return requestAttribute(Ability.HEADING, ship.heading());
 	}
-	
+
 	final public boolean isFiring(){
-		return fire;	
+		return fire;
 	}
-	
+
 	// all attributes are int's (basically)
 	// here's the chance to alter speed,damage,spread,cooldown,enemy damage,heading(?),etc
 	final private double requestAttribute(String attr, double n){
@@ -254,13 +251,13 @@ public abstract class Weapon implements Upgradeable, Runnable {
 			n=a.attributeCalled(attr,n);
 		return n;
 	}
-	
+
 	////////////
-	
+
 	final public Ship ship(){
-		return ship;		
+		return ship;
 	}
 	final public OuterSpacePanel panel(){
-		return ship().panel();		
+		return ship().panel();
 	}
 }
