@@ -16,9 +16,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public final static int WIDTH = 800;
 	public final static int HEIGHT = 400;
 
-	// amount of stars to have in the foreground and background
-	Point[] starsbg = new Point[500];
-	Point[] starsfg = new Point[25];
+    MarqueeStars starsBg, starsFg;
 
 	Ship player1;
 	ArrayList<Ship> players;
@@ -37,15 +35,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     {
 		setSize(getMinumumSize());
 
-		// background stars
-		for (int i = 0; i < starsbg.length; i++) {
-			starsbg[i] = new Point(Util.randRange(0, getWidth()), Util.randRange(0, getHeight()));
-		}
-
-		/// foreground stars
-		for (int i = 0; i < starsfg.length; i++) {
-			starsfg[i] = new Point(Util.randRange(0, getWidth()), Util.randRange(0, getHeight()));
-		}
+        starsFg = new MarqueeStars(25, Math.toRadians(180), 1, 2, Color.WHITE);
+        starsBg = new MarqueeStars(500, Math.toRadians(180), 0.5, 0, Color.GRAY);
 
 		bulletList = new ArrayList<Projectile>();
 		explosionList = new ArrayList<Explosion>();
@@ -55,7 +46,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 		changeScene(new DemoLevel(this));
 
-        new MarqueeStars(starsfg, this).start();
+        new Thread(starsFg).start();
+        new Thread(starsBg).start();
 		new Thread(this).start();
 	}
 
@@ -76,17 +68,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		// stars (bg-static)
-		g.setColor(Color.GRAY);
-		for (int i = 0; i < starsbg.length; i++) {
-			g.drawOval(starsbg[i].x, starsbg[i].y, 0, 0);
-        }
-
-		// stars fg
-		g.setColor(Color.WHITE);
-		for (int i = 0; i < starsfg.length; i++) {
-			g.drawOval(starsfg[i].x, starsfg[i].y, 2, 2);
-        }
+        starsBg.paint(g);
+        starsFg.paint(g);
 
 		// paint players
 		try {
