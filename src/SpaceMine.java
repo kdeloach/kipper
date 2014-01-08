@@ -60,7 +60,7 @@ public class SpaceMine extends Bullet
 
 	public void die()
     {
-		new BasicExplosion(getX(), getY(), panel());
+		new Explosion(getX(), getY(), panel());
 	}
 
 	public int getDefaultSpeed()

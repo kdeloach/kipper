@@ -96,21 +96,29 @@ class Trigun extends Weapon {
 
 		img=Toolkit.getDefaultToolkit().createImage("images/trigun_ico.gif");
 	}
-	public void fireProjectile(double heading){
-		new Bullet(x-1, y+height/2, heading, getDamage(), this) {
-			public void draw(Graphics g){
+
+	public void fireProjectile(double heading)
+    {
+		new Bullet(x-1, y+height/2, heading, getDamage(), this)
+        {
+			public void draw(Graphics g)
+            {
 				g.setColor(Color.GREEN);
 				g.drawOval(getX(), getY(), 1, 1);
 			}
-			public void die(){
-				new BasicExplosion(getX(), getY(), panel()){
-					public Color getColor(){
+			public void die()
+            {
+				new Explosion(getX(), getY(), panel())
+                {
+					public Color getColor()
+                    {
 						return Color.GREEN;
 					}
 				};
 			}
 		};
 	}
+
 	public Image getIcon(){
 		return img;
 	}

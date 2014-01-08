@@ -13,7 +13,7 @@ public class BasicLaserBeam extends LaserBeam {
 		);
 	}
 	public void die(){
-		new BasicExplosion((int)contact.x, (int)contact.y, panel());
+		new Explosion((int)contact.x, (int)contact.y, panel());
 	}
 	public int getDefaultSpeed(){
 		return 15;

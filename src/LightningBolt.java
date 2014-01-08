@@ -51,8 +51,10 @@ public class LightningBolt extends Bolt {
 	////////
 	
 	public void die(){
-		new BasicExplosion(getX(), getY(), panel()){
-			public Color getColor(){
+		new Explosion(getX(), getY(), panel())
+        {
+			public Color getColor()
+            {
 				return Color.BLUE;	
 			}	
 		};

@@ -64,10 +64,7 @@ public class Bullet implements Projectile, Runnable
 				break;
 			}
 			move();
-	 		try {
-                Thread.sleep(getSpeed());
-            } catch (Exception ie) {
-            }
+	 		try { Thread.sleep(getSpeed()); } catch (Exception ie) {}
 		}
         weapon.ship().panel().unregisterProjectile(this);
 	}
@@ -80,7 +77,7 @@ public class Bullet implements Projectile, Runnable
 
 	public void die()
     {
-		new BasicExplosion(getX(), getY(), panel());
+		new Explosion(getX(), getY(), panel());
 	}
 
 	public int getDefaultSpeed() { return 15; }

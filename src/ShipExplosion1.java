@@ -1,7 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Color;
 
-public class ShipExplosion1 extends BasicExplosion {
+public class ShipExplosion1 extends Explosion {
 	public ShipExplosion1(int x,int y,OuterSpacePanel c){
 		super(x,y,c);
 	}
