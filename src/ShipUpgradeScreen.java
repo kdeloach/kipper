@@ -2,6 +2,7 @@ package kipper;
 
 import java.awt.*;
 import java.awt.event.*;
+import kipper.weapons.*;
 import kipper.upgrades.*;
 
 public class ShipUpgradeScreen extends Scene {

@@ -1,10 +1,11 @@
-package kipper;
+package kipper.weapons;
 
 import java.awt.Rectangle;
 import java.awt.Point;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
+import kipper.*;
 import kipper.upgrades.*;
 
 // WEAPONS should be cycled through with the 1-9 keys
@@ -60,7 +61,7 @@ public abstract class Weapon implements Upgradeable, Runnable {
 	private int spread=1;
 
 	// percent cooled down
-	protected int percCooled=0;
+	public int percCooled=0;
 
 	// time to cooldown
 	private int cooldown;

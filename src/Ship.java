@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.ArrayList;
+import kipper.weapons.*;
 import kipper.upgrades.*;
 
 // So, ships have a maximum capactiy to hold 10 weapons, however,

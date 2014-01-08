@@ -1,5 +1,6 @@
 package kipper;
 
+import kipper.weapons.*;
 
 public interface Upgradeable
 {

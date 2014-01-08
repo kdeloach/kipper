@@ -1,4 +1,4 @@
-package kipper;
+package kipper.weapons;
 
 import java.awt.Rectangle;
 import java.awt.Graphics;
@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Polygon;
 import java.awt.Point;
 import java.awt.Color;
+import kipper.*;
 
 public class SpaceMine extends Bullet
 {

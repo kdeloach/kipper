@@ -1,10 +1,11 @@
-package kipper;
+package kipper.weapons;
 
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import kipper.*;
 
 // LaserBeams are basically 2 points, whereas the first point is x,y
 // and the second point is x+length*cos(theta),y+length*sin(theta)

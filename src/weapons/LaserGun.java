@@ -1,6 +1,7 @@
-package kipper;
+package kipper.weapons;
 
 import java.awt.*;
+import kipper.*;
 
 public class LaserGun extends Weapon {
 

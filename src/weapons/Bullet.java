@@ -1,9 +1,10 @@
-package kipper;
+package kipper.weapons;
 
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Dimension;
 import java.awt.Color;
+import kipper.*;
 
 public class Bullet implements Projectile, Runnable
 {
@@ -99,7 +100,7 @@ public class Bullet implements Projectile, Runnable
 		return s.intersects(getRectangle());
 	}
 
-	final public boolean intersects(Projectile p)
+	public boolean intersects(Projectile p)
     {
 		return p.contains(getX(), getY());
 	}

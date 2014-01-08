@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
 import kipper.upgrades.*;
+import kipper.weapons.*;
 
 public class TriangleMan extends Ship {
 
@@ -81,56 +82,6 @@ public class TriangleMan extends Ship {
 		return new Polygon(
 			new int[]{74,0,74},
 			new int[]{0,36,73},
-			3
-		);
-	}
-}
-class Trigun extends Weapon {
-	Image img;
-	public Trigun(int x, int y, int rx, int ry, Ship s){
-		super(x,y,rx,ry,s);
-		setSize(10,10);
-
-		img=Toolkit.getDefaultToolkit().createImage("images/trigun_ico.gif");
-	}
-
-	public void fireProjectile(double heading)
-    {
-		new Bullet(x-1, y+height/2, heading, getDamage(), this)
-        {
-			public void draw(Graphics g)
-            {
-				g.setColor(Color.GREEN);
-				g.drawOval(getX(), getY(), 1, 1);
-			}
-			public void die()
-            {
-				new Explosion(getX(), getY(), panel())
-                {
-					public Color getColor()
-                    {
-						return Color.GREEN;
-					}
-				};
-			}
-		};
-	}
-
-	public Image getIcon(){
-		return img;
-	}
-	public int getDefaultDamage(){
-		return 1;
-	}
-	public int getDefaultCooldown(){
-		return 500;
-	}
-	public void draw(Graphics g){
-
-		g.setColor(Color.RED);
-		g.fillPolygon(
-			new int[]{ x, x+width, x+width },
-			new int[]{ y+height/2, y, y+height },
 			3
 		);
 	}

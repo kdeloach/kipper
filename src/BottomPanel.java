@@ -3,6 +3,7 @@ package kipper;
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
+import kipper.weapons.*;
 
 // BottomPanel really isn't a fitting name, should change to...StatusBar later or something
 
@@ -33,7 +34,7 @@ public class BottomPanel extends JPanel implements Runnable {
 		public void drawCooldown(int x, int y, Weapon w, Graphics g){
 			if(w!=null){
 				// if this weapon is selected
-				if(w==w.ship.getWeapon()){
+				if(w == w.ship().getWeapon()){
 					g.drawRect(x-1,y-1,21,21);
 				}
 				g.drawImage(w.getIcon(), x, y, this);

@@ -1,4 +1,4 @@
-package kipper;
+package kipper.weapons;
 
 public class WeaponListener
 {

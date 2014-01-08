@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import kipper.*;
+import kipper.weapons.*;
 
 public class SpreadAbility extends Ability
 {

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import kipper.*;
+import kipper.weapons.*;
 
 // Send a ship flying back
 public class RecoilAbility extends Ability

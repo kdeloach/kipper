@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.ConcurrentModificationException;
 import java.util.ArrayList;
+import kipper.weapons.*;
 
 public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 {
@@ -23,8 +24,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	// current scene
 	Scene scene;
 
-	ArrayList<Projectile> bulletList;
-	ArrayList<Explosion> explosionList;
+	public ArrayList<Projectile> bulletList;
+	public ArrayList<Explosion> explosionList;
 
 	int bulletId = 0;
     int explosionId = 0;
