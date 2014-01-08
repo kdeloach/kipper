@@ -35,8 +35,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     {
 		setSize(getMinumumSize());
 
-        starsFg = new MarqueeStars(25, Math.toRadians(180), 1, 2, Color.WHITE);
-        starsBg = new MarqueeStars(500, Math.toRadians(180), 0.5, 0, Color.GRAY);
+        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.099, 2, Color.WHITE);
+        starsBg = new MarqueeStars(500, Math.toRadians(180), 0.05, 0, Color.GRAY);
 
 		bulletList = new ArrayList<Projectile>();
 		explosionList = new ArrayList<Explosion>();
@@ -46,14 +46,14 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 		changeScene(new DemoLevel(this));
 
-        new Thread(starsFg).start();
-        new Thread(starsBg).start();
 		new Thread(this).start();
 	}
 
 	public void run()
     {
 		while (true) {
+            starsBg.update();
+            starsFg.update();
 			repaint();
 			try {
                 Thread.sleep(5);

@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import kipper.*;
 
-public class MarqueeStars implements Runnable
+public class MarqueeStars
 {
 	Point2D.Double[] stars;
     int size;
@@ -25,25 +25,21 @@ public class MarqueeStars implements Runnable
 		}
 	}
 
-	public void run()
+	public void update()
     {
-		while (true) {
-			// move stars
-			for (int i = 0; i < stars.length; i++) {
-				stars[i].x += Math.cos(angle) * speed;
-				stars[i].y += Math.sin(angle) * speed;
-				// if a star goes out of bounds reset
-				if (stars[i].x <= 0)
-					stars[i] = new Point2D.Double(OuterSpacePanel.WIDTH, Math.random() * OuterSpacePanel.HEIGHT);
-				if (stars[i].x > OuterSpacePanel.WIDTH)
-					stars[i] = new Point2D.Double(0, Math.random() * OuterSpacePanel.HEIGHT);
-				if (stars[i].y > OuterSpacePanel.HEIGHT)
-					stars[i] = new Point2D.Double(Math.random() * OuterSpacePanel.WIDTH, 0);
-				if (stars[i].y <= 0)
-					stars[i] = new Point2D.Double(Math.random() * OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT);
-			}
-			try { Thread.sleep(50); } catch (Exception ie) {}
-		}
+        for (int i = 0; i < stars.length; i++) {
+            stars[i].x += Math.cos(angle) * speed;
+            stars[i].y += Math.sin(angle) * speed;
+            // if a star goes out of bounds reset
+            if (stars[i].x <= 0)
+                stars[i] = new Point2D.Double(OuterSpacePanel.WIDTH, Math.random() * OuterSpacePanel.HEIGHT);
+            if (stars[i].x > OuterSpacePanel.WIDTH)
+                stars[i] = new Point2D.Double(0, Math.random() * OuterSpacePanel.HEIGHT);
+            if (stars[i].y > OuterSpacePanel.HEIGHT)
+                stars[i] = new Point2D.Double(Math.random() * OuterSpacePanel.WIDTH, 0);
+            if (stars[i].y <= 0)
+                stars[i] = new Point2D.Double(Math.random() * OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT);
+        }
 	}
 
     public void paint(Graphics g)
