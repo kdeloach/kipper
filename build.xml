@@ -1,0 +1,18 @@
+<project default="build_run">
+    <target name="build_run">
+        <antcall target="build" />
+        <antcall target="run" />
+    </target>
+    <target name="build">
+        <javac srcdir="src" destdir="bin" includeAntRuntime="false" />
+        <copy todir="bin/assets">
+            <fileset dir="src/assets"/>
+        </copy>
+    </target>
+    <target name="run">
+        <java classpath="bin" classname="Execute" fork="true" />
+    </target>
+    <target name="masktool">
+        <java classpath="bin" classname="MaskMachine" fork="true" />
+    </target>
+</project>

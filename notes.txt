@@ -1,0 +1,169 @@
+February 11, 2007
+03:25:45 AM
++ started work on this yesterday
++ created moving stars bg
++ re-designed the enterprise
++ wrote an interface for ship,weapon,bullet
+07:04:17 AM
++ wrote alot of ideas for upgrades and added documentation
++ can move the ship unaturally
+
+February 13, 2007
+06:47:14 AM
++ better ship movement,still no sweet gravity effect yet
++ a SPEED_CAP introduced,the speed lvl of a ship now has effect
++ bullets are now painted;you can fire a weapon
++ redesigned the Enterprise in photoshop
++ designed the Shooter
+- still confusion with the mouse control schema,when dragging mouse all buttons return the same keycode
+- needs image preloader possibly last thing to worry about
+11:15:07 PM
++ cooldown setup working good
++ added a jpanel at the bottom to track cooldowns
++ mouse navigation improved
+
+February 14, 2007
+02:23:17 AM
++ created StandardShip, making a ship is easier, more object-oriented
++ added explosions to Pellet
++ added healthbar arc to cooldowns panel
+08:13:32 AM
++ StandardWeapon created, more oo-oriented
++ TriangleMan and Trigun created
+11:12:47 AM
++/- put objects into seperate files...
+11:56:53 AM
++ created StandardBullet class,Explosion interface,BasicExplosion class
+12:41:19 PM
+++ ships now explode on destruct, VERY cool
++ explosion updated,more realistic
++ created ShipExplosion1, now the default explosion when Ship explodes
++ TriangleMan can shoot and be shot, fun fun
+- ships can collide without consequence
+- need to be able to register/unregister ships but still give the enterprise mouselistener controls
+
+February 15, 2007
+03:08:28 AM
+++ changed 4 interfaces to abstract classes:StandardWeapon->Weapon,StandardShip->Ship,StandardBullet->Bullet,StandardExplosion->Explosion
++  Weapon,Bullet, & Ship no longer implement Rectangle
+++ mousecontrols moved from Enterprise to Ship, so you can control any Ship now
+?  an idea for a new monster: ginyu->does body swap when weak, the the playerList player1 and CPU switch places
+	   you have to stay alive until the attack coolsdown to attempt a switch
+-- collision not working, still cant properly register/unregister ships and switch control between ships safely
+-- enemies don't have AI yet
+?  have this idea where the marqueeStars in the BG move opposite the direction there player is going
+07:52:28 AM
++  explosions slightly improved
++  can register ships/players now
+?  get rid of OuterSpacePanel replace with Level1,Level2,etc.
+
+February 22, 2007
+07:09:19 AM
+-- images and rotation causing issues
+? shoot from rel.x+width*Math.cos(heading())
+
+February 23, 2007
+07:01:25 AM
++  bullets shoot at angle
+-- trouble rotating weapon relative to ship
+
+February 25, 2007
+11:05:42 PM
+?  took out rotating ship for now; was never an element of gameplay i wanted to focus on originally
+++ masks are operational
+?  polygon collision detection limited...
+12:56:07 AM
+??  goals for tomorrow:
+     - work on a better polygon collision method
+     - improve status bar; have cooldown bar for each weapon(?), show target stats
+
+February 26, 2007
+05:09:50 PM
+++ ship collision now operational! accuracy depends on complexity of the mask
++  NEW RULE: when two ships collide the damage inflicted to both ships is [max HP of the weakest ship]
++  status bar designed in ms paint, time to code it
+?  NEW RULE: only 5 guns can be macroed on the status bar; must be selected before each level
+    originally to save space on the status bar; makes the bar look slimmer and friendlier
+    adds another dimension of strategy, choosing which weapons will do best on each level
+
+February 27, 2007
+02:56:54 AM
+++ icons for first 5 weapons designed, status bar 80% done
+?  need to work on ship AI; moving, targetting
+?  need to work on upgrades
+////?  add acceleration variable that tracks current speed; when you fire your gun the bullet should be traveling at least as fast as the ship
+01:27:12 PM
+++ cleaned up the Ship class, started writing abilities (my idea is to use events and listeners)
+++ increased x&y precision in Bullet class
++  Pellet renamed to BasicBullet, BasicBullet&Shooter moved to seperate files
++  Shooter and Trigun are now interchangeable between ships
+?  have a LEFT&RIGHT orientation settings for every ship
+?? GOALs for today:
+     - add "target" stats on status bar (work on target system)
+     - add at least 1 ability
+-  ships collision is buggy -> check how much damage is being done on each later
+07:37:11 PM
+?? REPLACE natural&optional ArrayList's with arrays so we can add at particular slots
++  Ability,SpeedAbility..ShipListener,WeaponListener all created
+++ listeners work for weapons, SpeedAbility officially the first working upgrade!
+08:27:03 PM
+++ can switch between weapons using keyboard 1-5; Blaster,LaserGun,MineLauncher,LightningGun created but not customized (need their abilities to be realized)
+-  BUG: scenario- firing gun1,waiting for it to cooldown so you switch to gun2. you move the ship around and when you switch to gun1 the initial shot is fired from the (x,y) positions
+     that the ship was previously in before switching guns
+?  I made a suicide upgrade LOL (and a recoil upgrade)
+11:01:17 PM
++  Speed,Damage,Recoil are done; TODO: Spread,Explode,Guard,Rotate,Regen,Shield,Penetrate,Seek,Poison,Shock,Cloak :p
+11:39:35 PM
++  status bar finished
+-  TODO: take Players out of ArrayList and make it an array
+     controllable player always should be in slot 0
+
+February 28, 2007
+01:24:43 AM
++  SpreadAbility finished, Shooter and Blaster are well-defined
++  FIXED BUG where weapon location doesn't update right-away after switching weapons
+?  TODO: add shipStopped() to ShipListener, in RecoilAbility make the leftmousedown=true when the ship stops
+     for a nicer recoil effect
+?  TODO: move listeners code to Ship and in Ship add mehods addShipListener,addWeaponListener
+?  TODO: in WeaponListener add bulletFired(Bullet b),bulletHit(Ship target) and change the fireBullet method, instead of void->RETURN the bullet
++  move() wont execute if ship isn't moving, saves clock cycles
+12:27:10 PM
++  Ship object now has listeners
++  Speed,Recoil,Spread,& Damage updated to work for both Ship and Weapon
++  finished all of today's goals
++  updated method of finding heading()
+++ programmed some brains into TriangleMan, he now targets player1 (very cool with rotate ability)
++  wrote up some mock-lightning gun code downstairs, should work
+05:29:02 PM
++  updated Rotate,Recoil,Spread
+?  NOTE: when writing abilties, it is important to keep in mind Orientation and heading() always
+07:12:00 PM
++  LaserBeam object created; Bullet&LaserBeam implements Projectile interface; BasicLaserBeam also created
++  LaserGun basic principles are complete
+
+March 01, 2007
+04:07:45 PM
++  LightingGun pretty much done, its awesome!  just have to tweak it a bit
+?? got a great idea for a Calibrator; All weapons will have natural abilities, so why not let the use finetune them?
+     weapons will be able to upgrade and get more points to calibrate it...!
+?? Calibrator will only be able to edit natural Abilities
+?  for LightningGun, make an ability to be able to edit the RANGE of the blast, ex: Math.random()*180-90 <-> Math.random()*90-45
+
+March 02, 2007
+01:44:28 PM
+?  GOAL for today:
+     - work on the calibrator
+     - work on switching scenes/levels to make different parts of the game
+02:42:28 PM
+?  give each weapon/ammo a new paramater [team]
+
+March 05, 2007
+03:35:10 PM
++  Scenes added
+?  Have a master list of all upgrades
+
+January 8, 2014
+- Found backup of kipper project on dioveht.com
+- Added ant build
+- Can now press P to open ship upgrade screen
+- TODO: cannot remove attributes once selected on ship upgrade screen
