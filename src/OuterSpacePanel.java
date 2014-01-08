@@ -37,12 +37,12 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 		// background stars
 		for (int i = 0; i < starsbg.length; i++) {
-			starsbg[i] = new Point(Random.range(0, getWidth()), Random.range(0, getHeight()));
+			starsbg[i] = new Point(Util.randRange(0, getWidth()), Util.randRange(0, getHeight()));
 		}
 
 		/// foreground stars
 		for (int i = 0; i < starsfg.length; i++) {
-			starsfg[i] = new Point(Random.range(0, getWidth()), Random.range(0, getHeight()));
+			starsfg[i] = new Point(Util.randRange(0, getWidth()), Util.randRange(0, getHeight()));
 		}
 
 		bulletList = new ArrayList<Projectile>();

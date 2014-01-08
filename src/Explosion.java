@@ -28,7 +28,7 @@ public class Explosion implements Runnable
     {
 		shrap = new Debris[getAmount()];
 		for(int i=0;i<shrap.length;i++) {
-			shrap[i] = new Debris(x, y, Math.toRadians(Random.range(0,360)), Math.random());
+			shrap[i] = new Debris(x, y, Math.toRadians(Util.randRange(0,360)), Math.random());
 		}
 	}
 

@@ -12,4 +12,10 @@ public class Util
         String basePath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         return Toolkit.getDefaultToolkit().createImage(new File(basePath, filename).getPath());
     }
+
+	// inclusive lo, inclusive hi
+	public static int randRange(int lo, int hi)
+    {
+		return (int)(Math.random() * (hi - lo + 1) + lo);
+	}
 }

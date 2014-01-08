@@ -1,7 +1,5 @@
-<project default="build_run">
-    <target name="build_run">
-        <antcall target="build" />
-        <antcall target="run" />
+<project default="run">
+    <target name="run" depends="build, exec">
     </target>
     <target name="clean">
         <delete dir="bin" quiet="true" />
@@ -13,7 +11,7 @@
             <fileset dir="src/assets"/>
         </copy>
     </target>
-    <target name="run">
+    <target name="exec">
         <java classpath="bin" classname="kipper.Execute" fork="true" />
     </target>
     <target name="masktool">
