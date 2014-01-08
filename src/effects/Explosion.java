@@ -33,7 +33,7 @@ public class Explosion implements Runnable
 		}
 	}
 
-	final public void run()
+	public void run()
     {
         while (ticks > 0) {
             tick(ticks);
@@ -60,8 +60,8 @@ public class Explosion implements Runnable
 		}
 	}
 
-	final public void setId(int id) { this.id = id; }
-	final public int getId(){ return id; }
+	public void setId(int id) { this.id = id; }
+	public int getId() { return id; }
 
 	public Color getColor()
     {

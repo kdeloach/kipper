@@ -11,9 +11,9 @@ public class ShipUpgradeScreen extends Scene {
 	Ship player;
 	OuterSpacePanel osp;
 
-	final int weapons = 0;
-	final int upgrades = 1;
-	final int slots = 2;
+	int weapons = 0;
+	int upgrades = 1;
+	int slots = 2;
 
 	int selected=Const.NONE;
 	int selectedIndex=Const.NONE;

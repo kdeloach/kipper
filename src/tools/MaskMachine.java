@@ -76,8 +76,8 @@ class DrawPanel extends JPanel implements MouseListener {
 	Image img;
 	Polygon p;
 	JTextArea txt;
-	final int factor=10;
-	int w=-1,h=-1;
+	int factor = 10;
+	int w = -1, h = -1;
 
 	public DrawPanel(JTextArea t){
 		addMouseListener(this);

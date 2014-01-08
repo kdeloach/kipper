@@ -114,7 +114,7 @@ public abstract class Weapon implements Upgradeable, Runnable {
 
 	////////////
 
-	final public void startFiring(){
+	public void startFiring(){
 		// if user releases the mouse real quick,they can
 		// resume shooting without starting a new thread
 		fire=true;
@@ -127,10 +127,10 @@ public abstract class Weapon implements Upgradeable, Runnable {
 		fire=true;
 		fireThreadActive=true;
 	}
-	final public void stopFiring(){
+	public void stopFiring(){
 		fire=false;
 	}
-	final public void run(){
+	public void run(){
 		while(fire){
 
 			// call every listener
@@ -165,22 +165,22 @@ public abstract class Weapon implements Upgradeable, Runnable {
 	////////////
 	// Setters
 
-	final void setSize(int w,int h){
+	void setSize(int w,int h){
 			this.width=w;
 			this.height=h;
 	}
-	final public void setLocation(int x,int y){
+	public void setLocation(int x,int y){
 		this.x=x+rel.x;
 		this.y=y+rel.y;
 	}
-	final public void setMouseLocation(int x,int y){
+	public void setMouseLocation(int x,int y){
 		mouse.x=x;
 		mouse.y=y;
 	}
-	final public void setCooldown(int n){
+	public void setCooldown(int n){
 		cooldown=n;
 	}
-	final protected void setSpread(int n){
+	protected void setSpread(int n){
 		if(n<Const.MIN_SPREAD||n>Const.MAX_SPREAD)
 			throw new IllegalArgumentException("Cannot set spread to "+n+".  Acceptable values are ["+Const.MIN_SPREAD+"-"+Const.MAX_SPREAD+"]");
 
@@ -188,30 +188,30 @@ public abstract class Weapon implements Upgradeable, Runnable {
 	}
 
 	// LATER: check if exp is enough to levelUp()
-	final public void addExperience(int xp){
+	public void addExperience(int xp){
 		exp+=xp;
 	}
 
 	private int abid=0;
 
-	final public void addUpgrade(Ability a){
+	public void addUpgrade(Ability a){
 		addAbility(upgrades,a);
 	}
-	final public void addNaturalAbility(Ability a){
+	public void addNaturalAbility(Ability a){
 		addAbility(natural,a);
 	}
-	final private void addAbility(ArrayList<Ability> l, Ability a){
+	private void addAbility(ArrayList<Ability> l, Ability a){
 		a.setId(abid++);
 		upgrades.add(a);
 	}
-	final public void addWeaponListener(WeaponListener l){
+	public void addWeaponListener(WeaponListener l){
         listeners.add(l);
 	}
-	final public void addShipListener(ShipListener l){
+	public void addShipListener(ShipListener l){
         throw new UnsupportedOperationException();
 	}
 
-	final public void removeAbility(Ability a){
+	public void removeAbility(Ability a){
 		for(int i=0;i<upgrades.size();i++){
 			if(upgrades.get(i).getId()==a.getId()){
 				upgrades.remove(i);
@@ -223,35 +223,35 @@ public abstract class Weapon implements Upgradeable, Runnable {
 	////////////
 	// Getters
 
-	final public int getCooldown(){
+	public int getCooldown(){
 		return (int)requestAttribute(Ability.COOLDOWN, cooldown);
 	}
-	final public double getDamage(){
+	public double getDamage(){
 		return requestAttribute(Ability.DAMAGE, damage);
 	}
-	final public int getSpread(){
+	public int getSpread(){
 		return (int)requestAttribute(Ability.SPREAD, spread);
 	}
-	final public int getExperience(){
+	public int getExperience(){
 		return exp;
 	}
-	final public double percentCooled(){
+	public double percentCooled(){
 		return (double)percCooled/(double)getCooldown();
 	}
-	final public int amountSlots(){
+	public int amountSlots(){
 		return 0;
 	}
-	final public double heading(){
+	public double heading(){
 		return requestAttribute(Ability.HEADING, ship.heading());
 	}
 
-	final public boolean isFiring(){
+	public boolean isFiring(){
 		return fire;
 	}
 
 	// all attributes are int's (basically)
 	// here's the chance to alter speed,damage,spread,cooldown,enemy damage,heading(?),etc
-	final private double requestAttribute(String attr, double n){
+	private double requestAttribute(String attr, double n){
 		for(WeaponListener a : listeners)
 			n=a.attributeCalled(attr,n);
 		return n;
@@ -259,10 +259,10 @@ public abstract class Weapon implements Upgradeable, Runnable {
 
 	////////////
 
-	final public Ship ship(){
+	public Ship ship(){
 		return ship;
 	}
-	final public OuterSpacePanel panel(){
+	public OuterSpacePanel panel(){
 		return ship().panel();
 	}
 }

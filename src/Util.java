@@ -5,7 +5,7 @@ import java.io.File;
 
 public class Util
 {
-    final public static Util instance = new Util();
+    public final static Util instance = new Util();
 
     public Image loadImage(String filename)
     {

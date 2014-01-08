@@ -62,7 +62,7 @@ public class Bolt implements Projectile, Runnable
 		new Thread(this).start();
 	}
 
-	final public void splinter()
+	public void splinter()
     {
 		double x = stop.x;
         double y = stop.y;
@@ -74,7 +74,7 @@ public class Bolt implements Projectile, Runnable
 		}
 	}
 
-	final public void run()
+	public void run()
     {
 		while (span >= 0) {
 			Ship o = weapon.ship.panel().intersects(this);
@@ -119,14 +119,14 @@ public class Bolt implements Projectile, Runnable
 		g.drawLine((int)start.x, (int)start.y, (int)stop.x, (int)stop.y);
 	}
 
-	final public boolean registered() { return id != Const.UNREGISTERED; }
-	final public int getSpan() { return span; }
-	final public double getDamage() { return damage; }
-	final public int getX() { return (int)start.x; }
-	final public int getY() { return (int)start.y; }
-	final public int getId() {return id; }
+	public boolean registered() { return id != Const.UNREGISTERED; }
+	public int getSpan() { return span; }
+	public double getDamage() { return damage; }
+	public int getX() { return (int)start.x; }
+	public int getY() { return (int)start.y; }
+	public int getId() {return id; }
 
-	final public boolean intersects(Ship s)
+	public boolean intersects(Ship s)
     {
 		if(s.contains((int)start.x, (int)start.y)) {
 			contact = start;
@@ -138,17 +138,17 @@ public class Bolt implements Projectile, Runnable
 		return false;
 	}
 
-	final public boolean intersects(Projectile p)
+	public boolean intersects(Projectile p)
     {
 		return p.contains(start.x, start.y) || p.contains(stop.x, stop.y);
 	}
 
-	final public boolean contains(double x, double y)
+	public boolean contains(double x, double y)
     {
 		return contains((int)x, (int)y);
 	}
 
-	final public boolean contains(int x, int y)
+	public boolean contains(int x, int y)
     {
 		return new Rectangle.Double(start.x, start.y, 1, 1).contains(x, y) || new Rectangle.Double(stop.x, stop.y, 1, 1).contains(x, y);
 	}
@@ -158,14 +158,14 @@ public class Bolt implements Projectile, Runnable
 		setLocation((double)x, (double)y);
 	}
 
-	final void setLocation(double x,double y)
+	void setLocation(double x,double y)
     {
 		start.setLocation(x, y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
 
-	final public void setId(int k) { id = k; }
-	final public OuterSpacePanel panel() { return weapon().ship().panel(); }
-	final public Weapon weapon() { return weapon; }
-	final public Ship ship() { return weapon().ship(); }
+	public void setId(int k) { id = k; }
+	public OuterSpacePanel panel() { return weapon().ship().panel(); }
+	public Weapon weapon() { return weapon; }
+	public Ship ship() { return weapon().ship(); }
 }

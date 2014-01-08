@@ -124,7 +124,7 @@ public abstract class Ship implements
 
 	////////////
 
-	final public void run(){
+	public void run(){
 		while(alive){
 
 			if(!underControl()){
@@ -146,7 +146,7 @@ public abstract class Ship implements
 		}
 	}
 
-	final public void move(){
+	public void move(){
 		if(destination==null||disabled) return;
 
 		double a = destination.x-(x+width/2);
@@ -172,7 +172,7 @@ public abstract class Ship implements
 		}
 	}
 
-	final public void move(int mx,int my){
+	public void move(int mx,int my){
 		if(destination==null) {
 			destination=new Point();
 		}
@@ -194,11 +194,11 @@ public abstract class Ship implements
 	// think() is called every "round"
 	public void think(){}
 	// NPC's ONLY Please; hack(ish)
-	final public void targetLocation(int x, int y){
+	public void targetLocation(int x, int y){
 		setMousePressedLocation(x, y);
 	}
 
-	final public void hit(double dmg, int x, int y){
+	public void hit(double dmg, int x, int y){
 		lastHit.setLocation(x,y);
 
 		if(getHp()<=0) return;
@@ -211,7 +211,7 @@ public abstract class Ship implements
 			this.dmg+=dmg;
 	}
 
-	final public void explode(){
+	public void explode(){
 		alive=false;
 		disabled=true;
 
@@ -222,7 +222,7 @@ public abstract class Ship implements
 		osp.unregisterShip(this);
 	}
 
-	final public void equipWeapon(Weapon w){
+	public void equipWeapon(Weapon w){
 		for(int i=0;i<wpnList.length;i++){
 			if(wpnList[i]==null){
 				wpnList[i]=w;
@@ -236,7 +236,7 @@ public abstract class Ship implements
 		return Math.toRadians(orientation*180);
 	}
 
-	final public OuterSpacePanel panel(){
+	public OuterSpacePanel panel(){
 		return osp;
 	}
 
@@ -253,79 +253,79 @@ public abstract class Ship implements
 	/////////////
 
 	// EXPERIMENTAL
-	final public int getX(){
+	public int getX(){
 		return x+width/2;
 	}
-	final public int getY(){
+	public int getY(){
 		return y+height/2;
 	}
-	final public int getWidth(){
+	public int getWidth(){
 		return width;
 	}
-	final public int getHeight(){
+	public int getHeight(){
 		return height;
 	}
-	final public int getSlotsAmt(){
+	public int getSlotsAmt(){
 		return slots;
 	}
-	final public int getTeam(){
+	public int getTeam(){
 		return team;
 	}
-	final public Ship getTarget(){
+	public Ship getTarget(){
 		return target;
 	}
-	final public Point getDesination(){
+	public Point getDesination(){
 		return destination;
 	}
-	final public int getOrientation(){
+	public int getOrientation(){
 		return orientation;
 	}
-	final public boolean underControl(){
+	public boolean underControl(){
 		return underControl;
 	}
-	final public int maxHp(){
+	public int maxHp(){
 		return maxhp;
 	}
-	final public int getSpeed(){
+	public int getSpeed(){
 		return speed;
 	}
-	final public int getExperience(){
+	public int getExperience(){
 		return exp;
 	}
-	final public Weapon getWeapon(){
+	public Weapon getWeapon(){
 		return wpn;
 	}
-	final public Weapon getWeapon(int n){
+	public Weapon getWeapon(int n){
 		if(n<0||n>=wpnList.length)
 			throw new IllegalArgumentException("Weapon ["+n+"] does not exist");
 
 		return wpnList[n];
 	}
-	final public int getLevel(){
+	public int getLevel(){
 		return 5+maxHp();
 	}
-	final public Polygon getMask(){
+	public Polygon getMask(){
 		return mask;
 	}
-	final public double getHp(){
+	public double getHp(){
 		return maxHp()-dmg;
 	}
-	final public boolean isAlive(){
+	public boolean isAlive(){
 		return alive;
 	}
-	final public boolean isDisabled(){
+	public boolean isDisabled(){
 		return disabled;
 	}
-	final public boolean contains(int x, int y){
+	public boolean contains(int x, int y){
 		return contains(new Rectangle(x,y,1,1));
 	}
-	final public boolean contains(Point p){
+	public boolean contains(Point p){
 		return contains(new Rectangle(p.x,p.y,1,1));
 	}
-	final public boolean contains(Rectangle r){
+	public boolean contains(Rectangle r){
 		return mask.contains(r);
 	}
-	final public boolean intersects(Destructable s){
+	public boolean intersects(Destructable s){
 
 		for(int i=0;i<mask.npoints;i++){
 			if(s.contains(mask.xpoints[i],mask.ypoints[i]))
@@ -334,21 +334,21 @@ public abstract class Ship implements
 
 		return false;
 	}
-	final public boolean intersects(Rectangle r){
+	public boolean intersects(Rectangle r){
 		return mask.intersects(r);
 		/*return mask.contains( r.x,         r.y ) ||
 		       mask.contains( r.x+r.width, r.y ) ||
 		       mask.contains( r.x+r.width, r.y+r.height ) ||
 		       mask.contains( r.x,         r.y+r.height );*/
 	}
-	final public double percentHealth(){
+	public double percentHealth(){
 		return (double)getHp()/(double)maxHp();
 	}
-	final public int getId(){
+	public int getId(){
 		return id;
 	}
 
-	final private double requestAttribute(String attr, double n){
+	private double requestAttribute(String attr, double n){
 		for(ShipListener a : listeners)
 			n=a.attributeCalled(attr,n);
 		return n;
@@ -356,20 +356,20 @@ public abstract class Ship implements
 
 	/////////////
 
-	final public void gainControl(){
+	public void gainControl(){
 		osp.addMouseListener(this);
 		osp.addMouseMotionListener(this);
 
 		underControl=true;
 	}
-	final public void releaseControl(){
+	public void releaseControl(){
 		osp.removeMouseListener(this);
 		osp.removeMouseMotionListener(this);
 
 		underControl=false;
 	}
 	// LATER: split exp into chunks,divide between weapons and ship
-	final public void addExperience(int xp){
+	public void addExperience(int xp){
 		exp+=xp;
 	}
 
@@ -389,7 +389,7 @@ public abstract class Ship implements
 		this.x=x;
 		this.y=y;
 	}
-	final public void selectWeapon(int n){
+	public void selectWeapon(int n){
 		if(n<0||n>=wpnList.length)
 			throw new IllegalArgumentException("Weapon ["+n+"] does not exist");
 		if(wpnList[n]==null)
@@ -398,15 +398,15 @@ public abstract class Ship implements
 		wpn=wpnList[n];
 		wpn.setLocation(x,y);
 	}
-	final public void setMouseLocation(int x, int y){
+	public void setMouseLocation(int x, int y){
 		mouse.x=x;
 		mouse.y=y;
 	}
-	final public void setMousePressedLocation(int x, int y){
+	public void setMousePressedLocation(int x, int y){
 		mousePressed.x=x;
 		mousePressed.y=y;
 	}
-	final public void setId(int k){
+	public void setId(int k){
 		id=k;
 	}
 
@@ -414,22 +414,22 @@ public abstract class Ship implements
 
 	private int abid=0;
 
-	final public void addUpgrade(Ability a){
+	public void addUpgrade(Ability a){
 		//if(upgrades.size()<getSlotsAmt())
 			addAbility(upgrades,a);
 	}
-	final private void addAbility(ArrayList<Ability> l, Ability a){
+	private void addAbility(ArrayList<Ability> l, Ability a){
 		a.setId(abid++);
 		upgrades.add(a);
 	}
-	final public void addWeaponListener(WeaponListener l){
+	public void addWeaponListener(WeaponListener l){
 		for (Weapon wn : wpnList) {
 			if (wn != null) {
 				wn.addWeaponListener(l);
             }
         }
 	}
-	final public void addShipListener(ShipListener l){
+	public void addShipListener(ShipListener l){
 		listeners.add(l);
 	}
 

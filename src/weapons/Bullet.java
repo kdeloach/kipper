@@ -44,7 +44,7 @@ public class Bullet implements Projectile, Runnable
 		new Thread(this).start();
 	}
 
-	final public void explode()
+	public void explode()
     {
 		weapon.ship().panel().unregisterProjectile(this);
 		die();
@@ -58,7 +58,7 @@ public class Bullet implements Projectile, Runnable
 		);
 	}
 
-	final public void run()
+	public void run()
     {
 		while (weapon.ship.panel().contains(getX(), getY()) && registered()) {
 			Ship o = weapon.ship().panel().intersects(this);
@@ -89,13 +89,13 @@ public class Bullet implements Projectile, Runnable
 	public Dimension getSize() { return new Dimension(1, 1); }
 	public int getDefaultTeam() { return Const.PLAYER; }
 
-	final public boolean registered(){ return id!=Const.UNREGISTERED; }
-	final public double getDamage(){ return damage; }
-	final public int getSpeed(){ return speed; }
-	final public int getX(){ return (int)dx; }
-	final public int getY(){ return (int)dy; }
-	final public int getId(){ return id; }
-	final Rectangle getRectangle(){ return new Rectangle(getX() - width / 2, getY() - height / 2, width, height); }
+	public boolean registered(){ return id!=Const.UNREGISTERED; }
+	public double getDamage(){ return damage; }
+	public int getSpeed(){ return speed; }
+	public int getX(){ return (int)dx; }
+	public int getY(){ return (int)dy; }
+	public int getId(){ return id; }
+	Rectangle getRectangle(){ return new Rectangle(getX() - width / 2, getY() - height / 2, width, height); }
 
 	public boolean intersects(Ship s)
     {
@@ -107,22 +107,22 @@ public class Bullet implements Projectile, Runnable
 		return p.contains(getX(), getY());
 	}
 
-	final public boolean contains(double x, double y)
+	public boolean contains(double x, double y)
     {
 		return contains((int)x, (int)y);
 	}
 
-	final public boolean contains(int x, int y)
+	public boolean contains(int x, int y)
     {
 		return getRectangle().contains(x,y);
 	}
 
-	final public void setSize(int w,int h) { this.width = w; this.height = h; }
+	public void setSize(int w,int h) { this.width = w; this.height = h; }
 	public void setLocation(int x,int y){ setLocation((double)x, (double)y); }
 	public void setLocation(double x,double y){ dx = x; dy = y; }
-	final public void setId(int k){ id = k; }
+	public void setId(int k){ id = k; }
 
-	final public OuterSpacePanel panel() { return weapon().ship().panel(); }
-	final public Weapon weapon(){ return weapon; }
-	final public Ship ship(){ return weapon().ship(); }
+	public OuterSpacePanel panel() { return weapon().ship().panel(); }
+	public Weapon weapon(){ return weapon; }
+	public Ship ship(){ return weapon().ship(); }
 }

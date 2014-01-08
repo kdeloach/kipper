@@ -13,8 +13,8 @@ import kipper.weapons.*;
 
 public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 {
-	public final static int WIDTH = 800;
-	public final static int HEIGHT = 400;
+	public static final int WIDTH = 800;
+	public static final int HEIGHT = 400;
 
     MarqueeStars starsBg, starsFg;
 
