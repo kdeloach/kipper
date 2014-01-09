@@ -117,7 +117,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public void keyPressed(KeyEvent evt){
 		// if P is pressed, pause game, etc.
 
-		if(evt.getKeyCode()==KeyEvent.VK_P){
+		if(evt.getKeyCode()==KeyEvent.VK_Q){
             if (scene.name() == "upgrade") {
                 changeScene(new DemoLevel(this));
             } else {

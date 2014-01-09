@@ -20,6 +20,7 @@ public class SpaceMine extends Bullet
 		steps = getDefaultSteps();
 	}
 
+    @Override
 	public void move()
     {
 		// we want to stop moving at some point
@@ -43,6 +44,7 @@ public class SpaceMine extends Bullet
 		steps--;
 	}
 
+    @Override
 	public void draw(Graphics g)
     {
 		g.setColor(Color.GREEN);
@@ -62,28 +64,8 @@ public class SpaceMine extends Bullet
 		);
 	}
 
-	public void die()
-    {
-		new Explosion(getX(), getY(), panel());
-	}
-
-	public int getDefaultSpeed()
-    {
-		return 15;
-	}
-
-	public int getDefaultSteps()
-    {
-		return 40;
-	}
-
-	public Dimension getSize()
-    {
-		return new Dimension(25,25);
-	}
-
-	public int getDefaultTeam()
-    {
-		return Const.PLAYER;
-	}
+	public int getDefaultSteps() { return 40; }
+    
+	@Override public int getDefaultSpeed() { return 15; }
+	@Override public Dimension getSize() { return new Dimension(25, 25); }
 }

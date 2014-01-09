@@ -11,29 +11,18 @@ public class DamageAbility extends Ability
 {
 	double percent = 1.20;
 
-	public DamageAbility(Upgradable v)
+	public DamageAbility()
     {
-		attachListener(v, new DamageAbilityWeaponListener(this));
+	}
+
+	public double getValue(Upgradable sender, String name, double value)
+    {
+		if (name == Ability.DAMAGE) {
+			return value * percent;
+        }
+		return value;
 	}
 
     @Override public String getTitle() { return "Damage"; }
     @Override public Color getColor() { return Color.GREEN; }
-}
-
-class DamageAbilityWeaponListener extends WeaponListener
-{
-    private DamageAbility ability;
-
-    public DamageAbilityWeaponListener(DamageAbility ability)
-    {
-        this.ability = ability;
-    }
-
-	public double attributeCalled(String name, double value)
-    {
-		if (name == Ability.DAMAGE) {
-			return value * ability.percent;
-        }
-		return value;
-	}
 }

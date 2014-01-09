@@ -34,7 +34,7 @@ public class LaserBeam implements Projectile, Runnable
 		this.theta = t;
 
 		speed = getDefaultSpeed();
-		this.length = getLength();
+		this.length = getDefaultLength();
 		damage = dmg;
 
 		start = new Point2D.Double(x, y);
@@ -46,12 +46,14 @@ public class LaserBeam implements Projectile, Runnable
 		new Thread(this).start();
 	}
 
+    @Override
 	public void explode()
     {
 		weapon.ship.panel().unregisterProjectile(this);
-		die();
+		new Explosion((int)contact.x, (int)contact.y, weapon.ship.panel());
 	}
 
+    @Override
 	public void move()
     {
 		start.x += Const.BULLET_SPEED * Math.cos(theta);
@@ -60,55 +62,38 @@ public class LaserBeam implements Projectile, Runnable
 		stop.y  += Const.BULLET_SPEED * Math.sin(theta);
 	}
 
+    @Override
 	public void run()
     {
 		while (weapon.ship().panel().contains(getX(), getY())) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if(o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(getDamage(),(int)contact.x, (int)contact.y);
+				o.hit(damage,(int)contact.x, (int)contact.y);
 				weapon.ship.target=o;
 				explode();
 				break;
 			}
 			move();
-			try{ Thread.sleep(getSpeed()); } catch (Exception ie) {}
+			try{ Thread.sleep(speed); } catch (Exception ie) {}
 		}
         weapon.ship().panel().unregisterProjectile(this);
 	}
 
+    @Override
 	public void draw(Graphics g)
     {
 		g.setColor(Color.WHITE);
 		g.drawLine((int)start.x, (int)start.y, (int)stop.x, (int)stop.y);
 	}
 
-	public void die()
-    {
-		new Explosion((int)contact.x, (int)contact.y, panel());
-	}
+    public int getDefaultSpeed() { return 15; }
+    public int getDefaultLength() { return 10; }
 
-	public int getDefaultSpeed()
-    {
-		return 15;
-	}
+	@Override public int getX(){ return (int)start.x; }
+	@Override public int getY(){ return (int)start.y; }
+	@Override public int getId(){ return id; }
 
-	public int getLength()
-    {
-		return 10;
-	}
-
-	public int getDefaultTeam()
-    {
-		return Const.PLAYER;
-	}
-
-	public boolean registered() { return id != Const.UNREGISTERED; }
-	public double getDamage(){ return damage; }
-	public int getSpeed(){ return speed; }
-	public int getX(){ return (int)start.x; }
-	public int getY(){ return (int)start.y; }
-	public int getId(){ return id; }
-
+    @Override
 	public boolean intersects(Ship s)
     {
 		if (s.contains((int)start.x, (int)start.y)) {
@@ -121,32 +106,20 @@ public class LaserBeam implements Projectile, Runnable
 		return false;
 	}
 
-    public boolean intersects(Projectile p)
+    @Override public boolean intersects(Projectile p) { throw new UnsupportedOperationException("Not implemented yet"); }
+    @Override public boolean contains(int x, int y) { throw new UnsupportedOperationException("Not implemented yet"); }
+    @Override public boolean contains(double x, double y) { throw new UnsupportedOperationException("Not implemented yet"); }
+
+	private void setLocation(int x, int y)
     {
-        throw new UnsupportedOperationException("Not implemented yet");
+        setLocation((double)x, (double)y);
     }
 
-    public boolean contains(int x, int y)
-    {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public boolean contains(double x, double y)
-    {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-	private void setLocation(int x, int y){ setLocation((double)x, (double)y); }
-
-	void setLocation(double x, double y)
+	private void setLocation(double x, double y)
     {
 		start.setLocation(x,y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
 
-	public void setId(int k){ id = k; }
-
-	public OuterSpacePanel panel(){ return weapon().ship().panel(); }
-	public Weapon weapon(){ return weapon; }
-	public Ship ship(){ return weapon().ship(); }
+	@Override public void setId(int k){ id = k; }
 }

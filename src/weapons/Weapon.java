@@ -80,8 +80,6 @@ public abstract class Weapon implements Upgradable, Runnable {
 	// list of upgrades
 	protected ArrayList<Ability> upgrades;
 
-	private ArrayList<WeaponListener> listeners;
-
 	// owner
 	Ship ship;
 
@@ -95,12 +93,7 @@ public abstract class Weapon implements Upgradable, Runnable {
 
 		setLocation(x,y);
 
-		upgrades=new ArrayList<Ability>();
-		listeners = new ArrayList<WeaponListener>();
-
-        for (int i = 0; i < amountSlots(); i++) {
-            upgrades.add(null);
-        }
+		upgrades = new ArrayList<Ability>();
 
 		mouse=new Point();
 		cooldown=getDefaultCooldown();
@@ -136,9 +129,9 @@ public abstract class Weapon implements Upgradable, Runnable {
 	public void run(){
 		while(fire){
 
-			// call every listener
-			for(WeaponListener a : listeners)
+			for(Ability a : upgrades) {
 				a.weaponFired(this);
+            }
 
 			if(!fire)
 				return;
@@ -196,59 +189,49 @@ public abstract class Weapon implements Upgradable, Runnable {
 	}
 
     @Override
+    public Ability upgradeAt(int index)
+    {
+        if (index >= 0 && index < upgrades.size()) {
+            return upgrades.get(index);
+        }
+        return null;
+    }
+
+    @Override
     public void addUpgrade(Ability a)
     {
-        for (int i = 0; i < amountSlots(); i++) {
-            if (upgrades.get(i) == null) {
-                upgrades.set(i, a);
-                return;
-            }
+        if (upgrades.size() < amountSlots()) {
+            upgrades.add(a);
         }
 	}
 
     @Override
     public void removeUpgrade(int index)
     {
-        if (index >= 0 && index < amountSlots()) {
-            upgrades.set(index, null);
+        if (index >= 0 && index < upgrades.size()) {
+            Ability a = upgrades.get(index);
+            if (a != null) {
+                a.destroy();
+                upgrades.remove(index);
+            }
         }
     }
 
-    @Override
-	public void addWeaponListener(WeaponListener l)
-    {
-        listeners.add(l);
-	}
-
-    @Override
-	public void removeWeaponListener(WeaponListener l)
-    {
-        for (WeaponListener listener : listeners) {
-            if (listener == l) {
-                listeners.remove(l);
-                return;
-            }
-        }
-	}
-
-    @Override
-	public void addShipListener(ShipListener l) { throw new UnsupportedOperationException(); }
-
-	public int getCooldown() { return (int)requestAttribute(Ability.COOLDOWN, cooldown); }
-	public double getDamage() { return requestAttribute(Ability.DAMAGE, damage); }
-	public int getSpread() { return (int)requestAttribute(Ability.SPREAD, spread); }
+	public int getCooldown() { return (int)getValue(Ability.COOLDOWN, cooldown); }
+	public double getDamage() { return getValue(Ability.DAMAGE, damage); }
+	public int getSpread() { return (int)getValue(Ability.SPREAD, spread); }
 	public int getExperience() { return exp; }
 	public double percentCooled() { return (double)percCooled/(double)getCooldown(); }
 	public int amountSlots() { return 6; }
-	public double heading() { return requestAttribute(Ability.HEADING, ship.heading()); }
+	public double heading() { return getValue(Ability.HEADING, ship.heading()); }
 	public boolean isFiring() { return fire; }
 
 	// all attributes are int's (basically)
 	// here's the chance to alter speed,damage,spread,cooldown,enemy damage,heading(?),etc
-	private double requestAttribute(String attr, double n)
+	private double getValue(String attr, double n)
     {
-		for (WeaponListener a : listeners) {
-			n = a.attributeCalled(attr, n);
+		for (Ability a : upgrades) {
+			n = a.getValue(this, attr, n);
         }
 		return n;
 	}

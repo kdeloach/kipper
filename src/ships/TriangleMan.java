@@ -18,11 +18,12 @@ public class TriangleMan extends Ship {
 		setSize(75,75);
 		move(getX(),getY());
 
-		//equipWeapon(new LightningGun(x,y,0,height/2-5,this));
-		equipWeapon(new Trigun(x,y,0,height/2-5,this));
-		selectWeapon(0);
+        Weapon w1 = new Trigun(x,y,0,height/2-5,this);
+		w1.addUpgrade(new RotateAbility());
 
-		addUpgrade(new RotateAbility(this));
+		//equipWeapon(new LightningGun(x,y,0,height/2-5,this));
+		equipWeapon(w1);
+		selectWeapon(0);
 	}
 
 	public void die(){

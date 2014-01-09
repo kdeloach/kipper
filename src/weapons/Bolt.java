@@ -48,7 +48,6 @@ public class Bolt implements Projectile, Runnable
 		start = new Point2D.Double();
 		stop = new Point2D.Double();
 
-		// add offset here
 		this.theta =  Math.toRadians(Math.random() * 90 - 45);
 		this.theta += offset;
 
@@ -62,7 +61,7 @@ public class Bolt implements Projectile, Runnable
 		new Thread(this).start();
 	}
 
-	public void splinter()
+	private void splinter()
     {
 		double x = stop.x;
         double y = stop.y;
@@ -74,12 +73,18 @@ public class Bolt implements Projectile, Runnable
 		}
 	}
 
+    @Override
+    public void move()
+    {
+    }
+
+    @Override
 	public void run()
     {
 		while (span >= 0) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if (o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(getDamage(), (int)contact.x, (int)contact.y);
+				o.hit(damage, (int)contact.x, (int)contact.y);
 				weapon.ship.target = o;
 				explode();
 				break;
@@ -90,15 +95,11 @@ public class Bolt implements Projectile, Runnable
 		weapon.ship().panel().unregisterProjectile(this);
 	}
 
+    @Override
 	public void explode()
     {
 		weapon.ship().panel().unregisterProjectile(this);
-		die();
-	}
-
-	public void die()
-    {
-		new Explosion(getX(), getY(), panel())
+		new Explosion(getX(), getY(), weapon.ship().panel())
         {
 			public Color getColor()
             {
@@ -107,25 +108,27 @@ public class Bolt implements Projectile, Runnable
 		};
 	}
 
-	public int getDefaultSpan() { return 10; }
-	public int getDefaultLength() { return 40; }
-	public int getDefaultBranches() { return 2; }
-	public int getAmtChildrenBranches(){ return 5; }
-	public int getDefaultTeam() { return Const.PLAYER; }
-
+    @Override
 	public void draw(Graphics g)
     {
 		g.setColor(Color.WHITE);
 		g.drawLine((int)start.x, (int)start.y, (int)stop.x, (int)stop.y);
 	}
 
-	public boolean registered() { return id != Const.UNREGISTERED; }
-	public int getSpan() { return span; }
-	public double getDamage() { return damage; }
-	public int getX() { return (int)start.x; }
-	public int getY() { return (int)start.y; }
-	public int getId() {return id; }
+	protected int getDefaultSpan() { return 10; }
+	protected int getDefaultLength() { return 40; }
+	protected int getDefaultBranches() { return 2; }
+	protected int getAmtChildrenBranches(){ return 5; }
 
+	@Override public int getX() { return (int)start.x; }
+	@Override public int getY() { return (int)start.y; }
+	@Override public int getId() {return id; }
+    @Override public void setId(int k) { id = k; }
+
+	private int getDefaultTeam() { return Const.PLAYER; }
+	private boolean registered() { return id != Const.UNREGISTERED; }
+
+    @Override
 	public boolean intersects(Ship s)
     {
 		if(s.contains((int)start.x, (int)start.y)) {
@@ -138,34 +141,32 @@ public class Bolt implements Projectile, Runnable
 		return false;
 	}
 
+    @Override
 	public boolean intersects(Projectile p)
     {
 		return p.contains(start.x, start.y) || p.contains(stop.x, stop.y);
 	}
 
+    @Override
 	public boolean contains(double x, double y)
     {
 		return contains((int)x, (int)y);
 	}
 
+    @Override
 	public boolean contains(int x, int y)
     {
 		return new Rectangle.Double(start.x, start.y, 1, 1).contains(x, y) || new Rectangle.Double(stop.x, stop.y, 1, 1).contains(x, y);
 	}
 
-	private void setLocation(int x, int y)
+	protected void setLocation(int x, int y)
     {
 		setLocation((double)x, (double)y);
 	}
 
-	void setLocation(double x,double y)
+	protected void setLocation(double x,double y)
     {
 		start.setLocation(x, y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
-
-	public void setId(int k) { id = k; }
-	public OuterSpacePanel panel() { return weapon().ship().panel(); }
-	public Weapon weapon() { return weapon; }
-	public Ship ship() { return weapon().ship(); }
 }

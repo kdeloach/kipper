@@ -85,15 +85,8 @@ public abstract class Ship implements
 	// last ship hit
 	public Ship target=null;
 
-	//private ArrayList<Ability>[] listeners;
-
 	// all the upgrades picked up from battle go here
 	private ArrayList<Ability> inventory = new ArrayList<Ability>();
-
-	// list of upgrades
-	public ArrayList<Ability> upgrades;
-
-	private ArrayList<ShipListener> listeners;
 
 	// mask
 	private Polygon mask;
@@ -114,11 +107,6 @@ public abstract class Ship implements
 		maxhp=defaultMaxHp();
 		team=defaultTeam();
 
-		upgrades=new ArrayList<Ability>(getSlotsAmt());
-		for(int i=0;i<getSlotsAmt();i++)
-			upgrades.add(null);
-		listeners = new ArrayList<ShipListener>();
-
 		setLocation(x,y);
 		// hack; changes initial value of [desination] so NPC's don't float to 0,0 onload
 		move(getX(),getY());
@@ -128,7 +116,8 @@ public abstract class Ship implements
 
 	////////////
 
-	public void run(){
+	public void run()
+    {
 		while(alive){
 
 			if(!underControl()){
@@ -150,7 +139,8 @@ public abstract class Ship implements
 		}
 	}
 
-	public void move(){
+	public void move()
+    {
 		if(destination==null||disabled) return;
 
 		double a = destination.x-(x+width/2);
@@ -170,9 +160,6 @@ public abstract class Ship implements
 
 		if(x==oldx&&y==oldy){
 			destination=null;
-
-			for(ShipListener l : listeners)
-				l.shipStopped(this);
 		}
 	}
 
@@ -352,12 +339,6 @@ public abstract class Ship implements
 		return id;
 	}
 
-	private double requestAttribute(String attr, double n){
-		for(ShipListener a : listeners)
-			n=a.attributeCalled(attr,n);
-		return n;
-	}
-
 	/////////////
 
 	public void gainControl(){
@@ -412,57 +393,6 @@ public abstract class Ship implements
 	}
 	public void setId(int k){
 		id=k;
-	}
-
-	///
-
-	@Override
-    public void addUpgrade(Ability a)
-    {
-        for (int i = 0; i < getSlotsAmt(); i++) {
-            if (upgrades.get(i) == null) {
-                upgrades.set(i, a);
-                return;
-            }
-        }
-	}
-
-    @Override
-    public void removeUpgrade(int index)
-    {
-        if (index >= 0 && index < getSlotsAmt()) {
-            Ability a = upgrades.get(index);
-            if (a != null) {
-                a.destroy();
-                upgrades.set(index, null);
-            }
-        }
-    }
-
-    @Override
-	public void addWeaponListener(WeaponListener l)
-    {
-		for (Weapon wn : wpnList) {
-			if (wn != null) {
-				wn.addWeaponListener(l);
-            }
-        }
-	}
-
-    @Override
-    public void removeWeaponListener(WeaponListener l)
-    {
-		for (Weapon wn : wpnList) {
-			if (wn != null) {
-				wn.removeWeaponListener(l);
-            }
-        }
-    }
-
-    @Override
-	public void addShipListener(ShipListener l)
-    {
-		listeners.add(l);
 	}
 
 	/////////////////////
@@ -522,4 +452,9 @@ public abstract class Ship implements
 	}
 	public void keyReleased(KeyEvent evt){}
 
+    ///
+
+    public Ability upgradeAt(int index) { throw new UnsupportedOperationException("Not implemented"); }
+    public void addUpgrade(Ability a) { throw new UnsupportedOperationException("Not implemented"); }
+    public void removeUpgrade(int index) { throw new UnsupportedOperationException("Not implemented"); }
 }

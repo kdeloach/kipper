@@ -5,33 +5,24 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.upgrades.*;
 
-public class Blaster extends Weapon {
-
-	// icon for weapon
+public class Blaster extends Shooter
+{
 	Image icon;
 
-	public Blaster(int x, int y, int rx, int ry, Ship c){
+	public Blaster(int x, int y, int rx, int ry, Ship c)
+    {
 		super(x,y,rx,ry,c);
 
-		// natural abilities
-		addUpgrade(new RecoilAbility(this));
-		addUpgrade(new SpreadAbility(this));
-		addUpgrade(new SpreadAbility(this));
+		addUpgrade(new RecoilAbility());
+		addUpgrade(new SpreadAbility());
+		addUpgrade(new SpreadAbility());
 
 		icon = Util.instance.loadImage("/assets/blaster_icon.gif");
 	}
-	public Image getIcon(){
+
+    @Override
+	public Image getIcon()
+    {
 		return icon;
-	}
-	public int getDefaultDamage(){
-		return 2;
-	}
-	public void draw(Graphics g){
-	}
-	public void fireProjectile(double heading){
-		new Bullet(x, y, heading, getDamage(), this);
-	}
-	public int getDefaultCooldown(){
-		return 400;
 	}
 }

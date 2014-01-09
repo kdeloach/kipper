@@ -13,22 +13,14 @@ public abstract class Ability
 	public static final String GUARD = "GUARD";
 	public static final String HEADING = "HEADING";
 
-    private Upgradable vehicle;
-    private WeaponListener listener;
+    public void weaponFired(Weapon w) {}
+    // Note: Not really needed anymore
+    public void destroy() {}
 
-    protected void attachListener(Upgradable vehicle, WeaponListener listener)
+    // usage ex: when getSpeed() is called this function gets called first with argument "speed" and is added to weapon speed/cooldown
+	public double getValue(Upgradable sender, String name, double oldvalue)
     {
-        if (this.listener != null) {
-            throw new UnsupportedOperationException("Should not call attachListener more than once");
-        }
-        this.vehicle = vehicle;
-        this.listener = listener;
-        vehicle.addWeaponListener(listener);
-    }
-
-    public void destroy()
-    {
-        vehicle.removeWeaponListener(listener);
+        return oldvalue;
     }
 
 	abstract public String getTitle();
@@ -43,14 +35,14 @@ public abstract class Ability
         return new AbilityIconDrawer(getTitle(), getColor());
     }
 
-    public static Ability createInstance(int index, Ship player)
+    public static Ability createInstance(int index)
     {
         switch (index) {
-            case Const.SPEED: return new SpeedAbility(player);
-            case Const.DAMAGE: return new DamageAbility(player);
-            case Const.SPREAD: return new SpreadAbility(player);
-            case Const.RECOIL: return new RecoilAbility(player);
-            case Const.ROTATE: return new RotateAbility(player);
+            case Const.SPEED: return new SpeedAbility();
+            case Const.DAMAGE: return new DamageAbility();
+            case Const.SPREAD: return new SpreadAbility();
+            case Const.RECOIL: return new RecoilAbility();
+            case Const.ROTATE: return new RotateAbility();
         }
         throw new UnsupportedOperationException("Unable to create ability instance: " + index);
     }

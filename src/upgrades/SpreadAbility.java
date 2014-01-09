@@ -8,35 +8,23 @@ import kipper.weapons.*;
 
 public class SpreadAbility extends Ability
 {
-	// amount by which to increase spread
 	double amount = 2.0;
 
-	public SpreadAbility(Upgradable v)
+	public SpreadAbility()
     {
-		attachListener(v, new SpreadAbilityWeaponListener(this));
 	}
 
-	@Override public String getTitle() { return "Spread"; }
-	@Override public Color getColor() { return Color.RED; }
-}
-
-class SpreadAbilityWeaponListener extends WeaponListener
-{
-    private SpreadAbility ability;
-
-    public SpreadAbilityWeaponListener(SpreadAbility ability)
-    {
-        this.ability = ability;
-    }
-
-	public double attributeCalled(String name, double value)
+	public double getValue(Upgradable sender, String name, double value)
     {
 		if (name == Ability.SPREAD) {
-			return value + ability.amount;
+			return value + amount;
         } else if (name == Ability.COOLDOWN) {
             // balancing act - you can fire more bullets at the price of slower firerate
 			return value + 10;
         }
 		return value;
 	}
+
+	@Override public String getTitle() { return "Spread"; }
+	@Override public Color getColor() { return Color.RED; }
 }

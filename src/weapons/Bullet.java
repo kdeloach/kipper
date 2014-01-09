@@ -44,12 +44,14 @@ public class Bullet implements Projectile, Runnable
 		new Thread(this).start();
 	}
 
+    @Override
 	public void explode()
     {
 		weapon.ship().panel().unregisterProjectile(this);
-		die();
+		new Explosion(getX(), getY(), weapon.ship.panel());
 	}
 
+    @Override
 	public void move()
     {
 		setLocation(
@@ -58,71 +60,85 @@ public class Bullet implements Projectile, Runnable
 		);
 	}
 
+    @Override
 	public void run()
     {
 		while (weapon.ship.panel().contains(getX(), getY()) && registered()) {
 			Ship o = weapon.ship().panel().intersects(this);
 			if (o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(getDamage(), getX(), getY());
+				o.hit(damage, getX(), getY());
 				weapon.ship.target = o;
 				explode();
 				break;
 			}
 			move();
-	 		try { Thread.sleep(getSpeed()); } catch (Exception ie) {}
+	 		try { Thread.sleep(speed); } catch (Exception ie) {}
 		}
         weapon.ship().panel().unregisterProjectile(this);
 	}
 
+    @Override
 	public void draw(Graphics g)
     {
 		g.setColor(Color.YELLOW);
 		g.drawOval(getX(), getY(), width, height);
 	}
 
-	public void die()
-    {
-		new Explosion(getX(), getY(), panel());
-	}
+	protected int getDefaultSpeed() { return 15; }
+	protected Dimension getSize() { return new Dimension(1, 1); }
 
-	public int getDefaultSpeed() { return 15; }
-	public Dimension getSize() { return new Dimension(1, 1); }
-	public int getDefaultTeam() { return Const.PLAYER; }
+	@Override public int getX(){ return (int)dx; }
+	@Override public int getY(){ return (int)dy; }
+	@Override public int getId(){ return id; }
+    @Override public void setId(int k){ id = k; }
 
-	public boolean registered(){ return id!=Const.UNREGISTERED; }
-	public double getDamage(){ return damage; }
-	public int getSpeed(){ return speed; }
-	public int getX(){ return (int)dx; }
-	public int getY(){ return (int)dy; }
-	public int getId(){ return id; }
-	Rectangle getRectangle(){ return new Rectangle(getX() - width / 2, getY() - height / 2, width, height); }
-
+    @Override
 	public boolean intersects(Ship s)
     {
 		return s.intersects(getRectangle());
 	}
 
+    @Override
 	public boolean intersects(Projectile p)
     {
 		return p.contains(getX(), getY());
 	}
 
+    @Override
 	public boolean contains(double x, double y)
     {
 		return contains((int)x, (int)y);
 	}
 
+    @Override
 	public boolean contains(int x, int y)
     {
 		return getRectangle().contains(x,y);
 	}
 
-	public void setSize(int w,int h) { this.width = w; this.height = h; }
-	public void setLocation(int x,int y){ setLocation((double)x, (double)y); }
-	public void setLocation(double x,double y){ dx = x; dy = y; }
-	public void setId(int k){ id = k; }
+	protected void setSize(int w, int h)
+    {
+        this.width = w;
+        this.height = h;
+    }
 
-	public OuterSpacePanel panel() { return weapon().ship().panel(); }
-	public Weapon weapon(){ return weapon; }
-	public Ship ship(){ return weapon().ship(); }
+	protected void setLocation(int x, int y)
+    {
+        setLocation((double)x, (double)y);
+    }
+
+	protected void setLocation(double x, double y)
+    {
+        dx = x;
+        dy = y;
+    }
+
+    protected Rectangle getRectangle()
+    {
+        return new Rectangle(getX() - width / 2, getY() - height / 2, width, height);
+    }
+    
+    // TODO: Remove
+	private int getDefaultTeam() { return Const.PLAYER; }
+	private boolean registered(){ return id!=Const.UNREGISTERED; }
 }

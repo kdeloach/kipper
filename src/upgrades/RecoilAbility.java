@@ -13,23 +13,9 @@ public class RecoilAbility extends Ability
 	// distance to send ship backwards
 	int distance = 100;
 
-	public RecoilAbility(Upgradable v)
+	public RecoilAbility()
     {
-		attachListener(v, new RecoilAbilityWeaponListener(this));
 	}
-
-	@Override public String getTitle() { return "Recoil"; }
-	@Override public Color getColor() { return Color.MAGENTA; }
-}
-
-class RecoilAbilityWeaponListener extends WeaponListener
-{
-    private RecoilAbility ability;
-
-    public RecoilAbilityWeaponListener(RecoilAbility ability)
-    {
-        this.ability = ability;
-    }
 
 	public void weaponFired(Weapon w)
     {
@@ -47,7 +33,10 @@ class RecoilAbilityWeaponListener extends WeaponListener
 			return;
         }
 
-        s.move((int)(s.getX() - ability.distance * Math.cos(w.heading())),
-               (int)(s.getY() - ability.distance * Math.sin(w.heading())));
+        s.move((int)(s.getX() - distance * Math.cos(w.heading())),
+               (int)(s.getY() - distance * Math.sin(w.heading())));
 	}
+
+	@Override public String getTitle() { return "Recoil"; }
+	@Override public Color getColor() { return Color.MAGENTA; }
 }

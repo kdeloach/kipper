@@ -29,9 +29,6 @@ public class Enterprise extends Ship {
 		equipWeapon(new LightningGun(x,y,width-3,height/2+4,this));
 		selectWeapon(0);
 
-		// abilities
-		//addUpgrade(new RotateAbility(this));
-
 		img = Util.instance.loadImage("/assets/enterprise2.gif");
 	}
 	public int getDefaultOrientation(){
