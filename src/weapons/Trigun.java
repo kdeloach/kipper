@@ -14,7 +14,7 @@ public class Trigun extends Weapon
 		super(x,y,rx,ry,s);
 		setSize(10,10);
 
-		img = Util.instance.loadImage("images/trigun_ico.gif");
+		img = Util.instance.loadImage("/assets/trigun_ico.gif");
 	}
 
 	public void fireProjectile(double heading)

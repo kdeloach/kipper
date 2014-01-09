@@ -32,7 +32,7 @@ public class Enterprise extends Ship {
 		// abilities
 		//addUpgrade(new RotateAbility(this));
 
-		img = Util.instance.loadImage("assets/enterprise2.gif");
+		img = Util.instance.loadImage("/assets/enterprise2.gif");
 	}
 	public int getDefaultOrientation(){
 		return Const.LEFT_TO_RIGHT;

@@ -9,8 +9,7 @@ public class Util
 
     public Image loadImage(String filename)
     {
-        String basePath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-        return Toolkit.getDefaultToolkit().createImage(new File(basePath, filename).getPath());
+        return Toolkit.getDefaultToolkit().getImage(getClass().getResource(filename));
     }
 
 	// inclusive lo, inclusive hi

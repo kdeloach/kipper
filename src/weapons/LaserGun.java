@@ -14,7 +14,7 @@ public class LaserGun extends Weapon {
 
 		// natural abilities
 
-		icon = Util.instance.loadImage("assets/laser_icon.gif");
+		icon = Util.instance.loadImage("/assets/laser_icon.gif");
 	}
 	public Image getIcon(){
 		return icon;

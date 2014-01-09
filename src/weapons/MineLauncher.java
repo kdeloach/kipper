@@ -16,7 +16,7 @@ public class MineLauncher extends Weapon {
 		// natural abilities
 		addUpgrade(new RecoilAbility(this));
 
-		icon = Util.instance.loadImage("assets/mines_icon.gif");
+		icon = Util.instance.loadImage("/assets/mines_icon.gif");
 	}
 	public Image getIcon(){
 		return icon;

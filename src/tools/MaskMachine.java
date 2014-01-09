@@ -82,7 +82,7 @@ class DrawPanel extends JPanel implements MouseListener {
 	public DrawPanel(JTextArea t){
 		addMouseListener(this);
 
-		img = Util.instance.loadImage("assets/target.gif");
+		img = Util.instance.loadImage("/assets/target.gif");
 		p=new Polygon();
 		this.txt=t;
 	}

@@ -14,7 +14,7 @@ public class Shooter extends Weapon {
 
 		// natural abilities
 
-		icon = Util.instance.loadImage("assets/shooter_icon.gif");
+		icon = Util.instance.loadImage("/assets/shooter_icon.gif");
 	}
 	public Image getIcon(){
 		return icon;
