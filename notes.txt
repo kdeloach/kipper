@@ -168,3 +168,6 @@ January 8, 2014
 - Can now press P to open ship upgrade screen
 - BUG: cannot remove attributes once selected on ship upgrade screen
 - TODO: Improve game loop, put everything on single thread, fix weapon upgrade screen
+
+January 98, 2014
+- TODO: Rename Upgradeable to Upgradable

@@ -416,24 +416,52 @@ public abstract class Ship implements
 
 	///
 
-	private int abid=0;
+	@Override
+    public void addUpgrade(Ability a)
+    {
+        for (int i = 0; i < getSlotsAmt(); i++) {
+            if (upgrades.get(i) == null) {
+                upgrades.set(i, a);
+                return;
+            }
+        }
+	}
 
-	public void addUpgrade(Ability a){
-		//if(upgrades.size()<getSlotsAmt())
-			addAbility(upgrades,a);
-	}
-	private void addAbility(ArrayList<Ability> l, Ability a){
-		a.setId(abid++);
-		upgrades.add(a);
-	}
-	public void addWeaponListener(WeaponListener l){
+    @Override
+    public void removeUpgrade(int index)
+    {
+        if (index >= 0 && index < getSlotsAmt()) {
+            Ability a = upgrades.get(index);
+            if (a != null) {
+                a.destroy();
+                upgrades.set(index, null);
+            }
+        }
+    }
+
+    @Override
+	public void addWeaponListener(WeaponListener l)
+    {
 		for (Weapon wn : wpnList) {
 			if (wn != null) {
 				wn.addWeaponListener(l);
             }
         }
 	}
-	public void addShipListener(ShipListener l){
+
+    @Override
+    public void removeWeaponListener(WeaponListener l)
+    {
+		for (Weapon wn : wpnList) {
+			if (wn != null) {
+				wn.removeWeaponListener(l);
+            }
+        }
+    }
+
+    @Override
+	public void addShipListener(ShipListener l)
+    {
 		listeners.add(l);
 	}
 

@@ -13,7 +13,7 @@ public class DamageAbility extends Ability
 
 	public DamageAbility(Upgradeable v)
     {
-		v.addWeaponListener(new DamageAbilityWeaponListener(this));
+		attachListener(v, new DamageAbilityWeaponListener(this));
 	}
 
     @Override public String getTitle() { return "Damage"; }

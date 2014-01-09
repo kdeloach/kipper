@@ -28,7 +28,7 @@ public class LightningGun extends Weapon {
 		super(x,y,rx,ry,c);
 
 		// natural abilities
-		addNaturalAbility(new SpreadAbility(this));
+		addUpgrade(new SpreadAbility(this));
 
 		icon = Util.instance.loadImage("assets/lightning_icon.gif");
 	}

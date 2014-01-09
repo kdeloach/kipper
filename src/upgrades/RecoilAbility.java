@@ -15,7 +15,7 @@ public class RecoilAbility extends Ability
 
 	public RecoilAbility(Upgradeable v)
     {
-		v.addWeaponListener(new RecoilAbilityWeaponListener(this));
+		attachListener(v, new RecoilAbilityWeaponListener(this));
 	}
 
 	@Override public String getTitle() { return "Recoil"; }

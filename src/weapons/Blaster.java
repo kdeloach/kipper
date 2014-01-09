@@ -14,9 +14,9 @@ public class Blaster extends Weapon {
 		super(x,y,rx,ry,c);
 
 		// natural abilities
-		addNaturalAbility(new RecoilAbility(this));
-		addNaturalAbility(new SpreadAbility(this));
-		addNaturalAbility(new SpreadAbility(this));
+		addUpgrade(new RecoilAbility(this));
+		addUpgrade(new SpreadAbility(this));
+		addUpgrade(new SpreadAbility(this));
 
 		icon = Util.instance.loadImage("assets/blaster_icon.gif");
 	}

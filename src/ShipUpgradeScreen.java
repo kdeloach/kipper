@@ -14,10 +14,6 @@ public class ShipUpgradeScreen extends Scene {
 	int upgrades = 0;
 	int slots = 1;
 
-	int selected = Const.NONE;
-	int selectedIndex = Const.NONE;
-	Point mouse = new Point();
-
 	Rectangle[][] hotspots = new Rectangle[2][];
 
     private Font f = new Font("Arial", Font.PLAIN, 16);
@@ -53,15 +49,13 @@ public class ShipUpgradeScreen extends Scene {
     public void createScene()
     {
 		player.releaseControl();
-		player.move(player.getWidth()/2+10,player.getHeight()/2+20);
+		player.move(player.getWidth() / 2 + 10, player.getHeight() / 2 + 20);
 		osp.addMouseListener(this);
-		osp.addMouseMotionListener(this);
     }
 
     public void destroyScene()
     {
 		osp.removeMouseListener(this);
-		osp.removeMouseMotionListener(this);
     }
 
 	public void paint(Graphics g)
@@ -81,79 +75,31 @@ public class ShipUpgradeScreen extends Scene {
 			}
 		}
 
+        // draw available upgrades
 		for (int i = 0; i < hotspots[upgrades].length; i++) {
 			Rectangle r = hotspots[upgrades][i];
             AbilityIconDrawer drawer = upgradeInstances[i].getIconDrawer();
             drawer.drawIcon(g, r.x, r.y, r.width, r.height);
 		}
-
-		if (selected == upgrades) {
-			Rectangle r = hotspots[upgrades][selectedIndex];
-            AbilityIconDrawer drawer = upgradeInstances[selectedIndex].getIconDrawer();
-            drawer.drawIcon(g, mouse.x - r.width / 2, mouse.y - r.height / 2, r.width, r.height);
-		} else if (selected == slots) {
-			Rectangle r = hotspots[slots][selectedIndex];
-            Ability a = player.upgrades.get(selectedIndex);
-            AbilityIconDrawer drawer = a.getIconDrawer();
-            drawer.drawIcon(g, mouse.x - r.width / 2, mouse.y - r.height / 2, r.width, r.height);
-		}
 	}
 
-	public void mousePressed(MouseEvent evt)
+	public void mousePressed(MouseEvent e)
     {
-		mouse.setLocation(evt.getPoint());
-
 		// if an upgrade is selected
 		for (int i = 0; i < hotspots[upgrades].length; i++) {
-			if (hotspots[upgrades][i].contains(mouse)) {
-				selected = upgrades;
-				selectedIndex = i;
+			if (hotspots[upgrades][i].contains(e.getPoint())) {
+                player.addUpgrade(Ability.createInstance(i, player));
 				return;
 			}
 		}
 
 		// if a slot is selected
 		for (int i = 0; i < hotspots[slots].length; i++) {
-			if (hotspots[slots][i].contains(mouse)) {
-				selected = slots;
-				selectedIndex = i;
+			if (hotspots[slots][i].contains(e.getPoint())) {
+				player.removeUpgrade(i);
 				return;
 			}
 		}
-	}
-
-	public void mouseReleased(MouseEvent evt)
-    {
-		mouse.setLocation(evt.getPoint());
-
-		if (selected == upgrades) {
-			for (int i = 0; i < hotspots[slots].length; i++) {
-				if (hotspots[slots][i].contains(mouse)) {
-                    player.upgrades.set(i, Ability.createInstance(selectedIndex, player));
-					break;
-				}
-			}
-		} else if (selected==slots) {
-			for (int i = 0; i < hotspots[slots].length; i++) {
-				if (hotspots[slots][i].contains(mouse)) {
-					Ability a = player.upgrades.get(i);
-					player.upgrades.set(i, player.upgrades.get(selectedIndex));
-					player.upgrades.set(selectedIndex, a);
-					selected = Const.NONE;
-					selectedIndex = Const.NONE;
-					return;
-				}
-			}
-			player.upgrades.set(selectedIndex, null);
-		}
-
-		selected = Const.NONE;
-		selectedIndex = Const.NONE;
-	}
-
-	public void mouseDragged(MouseEvent evt)
-    {
-		mouse.setLocation(evt.getPoint());
 	}
 
     public String name()

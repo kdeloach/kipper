@@ -15,7 +15,7 @@ public class RotateAbility extends Ability
 	public RotateAbility(Upgradeable v)
     {
         this.ship = (Ship)v;
-		v.addWeaponListener(new RotateAbilityWeaponListener(this));
+		attachListener(v, new RotateAbilityWeaponListener(this));
 	}
 
 	@Override public String getTitle() { return "Rotate"; }

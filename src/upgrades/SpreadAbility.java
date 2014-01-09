@@ -13,7 +13,7 @@ public class SpreadAbility extends Ability
 
 	public SpreadAbility(Upgradeable v)
     {
-		v.addWeaponListener(new SpreadAbilityWeaponListener(this));
+		attachListener(v, new SpreadAbilityWeaponListener(this));
 	}
 
 	@Override public String getTitle() { return "Spread"; }

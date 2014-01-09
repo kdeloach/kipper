@@ -13,7 +13,7 @@ public class SpeedAbility extends Ability
 
 	public SpeedAbility(Upgradeable v)
     {
-		v.addWeaponListener(new SpeedAbilityWeaponListener(this));
+        attachListener(v, new SpeedAbilityWeaponListener(this));
 	}
 
 	@Override public String getTitle() { return "Speed"; }
