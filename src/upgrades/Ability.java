@@ -13,10 +13,10 @@ public abstract class Ability
 	public static final String GUARD = "GUARD";
 	public static final String HEADING = "HEADING";
 
-    private Upgradeable vehicle;
+    private Upgradable vehicle;
     private WeaponListener listener;
 
-    protected void attachListener(Upgradeable vehicle, WeaponListener listener)
+    protected void attachListener(Upgradable vehicle, WeaponListener listener)
     {
         if (this.listener != null) {
             throw new UnsupportedOperationException("Should not call attachListener more than once");

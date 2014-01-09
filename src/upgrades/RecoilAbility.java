@@ -13,7 +13,7 @@ public class RecoilAbility extends Ability
 	// distance to send ship backwards
 	int distance = 100;
 
-	public RecoilAbility(Upgradeable v)
+	public RecoilAbility(Upgradable v)
     {
 		attachListener(v, new RecoilAbilityWeaponListener(this));
 	}

@@ -11,7 +11,7 @@ public class SpeedAbility extends Ability
 {
 	double percent = 0.20;
 
-	public SpeedAbility(Upgradeable v)
+	public SpeedAbility(Upgradable v)
     {
         attachListener(v, new SpeedAbilityWeaponListener(this));
 	}

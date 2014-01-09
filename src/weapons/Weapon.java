@@ -47,7 +47,7 @@ import kipper.upgrades.*;
 
 // !!!SOON - start implementing upgrades
 
-public abstract class Weapon implements Upgradeable, Runnable {
+public abstract class Weapon implements Upgradable, Runnable {
 
 	protected int x, y, width, height;
 

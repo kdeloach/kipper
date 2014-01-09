@@ -32,7 +32,7 @@ import kipper.upgrades.*;
 
 // A standard template all ships can extend
 public abstract class Ship implements
-    Destructable, Controllable, Upgradeable, MouseListener, MouseMotionListener, KeyListener, Runnable
+    Destructable, Controllable, Upgradable, MouseListener, MouseMotionListener, KeyListener, Runnable
 {
 	// arbitrary dimensions
 	public int x, y, width, height;

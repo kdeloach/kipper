@@ -12,7 +12,7 @@ public class RotateAbility extends Ability
 {
 	Ship ship;
 
-	public RotateAbility(Upgradeable v)
+	public RotateAbility(Upgradable v)
     {
         this.ship = (Ship)v;
 		attachListener(v, new RotateAbilityWeaponListener(this));

@@ -11,7 +11,7 @@ public class SpreadAbility extends Ability
 	// amount by which to increase spread
 	double amount = 2.0;
 
-	public SpreadAbility(Upgradeable v)
+	public SpreadAbility(Upgradable v)
     {
 		attachListener(v, new SpreadAbilityWeaponListener(this));
 	}

@@ -11,7 +11,7 @@ public class DamageAbility extends Ability
 {
 	double percent = 1.20;
 
-	public DamageAbility(Upgradeable v)
+	public DamageAbility(Upgradable v)
     {
 		attachListener(v, new DamageAbilityWeaponListener(this));
 	}
