@@ -1,20 +1,28 @@
 <project default="run">
     <target name="run" depends="build, exec">
     </target>
+
     <target name="clean">
         <delete dir="bin" quiet="true" />
         <mkdir dir="bin" />
     </target>
+
     <target name="build">
         <javac srcdir="src" destdir="bin" debug="true" includeAntRuntime="false" />
         <copy todir="bin/assets">
             <fileset dir="src/assets"/>
         </copy>
     </target>
+
     <target name="exec">
         <java classpath="bin" classname="kipper.Execute" fork="true" />
     </target>
-    <target name="masker">
+
+    <target name="jar" depends="build">
+        <jar destfile="bin/kipper.jar" basedir="bin" manifest="src/manifest" />
+    </target>
+
+    <target name="masker" depends="build">
         <java classpath="bin" classname="kipper.tools.MaskMachine" fork="true" />
     </target>
 </project>
