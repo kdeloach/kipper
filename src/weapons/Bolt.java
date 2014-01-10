@@ -2,8 +2,12 @@ package kipper.weapons;
 
 import java.awt.Rectangle;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Line2D;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import kipper.*;
 import kipper.ships.*;
@@ -15,7 +19,7 @@ import kipper.effects.*;
 public class Bolt implements Projectile, Runnable
 {
 	// length is the size of 1 segment of the largest tier branches
-	protected int branches, length, span;
+	protected int branches, length, span, thickness;
 
 	// id of bullet,is set by master panel
 	protected int id;
@@ -33,17 +37,20 @@ public class Bolt implements Projectile, Runnable
 
 	public Bolt(int x, int y, double t, double dmg, Weapon w)
     {
-		new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultSpan(), dmg, w);
+        x = x - w.ship().x;
+        y = y - w.ship().y;
+		new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultSpan(), getDefaultThickness(), dmg, w);
 	}
 
-	public Bolt(double x, double y, double offset, int branches, int length, int span, double dmg, Weapon w)
+	public Bolt(double x, double y, double offset, int branches, int length, int span, int thickness, double dmg, Weapon w)
     {
-		this.weapon = w;
-		this.length = length;
-		this.branches = branches;
-		this.damage = dmg;
-		this.span = span;
 		this.offset = offset;
+		this.branches = branches;
+		this.length = length;
+		this.span = span;
+        this.thickness = thickness;
+		this.damage = dmg;
+		this.weapon = w;
 
 		start = new Point2D.Double();
 		stop = new Point2D.Double();
@@ -67,7 +74,7 @@ public class Bolt implements Projectile, Runnable
         double y = stop.y;
 		for (int i = 0; i < branches; i++) {
             int branches = (int)(Math.random() * getAmtChildrenBranches());
-			Bolt b = new Bolt(x, y, offset, branches, length - 10, span, damage, weapon);
+			Bolt b = new Bolt(x, y, offset, branches, length - 10, span, thickness - 1, damage, weapon);
 			x = b.stop.x;
 			y = b.stop.y;
 		}
@@ -76,6 +83,7 @@ public class Bolt implements Projectile, Runnable
     @Override
     public void move()
     {
+
     }
 
     @Override
@@ -89,6 +97,7 @@ public class Bolt implements Projectile, Runnable
 				explode();
 				break;
 			}
+            move();
 			try { Thread.sleep(50); } catch (Exception ie) {}
 			span -= 10;
 		}
@@ -112,16 +121,19 @@ public class Bolt implements Projectile, Runnable
 	public void draw(Graphics g)
     {
 		g.setColor(Color.WHITE);
-		g.drawLine((int)start.x, (int)start.y, (int)stop.x, (int)stop.y);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(thickness));
+        g2.draw(new Line2D.Double(startX(), startY(), stopX(), stopY()));
 	}
 
 	protected int getDefaultSpan() { return 10; }
 	protected int getDefaultLength() { return 40; }
 	protected int getDefaultBranches() { return 2; }
 	protected int getAmtChildrenBranches(){ return 5; }
+	protected int getDefaultThickness(){ return 4; }
 
-	@Override public int getX() { return (int)start.x; }
-	@Override public int getY() { return (int)start.y; }
+	@Override public int getX() { return (int)startX(); }
+	@Override public int getY() { return (int)startY(); }
 	@Override public int getId() {return id; }
     @Override public void setId(int k) { id = k; }
 
@@ -131,10 +143,10 @@ public class Bolt implements Projectile, Runnable
     @Override
 	public boolean intersects(Ship s)
     {
-		if(s.contains((int)start.x, (int)start.y)) {
+		if(s.contains((int)startX(), (int)startY())) {
 			contact = start;
 			return true;
-		} else if (s.contains((int)stop.x, (int)stop.y)) {
+		} else if (s.contains((int)stopX(), (int)stopY())) {
 			contact = stop;
 			return true;
 		}
@@ -144,7 +156,7 @@ public class Bolt implements Projectile, Runnable
     @Override
 	public boolean intersects(Projectile p)
     {
-		return p.contains(start.x, start.y) || p.contains(stop.x, stop.y);
+		return p.contains(startX(), startY()) || p.contains(stopX(), stopY());
 	}
 
     @Override
@@ -156,7 +168,8 @@ public class Bolt implements Projectile, Runnable
     @Override
 	public boolean contains(int x, int y)
     {
-		return new Rectangle.Double(start.x, start.y, 1, 1).contains(x, y) || new Rectangle.Double(stop.x, stop.y, 1, 1).contains(x, y);
+		return new Rectangle.Double(startX(), startY(), 1, 1).contains(x, y)
+            || new Rectangle.Double(stopX(), stopY(), 1, 1).contains(x, y);
 	}
 
 	protected void setLocation(int x, int y)
@@ -164,9 +177,14 @@ public class Bolt implements Projectile, Runnable
 		setLocation((double)x, (double)y);
 	}
 
-	protected void setLocation(double x,double y)
+	protected void setLocation(double x, double y)
     {
 		start.setLocation(x, y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
+
+    protected double startX() { return start.x + weapon.ship().x; }
+    protected double startY() { return start.y + weapon.ship().y; }
+    protected double stopX() { return stop.x + weapon.ship().x; }
+    protected double stopY() { return stop.y + weapon.ship().y; }
 }
