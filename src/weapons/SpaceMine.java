@@ -65,7 +65,7 @@ public class SpaceMine extends Bullet
 	}
 
 	public int getDefaultSteps() { return 40; }
-    
+
 	@Override public int getDefaultSpeed() { return 15; }
 	@Override public Dimension getSize() { return new Dimension(25, 25); }
 }

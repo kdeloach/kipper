@@ -26,15 +26,16 @@ public class Bullet implements Projectile, Runnable
 
 	public Bullet(int x, int y, double t, double dmg, Weapon w)
     {
-		this.weapon=w;
-		this.theta=t;
-		dx=x;
-		dy=y;
+		this.weapon = w;
+		this.theta = t;
+		dx = x;
+		dy = y;
 
 		setLocation(x, y);
 
-		if (getSize() != null)
+		if (getSize() != null) {
 			setSize(getSize().width, getSize().height);
+        }
 
 		speed = getDefaultSpeed();
 		damage = dmg;
@@ -65,7 +66,7 @@ public class Bullet implements Projectile, Runnable
     {
 		while (weapon.ship.panel().contains(getX(), getY()) && registered()) {
 			Ship o = weapon.ship().panel().intersects(this);
-			if (o != null && o.getId() != weapon.ship().getId()) {
+			if (o != null) {
 				o.hit(damage, getX(), getY());
 				weapon.ship.target = o;
 				explode();
@@ -137,7 +138,7 @@ public class Bullet implements Projectile, Runnable
     {
         return new Rectangle(getX() - width / 2, getY() - height / 2, width, height);
     }
-    
+
     // TODO: Remove
 	private int getDefaultTeam() { return Const.PLAYER; }
 	private boolean registered(){ return id!=Const.UNREGISTERED; }

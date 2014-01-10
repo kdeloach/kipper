@@ -15,18 +15,20 @@ public class Enterprise extends Ship {
 
 	// ship sprite
 	Image img;
+    OuterSpacePanel panel;
 
 	public Enterprise(int x, int y, OuterSpacePanel c)
     {
 		super(x, y, c);
+        panel = c;
 
 		setSize(141,52);
 
-		equipWeapon(new Shooter(x,y,width-3,height/2+4,this));
-		equipWeapon(new Blaster(x,y,width-3,height/2+4,this));
-		equipWeapon(new LaserGun(x,y,width-3,height/2+4,this));
-		equipWeapon(new MineLauncher(x,y,width-3,height/2+4,this));
-		equipWeapon(new LightningGun(x,y,width-3,height/2+4,this));
+		equipWeapon(new Shooter(x,y,width,height/2+4,this));
+		equipWeapon(new Blaster(x,y,width,height/2+4,this));
+		equipWeapon(new LaserGun(x,y,width,height/2+4,this));
+		equipWeapon(new MineLauncher(x,y,width+15,height/2+4,this));
+		equipWeapon(new LightningGun(x,y,width,height/2+6,this));
 		selectWeapon(0);
 
 		img = Util.instance.loadImage("/assets/enterprise2.gif");
@@ -53,6 +55,13 @@ public class Enterprise extends Ship {
 			}
 		};
 	}
+
+    public void explode()
+    {
+        super.explode();
+        panel.respawnPlayer();
+    }
+
 	public void draw(Graphics g){
 		g.drawImage(img, x, y, osp);
 
