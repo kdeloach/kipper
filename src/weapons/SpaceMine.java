@@ -27,7 +27,7 @@ public class SpaceMine extends Bullet
 		if (steps <= 0) {
 			try {
 				for (Projectile p : weapon.ship.panel().bulletList) {
-					if (p instanceof SpaceMine && p.getId() != getId() && p.intersects(this)) {
+					if (p.getId() != getId() && p.intersects(this)) {
 						p.explode();
 						explode();
 					}
