@@ -1,118 +1,104 @@
 package kipper;
 
-import java.awt.*;
-import javax.swing.*;
-import java.util.*;
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Dimension;
+import javax.swing.JPanel;
 import kipper.ships.*;
 import kipper.weapons.*;
 
-// BottomPanel really isn't a fitting name, should change to...StatusBar later or something
+public class BottomPanel extends JPanel
+{
+    Ship player;
 
-public class BottomPanel extends JPanel implements Runnable {
-		OuterSpacePanel osp;
+    Font smallFont = new Font("Lucida Console", Font.PLAIN, 11);
 
-		Font bigFont = new Font("Lucida Console",Font.PLAIN,13);
-		Font smallFont = new Font("Lucida Console",Font.PLAIN,11);
+    public BottomPanel()
+    {
+        setSize(getMinumumSize());
+    }
 
-		public BottomPanel(OuterSpacePanel c){
-			setSize(getMinumumSize());
-			this.osp=c;
+    public void update(Ship player)
+    {
+        this.player = player;
+    }
 
-			new Thread(this).start();
-		}
+    public void paint(Graphics g)
+    {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setFont(smallFont);
 
-		public void run(){
-			while(true){
-				repaint();
-				try{Thread.sleep(10);}catch(Exception ie){}
-			}
-		}
+        if (player != null && player.isAlive()) {
+            // text
+            g.setColor(Color.GRAY);
+            g.drawString(player.getName(), 3, 9);
+            g.drawString("life", 3, 21);
+            g.drawString("exp", 3, 29);
 
-		public void drawBar(int x, int y, double perc, Color c, Graphics g){
-			g.setColor(c);
-			g.fillRect(x, y, (int)(75*perc), 8);
-		}
-		public void drawCooldown(int x, int y, Weapon w, Graphics g){
-			if(w!=null){
-				// if this weapon is selected
-				if(w == w.ship().getWeapon()){
-					g.drawRect(x-1,y-1,21,21);
-				}
-				g.drawImage(w.getIcon(), x, y, this);
-				g.fillArc(x, y, 20, 20, 90, (int)( -360*w.percentCooled() ));
-			}
+            // bars
+            drawBar(g, 40, 13, player.percentHealth(), Color.GRAY);
+            drawBar(g, 40, 23, 1, Color.LIGHT_GRAY);
 
-		}
+            g.setColor(Color.DARK_GRAY);
+            g.drawLine(124, 12, 124, getHeight() - 4);
 
-		public void paint(Graphics g){
-			g.setColor(Color.BLACK);// change to #333333 maybe
-			g.fillRect(0,0,getWidth(),getHeight());
+            // cooldowns
+            g.setColor(Color.GRAY);
+            drawCooldown(g, 135, 11, player.getWeapon(0));
+            drawCooldown(g, 135 + (20 + 3) * 1, 11, player.getWeapon(1));
+            drawCooldown(g, 135 + (20 + 3) * 2, 11, player.getWeapon(2));
+            drawCooldown(g, 135 + (20 + 3) * 3, 11, player.getWeapon(3));
+            drawCooldown(g, 135 + (20 + 3) * 4, 11, player.getWeapon(4));
+        }
 
-			Ship player=null, target=null;
+        Ship target = player.getTarget();
+        if (target != null && target.isAlive()) {
+            // offset
+            int xoff = getWidth() - 250;
 
-			try {
-				player = osp.getPlayer();
-				target = player.getTarget();
-			} catch (NullPointerException ie){}
+            // text
+            g.setColor(Color.GRAY);
+            g.drawString(target.getName(), 3 + xoff, 9);
+            g.drawString("life", 3 + xoff, 21);
+            g.drawString("exp", 3 + xoff, 29);
 
-			if(player!=null && player.isAlive()){
-				// text
-				g.setColor(Color.GRAY);
-				g.setFont(smallFont);
-				g.drawString(player.getName(), 3, 9);
-				g.drawString("life", 3, 21);
-				g.drawString("exp", 3, 29);
+            // bars
+            drawBar(g, 40 + xoff, 13, target.percentHealth(), Color.GRAY);
+            drawBar(g, 40 + xoff, 23, 1, Color.LIGHT_GRAY);
 
-				// bars
-				drawBar(40, 13, player.percentHealth(), Color.GRAY, g);
-				drawBar(40, 23, 1, Color.LIGHT_GRAY, g);
+            g.setColor(Color.DARK_GRAY);
+            g.drawLine(124 + xoff, 12, 124 + xoff, getHeight() - 4);
 
-				g.setColor(Color.DARK_GRAY);
-				g.drawLine(124, 12, 124, getHeight()-4);
+            // cooldowns
+            g.setColor(Color.GRAY);
+            drawCooldown(g, 135 + xoff, 11, target.getWeapon(0));
+            drawCooldown(g, 135 + xoff + (20 + 3) * 1, 11, target.getWeapon(1));
+            drawCooldown(g, 135 + xoff + (20 + 3) * 2, 11, target.getWeapon(2));
+            drawCooldown(g, 135 + xoff + (20 + 3) * 3, 11, target.getWeapon(3));
+            drawCooldown(g, 135 + xoff + (20 + 3) * 4, 11, target.getWeapon(4));
+        }
+    }
 
-				// cooldowns
-				g.setColor(Color.GRAY);
-				drawCooldown(135,          11, player.getWeapon(0), g);
-				drawCooldown(135+(20+3)*1, 11, player.getWeapon(1), g);
-				drawCooldown(135+(20+3)*2, 11, player.getWeapon(2), g);
-				drawCooldown(135+(20+3)*3, 11, player.getWeapon(3), g);
-				drawCooldown(135+(20+3)*4, 11, player.getWeapon(4), g);
-			}
+    public void drawBar(Graphics g, int x, int y, double perc, Color c)
+    {
+        g.setColor(c);
+        g.fillRect(x, y, (int)(75 * perc), 8);
+    }
 
-			if(target!=null && target.isAlive()){
-				// offset
-				int xoff=getWidth()-250;
+    public void drawCooldown(Graphics g, int x, int y, Weapon w)
+    {
+        if (w != null) {
+            // if this weapon is selected
+            if (w == w.ship().getWeapon()) {
+                g.drawRect(x-1, y-1, 21, 21);
+            }
+            g.drawImage(w.getIcon(), x, y, this);
+            g.fillArc(x, y, 20, 20, 90, (int)(-360 * w.percentCooled()));
+        }
+    }
 
-				// text
-				g.setColor(Color.GRAY);
-				//g.setFont(smallFont);
-				g.drawString(target.getName(), 3+xoff, 9);
-				g.drawString("life", 3+xoff, 21);
-				g.drawString("exp", 3+xoff, 29);
-
-				// bars
-				drawBar(40+xoff, 13, target.percentHealth(), Color.GRAY, g);
-				drawBar(40+xoff, 23, 1, Color.LIGHT_GRAY, g);
-
-				g.setColor(Color.DARK_GRAY);
-				g.drawLine(124+xoff, 12, 124+xoff, getHeight()-4);
-
-				// cooldowns
-				g.setColor(Color.GRAY);
-				drawCooldown(135+xoff,          11, target.getWeapon(0), g);
-				drawCooldown(135+xoff+(20+3)*1, 11, target.getWeapon(1), g);
-				drawCooldown(135+xoff+(20+3)*2, 11, target.getWeapon(2), g);
-				drawCooldown(135+xoff+(20+3)*3, 11, target.getWeapon(3), g);
-				drawCooldown(135+xoff+(20+3)*4, 11, target.getWeapon(4), g);
-			}
-		}
-
-
-
-		public Dimension getMinumumSize(){
-			return getPreferredSize();
-		}
-		public Dimension getPreferredSize(){
-			return new Dimension(OuterSpacePanel.WIDTH,33);
-		}
-	}
+    public Dimension getMinumumSize() { return getPreferredSize(); }
+    public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, 33); }
+}

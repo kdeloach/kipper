@@ -175,3 +175,6 @@ January 9, 2014
 - TODO: Upgrade screen should attach upgrades to weapons directly instead of the entire ship. (rename ShipUpgradeScreen to WeaponUpgradeScreen)
 - TODO: Move bolt splinter() into move() to create an animated lightning effect
 - TODO: Mines should collide with everything
+
+January 10, 2014
+- BUG: Shooting SpaceMine with Laser will somehow orphan the mine (not alive but ignores collisions)

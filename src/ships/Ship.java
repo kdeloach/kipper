@@ -8,10 +8,6 @@ import kipper.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
 
-// So, ships have a maximum capactiy to hold 10 weapons, however,
-// the BottomPanel only paints the first 5
-// SO, my idea is that...to equip a weapon you just move it into the first 5 slots
-
 // IT hasnt been decided yet BUT Ships may have special abilities
 // Abilities applied to ship affect all equiped weapons
 // Every 3 levels or such you get an extra slot, CAPPED

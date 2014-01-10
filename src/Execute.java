@@ -19,13 +19,15 @@ public class Execute
 
 		frame.getContentPane().setLayout(new BorderLayout());
 
-		OuterSpacePanel bg = new OuterSpacePanel();
-		frame.addKeyListener(bg);
-		frame.getContentPane().add((JPanel)bg);
-		frame.getContentPane().add(bg.getBottomPanel(),BorderLayout.NORTH);
+        BottomPanel statusBar = new BottomPanel();
+		OuterSpacePanel gamePanel = new OuterSpacePanel(statusBar);
+
+		frame.addKeyListener(gamePanel);
+		frame.getContentPane().add(gamePanel);
+		frame.getContentPane().add(statusBar, BorderLayout.NORTH);
 
 		frame.pack();
-		frame.setLocation(300,200);
+		frame.setLocation(300, 200);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setVisible(true);

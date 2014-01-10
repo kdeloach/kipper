@@ -16,6 +16,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 400;
 
+    BottomPanel statusBar;
     MarqueeStars starsBg, starsFg;
 
 	public Ship player1;
@@ -29,23 +30,25 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public ArrayList<Projectile> bulletList;
 	private ArrayList<Explosion> explosionList;
 
+    // TODO: Get rid of this stuff
 	int bulletId = 0;
     int explosionId = 0;
     int playersId = 0;
 
-	public OuterSpacePanel()
+	public OuterSpacePanel(BottomPanel statusBar)
     {
+        this.statusBar = statusBar;
+
 		setSize(getMinumumSize());
 
-        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.099, 2, Color.WHITE);
-        starsBg = new MarqueeStars(500, Math.toRadians(180), 0.05, 0, Color.GRAY);
-
+		players = new ArrayList<Ship>();
 		bulletList = new ArrayList<Projectile>();
 		explosionList = new ArrayList<Explosion>();
-		players = new ArrayList<Ship>();
+
+        starsBg = new MarqueeStars(500, Math.toRadians(180), 0.05, 0, Color.GRAY);
+        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.099, 2, Color.WHITE);
 
 		player1 = new Enterprise(100,100,this);
-
 		changeScene(new DemoLevel(this));
 
 		new Thread(this).start();
@@ -54,8 +57,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public void run()
     {
 		while (true) {
-            starsBg.update();
-            starsFg.update();
+            update();
 			repaint();
 			try {
                 Thread.sleep(5);
@@ -64,12 +66,20 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		}
 	}
 
+    public void update()
+    {
+        statusBar.update(player1);
+        starsBg.update();
+        starsFg.update();
+    }
+
 	public void paint(Graphics g)
     {
 		// bg
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
+        statusBar.repaint();
         starsBg.paint(g);
         starsFg.paint(g);
 
@@ -195,7 +205,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 			}
 		}
 	}
-    public synchronized void killNPCs() {
+    public synchronized void killNPCs()
+    {
         ArrayList<Ship> npcs = new ArrayList<Ship>();
         for (Ship player : players) {
             if (player instanceof Enterprise == false) {
@@ -208,7 +219,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     }
 
 	// @Deprecated
-	public synchronized Ship intersects(Projectile b) {
+	public synchronized Ship intersects(Projectile b)
+    {
 		try {
 			for (Ship s : players) {
 				if (b.intersects(s)) {
@@ -218,13 +230,15 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		} catch (ConcurrentModificationException ie) {}
 		return null;
 	}
-	public synchronized Ship intersects(Ship r){
+
+	public synchronized Ship intersects(Ship r)
+    {
 		try {
-			for(Ship p : players){
+			for(Ship p : players) {
 				// NOTE: a ship might want to know if an ally hits it, maybe to push him away?
-				// add it to the listener sometime
-				if(p.getId()!=r.getId() && p.getTeam()!=r.getTeam() && p.intersects((Destructable)r))
+				if (p.getId() != r.getId() && p.getTeam() != r.getTeam() && p.intersects((Destructable)r)) {
 					return p;
+                }
 			}
 		} catch (ConcurrentModificationException ie) {}
 		return null;
@@ -232,23 +246,13 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 	///
 
-	public Dimension getMinumumSize(){
-		return getPreferredSize();
-	}
-	public Dimension getPreferredSize(){
-		return new Dimension(OuterSpacePanel.WIDTH,OuterSpacePanel.HEIGHT);
-	}
-	public BottomPanel getBottomPanel(){
-		return new BottomPanel(this);
-	}
-	public Ship getPlayer(){
-		return player1;
-	}
+	public Dimension getMinumumSize() { return getPreferredSize(); }
+	public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT); }
+	public Ship getPlayer() { return player1; }
 
     public void respawnPlayer()
     {
         player1 = new Enterprise(100, 100, this);
         changeScene(new DemoLevel(this));
     }
-
 }
