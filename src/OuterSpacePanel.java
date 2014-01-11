@@ -86,6 +86,11 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             }
         } catch (ConcurrentModificationException ie) {}
 		try {
+			for(Projectile b : bulletList) {
+                b.update();
+			}
+		} catch(ConcurrentModificationException ie) {}
+		try {
 			for (Explosion e : explosionList) {
                 e.update();
 			}

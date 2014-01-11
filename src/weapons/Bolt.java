@@ -16,7 +16,7 @@ import kipper.effects.*;
 // Bolts are basically 2 points, whereas the first point is x,y
 //   and the second point is x+length*cos(theta),y+length*sin(theta)
 
-public class Bolt implements Projectile, Runnable
+public class Bolt implements Projectile
 {
 	// length is the size of 1 segment of the largest tier branches
 	protected int branches, length, span, thickness;
@@ -64,8 +64,6 @@ public class Bolt implements Projectile, Runnable
 		if (length > 10) {
 			splinter();
         }
-
-		new Thread(this).start();
 	}
 
 	private void splinter()
@@ -86,19 +84,19 @@ public class Bolt implements Projectile, Runnable
     }
 
     @Override
-	public void run()
+	public void update()
     {
-		while (span >= 0) {
+		if (span >= 0) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if (o != null && o.getId() != weapon.ship().getId()) {
 				o.hit(damage);
 				weapon.ship.target = o;
 				explode();
-				break;
+				return;
 			}
             move();
-			try { Thread.sleep(50); } catch (Exception ie) {}
-			span -= 10;
+			span--;
+            return;
 		}
 		weapon.ship().panel().unregisterProjectile(this);
 	}
@@ -122,7 +120,7 @@ public class Bolt implements Projectile, Runnable
         g2.draw(new Line2D.Double(startX(), startY(), stopX(), stopY()));
 	}
 
-	protected int getDefaultSpan() { return 10; }
+	protected int getDefaultSpan() { return 5; }
 	protected int getDefaultLength() { return 40; }
 	protected int getDefaultBranches() { return 2; }
 	protected int getAmtChildrenBranches(){ return 5; }

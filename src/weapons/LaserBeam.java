@@ -12,7 +12,7 @@ import kipper.effects.*;
 // LaserBeams are basically 2 points, whereas the first point is x,y
 // and the second point is x+length*cos(theta),y+length*sin(theta)
 
-public class LaserBeam implements Projectile, Runnable
+public class LaserBeam implements Projectile
 {
 	protected int length;
 	private int speed;
@@ -42,8 +42,6 @@ public class LaserBeam implements Projectile, Runnable
 
 		setLocation(x, y);
 		weapon.ship.panel().registerProjectile(this);
-
-		new Thread(this).start();
 	}
 
     @Override
@@ -63,20 +61,18 @@ public class LaserBeam implements Projectile, Runnable
 	}
 
     @Override
-	public void run()
+	public void update()
     {
-		while (weapon.ship().panel().contains(getX(), getY())) {
+		if (weapon.ship().panel().contains(getX(), getY())) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if(o != null && o.getId() != weapon.ship().getId()) {
 				o.hit(damage);
 				weapon.ship.target = o;
 				explode();
-				break;
+				return;
 			}
-
 			move();
-
-			try{ Thread.sleep(speed); } catch (Exception ie) {}
+            return;
 		}
         weapon.ship().panel().unregisterProjectile(this);
 	}

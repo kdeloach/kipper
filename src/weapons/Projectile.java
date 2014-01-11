@@ -19,4 +19,5 @@ public interface Projectile
 	public void draw(java.awt.Graphics g);
     public void move();
 	public void explode();
+    public void update();
 }

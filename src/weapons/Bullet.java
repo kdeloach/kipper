@@ -8,7 +8,7 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
 
-public class Bullet implements Projectile, Runnable
+public class Bullet implements Projectile
 {
 	protected int width, height;
 	private int speed;
@@ -41,8 +41,6 @@ public class Bullet implements Projectile, Runnable
 		damage = dmg;
 
 		weapon.ship().panel().registerProjectile(this);
-
-		new Thread(this).start();
 	}
 
     @Override
@@ -62,18 +60,18 @@ public class Bullet implements Projectile, Runnable
 	}
 
     @Override
-	public void run()
+	public void update()
     {
-		while (weapon.ship.panel().contains(getX(), getY()) && registered()) {
+		if (weapon.ship.panel().contains(getX(), getY()) && registered()) {
 			Ship o = weapon.ship().panel().intersects(this);
 			if (o != null) {
 				o.hit(damage);
 				weapon.ship.target = o;
 				explode();
-				break;
+				return;
 			}
 			move();
-	 		try { Thread.sleep(speed); } catch (Exception ie) {}
+            return;
 		}
         weapon.ship().panel().unregisterProjectile(this);
 	}
