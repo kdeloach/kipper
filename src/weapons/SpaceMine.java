@@ -26,7 +26,7 @@ public class SpaceMine extends Bullet
 		// we want to stop moving at some point
 		if (steps <= 0) {
             for (Projectile p : weapon.ship.panel().bulletList) {
-                if (p.getId() != getId() && p.intersects(this)) {
+                if (p != this && p.intersects(this)) {
                     p.explode();
                     explode();
                 }
@@ -68,4 +68,5 @@ public class SpaceMine extends Bullet
 
 	@Override public int getDefaultSpeed() { return 15; }
 	@Override public Dimension getSize() { return new Dimension(25, 25); }
+    @Override public boolean collidesWithOwner() { return true; }
 }

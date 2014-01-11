@@ -15,9 +15,6 @@ public class Bullet implements Projectile
 	private double damage;
 	protected double dx, dy;
 
-	// id of bullet,is set by master panel
-	protected int id;
-
 	// bullet trajectory
 	protected double theta;
 
@@ -40,13 +37,13 @@ public class Bullet implements Projectile
 		speed = getDefaultSpeed();
 		damage = dmg;
 
-		weapon.ship().panel().registerProjectile(this);
+		weapon.ship().panel().addProjectile(this);
 	}
 
     @Override
 	public void explode()
     {
-		weapon.ship().panel().unregisterProjectile(this);
+		weapon.ship().panel().removeProjectile(this);
 		new Explosion(getX(), getY(), weapon.ship.panel());
 	}
 
@@ -62,18 +59,20 @@ public class Bullet implements Projectile
     @Override
 	public void update()
     {
-		if (weapon.ship.panel().contains(getX(), getY()) && registered()) {
-			Ship o = weapon.ship().panel().intersects(this);
-			if (o != null) {
-				o.hit(damage);
-				weapon.ship.target = o;
+		if (weapon.ship.panel().contains(getX(), getY())) {
+			Ship ship = weapon.ship().panel().intersects(this);
+            boolean collision = ship != null;
+            boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
+			if (collision && validTarget) {
+				ship.hit(damage);
+				weapon.ship.target = ship;
 				explode();
 				return;
 			}
 			move();
             return;
 		}
-        weapon.ship().panel().unregisterProjectile(this);
+        weapon.ship().panel().removeProjectile(this);
 	}
 
     @Override
@@ -88,9 +87,7 @@ public class Bullet implements Projectile
 
 	@Override public double getX(){ return dx; }
 	@Override public double getY(){ return dy; }
-
-	@Override public int getId(){ return id; }
-    @Override public void setId(int k){ id = k; }
+    @Override public boolean collidesWithOwner() { return false; }
 
     @Override
 	public boolean intersects(Ship s)
@@ -135,8 +132,4 @@ public class Bullet implements Projectile
                              width,
                              height);
     }
-
-    // TODO: Remove
-	private int getDefaultTeam() { return Const.PLAYER; }
-	private boolean registered(){ return id!=Const.UNREGISTERED; }
 }

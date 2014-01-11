@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.List;
 import kipper.ships.*;
 import kipper.effects.*;
 import kipper.weapons.*;
@@ -56,8 +57,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		deleteProjectiles = new LinkedList<Projectile>();
 		deleteExplosions = new LinkedList<Explosion>();
 
-        starsBg = new MarqueeStars(500, Math.toRadians(180), 0.05, 0, Color.GRAY);
-        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.099, 2, Color.WHITE);
+        starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 0, Color.GRAY);
+        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 2, Color.WHITE);
 
 		player1 = new Enterprise(100, 100, this);
 		changeScene(new DemoLevel(this));
@@ -161,40 +162,41 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	/////////////////////////
 	// Keyboard Controls
 
-	public void keyTyped(KeyEvent evt)
+	public void keyTyped(KeyEvent e)
     {
-		getPlayer().keyTyped(evt);
+		getPlayer().keyTyped(e);
 	}
 
-	public void keyPressed(KeyEvent evt)
+	public void keyPressed(KeyEvent e)
     {
-		if (evt.getKeyCode() == KeyEvent.VK_Q) {
+		if (e.getKeyCode() == KeyEvent.VK_Q) {
             if (scene.name() == "upgrade") {
                 changeScene(new DemoLevel(this));
             } else {
                 changeScene(new ShipUpgradeScreen(this));
             }
 		}
-		getPlayer().keyPressed(evt);
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            starsBg.speed = 0.5;
+            starsFg.speed = 4;
+        }
+		getPlayer().keyPressed(e);
 	}
 
-	public void keyReleased(KeyEvent evt)
+	public void keyReleased(KeyEvent e)
     {
-		getPlayer().keyReleased(evt);
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            starsBg.speed = 0;
+            starsFg.speed = 0.5;
+        }
+		getPlayer().keyReleased(e);
 	}
 
 	////////////////////////
 
-	public void registerProjectile(Projectile b)
+	public void addProjectile(Projectile b)
     {
-		b.setId(bulletId++);
 		bulletList.add(b);
-	}
-
-    // TODO: Remove
-	public void unregisterProjectile(Projectile b)
-    {
-		removeProjectile(b);
 	}
 
     public void removeProjectile(Projectile p)
@@ -202,24 +204,16 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         deleteProjectiles.add(p);
     }
 
-    public void clearProjectiles()
+    public void removeAllProjectiles()
     {
         for (int i = 0; i < bulletList.size(); i++) {
-            bulletList.get(i).setId(Const.UNREGISTERED);
+            removeProjectile(bulletList.get(i));
         }
-        bulletList.clear();
     }
 
-	public void registerExplosion(Explosion e)
+	public void addExplosion(Explosion e)
     {
-		e.setId(explosionId++);
 		explosionList.add(e);
-	}
-
-    // TODO: Remove
-	public void unregisterExplosion(Explosion e)
-    {
-		removeExplosion(e);
 	}
 
     public void removeExplosion(Explosion e)
@@ -227,16 +221,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         deleteExplosions.add(e);
     }
 
-	public void registerShip(Ship e)
+	public void addShip(Ship e)
     {
-		e.setId(playersId++);
 		players.add(e);
-	}
-
-    // TODO: Remove
-	public void unregisterShip(Ship e)
-    {
-		removeShip(e);
 	}
 
     public void removeShip(Ship s)
@@ -244,17 +231,23 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         deleteShips.add(s);
     }
 
-    public void killNPCs()
+    public void removeManyShips(List<Ship> ships)
     {
-        ArrayList<Ship> npcs = new ArrayList<Ship>();
-        for (Ship player : players) {
+        for (int i = 0; i < ships.size(); i++) {
+            deleteShips.add(ships.get(i));
+        }
+    }
+
+    public List<Ship> getNPCs()
+    {
+        ArrayList<Ship> result = new ArrayList<Ship>();
+        for (int i = 0; i < players.size(); i++) {
+            Ship player = players.get(i);
             if (player instanceof Enterprise == false) {
-                npcs.add(player);
+                result.add(player);
             }
         }
-        for (Ship npc : npcs) {
-            npc.explode();
-        }
+        return result;
     }
 
 	// @Deprecated
@@ -272,7 +265,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     {
         for(Ship p : players) {
             // NOTE: a ship might want to know if an ally hits it, maybe to push him away?
-            if (p.getId() != r.getId() && p.getTeam() != r.getTeam() && p.intersects((Destructable)r)) {
+            if (p != r && p.getTeam() != r.getTeam() && p.intersects((Destructable)r)) {
                 return p;
             }
         }

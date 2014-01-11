@@ -19,9 +19,6 @@ public class LaserBeam implements Projectile
 	private double damage;
 	protected double theta;
 
-	// id of bullet, is set by master panel
-	protected int id;
-
 	// start and end of beam
 	protected Point2D.Double start, stop, contact;
 
@@ -34,20 +31,21 @@ public class LaserBeam implements Projectile
 		this.theta = t;
 
 		speed = getDefaultSpeed();
-		this.length = getDefaultLength();
+		length = getDefaultLength();
 		damage = dmg;
 
-		start = new Point2D.Double(x, y);
-		stop = new Point2D.Double(x + length * Math.cos(theta), y + length * Math.sin(theta));
+		start = new Point2D.Double();
+		stop = new Point2D.Double();
 
 		setLocation(x, y);
-		weapon.ship.panel().registerProjectile(this);
+
+		weapon.ship.panel().addProjectile(this);
 	}
 
     @Override
 	public void explode()
     {
-		weapon.ship.panel().unregisterProjectile(this);
+		weapon.ship.panel().removeProjectile(this);
 		new Explosion(contact.x, contact.y, weapon.ship.panel());
 	}
 
@@ -64,17 +62,19 @@ public class LaserBeam implements Projectile
 	public void update()
     {
 		if (weapon.ship().panel().contains(getX(), getY())) {
-			Ship o = weapon.ship.panel().intersects(this);
-			if(o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(damage);
-				weapon.ship.target = o;
-				explode();
-				return;
+			Ship ship = weapon.ship.panel().intersects(this);
+            boolean collision = ship != null;
+            boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
+			if (collision && validTarget) {
+                ship.hit(damage);
+                weapon.ship.target = ship;
+                explode();
+                return;
 			}
 			move();
             return;
 		}
-        weapon.ship().panel().unregisterProjectile(this);
+        weapon.ship().panel().removeProjectile(this);
 	}
 
     @Override
@@ -89,8 +89,7 @@ public class LaserBeam implements Projectile
 
 	@Override public double getX() { return start.x; }
 	@Override public double getY() { return start.y; }
-	@Override public int getId() { return id; }
-	@Override public void setId(int k) { id = k; }
+    @Override public boolean collidesWithOwner() { return false; }
 
     @Override
 	public boolean intersects(Ship s)

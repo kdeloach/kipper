@@ -8,7 +8,6 @@ import kipper.*;
 public class Explosion
 {
     double x, y;
-    int id;
 	int ticks = 0;
 	Particle[] shrap;
 	OuterSpacePanel osp;
@@ -21,7 +20,7 @@ public class Explosion
 
 		initParticles();
 
-		osp.registerExplosion(this);
+		osp.addExplosion(this);
 	}
 
 	public void initParticles()
@@ -44,7 +43,7 @@ public class Explosion
             ticks++;
             return;
         }
-        osp.unregisterExplosion(this);
+        osp.removeExplosion(this);
 	}
 
 	public void tick(double t)
@@ -68,10 +67,6 @@ public class Explosion
 			g.drawOval((int)d.x, (int)d.y, getSize().width, getSize().height);
 		}
 	}
-
-    // TODO: Remove
-	public void setId(int id) { this.id = id; }
-	public int getId() { return id; }
 
     // Represents number of times update() must be called until animation ends
     private int getDurationTicks()

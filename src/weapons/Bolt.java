@@ -21,9 +21,6 @@ public class Bolt implements Projectile
 	// length is the size of 1 segment of the largest tier branches
 	protected int branches, length, life, lifespan, thickness;
 
-	// id of bullet,is set by master panel
-	protected int id;
-
 	protected double damage;
 
 	// bullet trajectory
@@ -60,7 +57,7 @@ public class Bolt implements Projectile
 		this.theta += offset;
 
 		setLocation(x, y);
-		weapon.ship.panel().registerProjectile(this);
+		weapon.ship.panel().addProjectile(this);
 
 		if (length > 10) {
 			splinter();
@@ -88,24 +85,25 @@ public class Bolt implements Projectile
 	public void update()
     {
 		if (life > 0) {
-			Ship o = weapon.ship.panel().intersects(this);
-			if (o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(damage);
-				weapon.ship.target = o;
+			Ship ship = weapon.ship.panel().intersects(this);
+            boolean collision = ship != null;
+            boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
+			if (collision && validTarget) {
+				ship.hit(damage);
+				weapon.ship.target = ship;
 				explode();
-				return;
 			}
             move();
 			life--;
             return;
 		}
-		weapon.ship().panel().unregisterProjectile(this);
+		weapon.ship().panel().removeProjectile(this);
 	}
 
     @Override
 	public void explode()
     {
-		weapon.ship().panel().unregisterProjectile(this);
+        life = 0;
 		new Explosion(getX(), getY(), weapon.ship().panel())
         {
 			@Override public Color getColor() { return Color.BLUE; }
@@ -115,8 +113,8 @@ public class Bolt implements Projectile
     @Override
 	public void draw(Graphics g)
     {
-        int r = (int)Easing.easeInQuad(life, 0, (double)0xFF, lifespan);
-		g.setColor(new Color(r, r, r));
+        int a = (int)Easing.easeInQuad(life, 0, 0xFF, lifespan);
+		g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(thickness));
         g2.draw(new Line2D.Double(startX(), startY(), stopX(), stopY()));
@@ -135,11 +133,7 @@ public class Bolt implements Projectile
 
 	@Override public double getX() { return startX(); }
 	@Override public double getY() { return startY(); }
-	@Override public int getId() {return id; }
-    @Override public void setId(int k) { id = k; }
-
-	private int getDefaultTeam() { return Const.PLAYER; }
-	private boolean registered() { return id != Const.UNREGISTERED; }
+    @Override public boolean collidesWithOwner() { return false; }
 
     @Override
 	public boolean intersects(Ship s)

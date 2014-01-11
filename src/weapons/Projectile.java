@@ -8,9 +8,6 @@ public interface Projectile
 	public double getX();
 	public double getY();
 
-	public int getId();
-	public void setId(int n);
-
 	public boolean intersects(Ship s);
 	public boolean intersects(Projectile s);
 	public boolean contains(int x, int y);
@@ -20,4 +17,6 @@ public interface Projectile
     public void move();
 	public void explode();
     public void update();
+
+    public boolean collidesWithOwner();
 }

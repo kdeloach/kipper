@@ -48,9 +48,6 @@ public abstract class Ship implements
 	// maximum health
 	private int maxhp;
 
-	// ship id
-	protected int id;
-
 	// direction ship face
 	private int orientation;
 
@@ -106,7 +103,7 @@ public abstract class Ship implements
 		// hack; changes initial value of [desination] so NPC's don't float to 0,0 onload
 		setDestination(getX(), getY());
 
-        osp.registerShip(this);
+        osp.addShip(this);
 	}
 
     public void update()
@@ -200,7 +197,7 @@ public abstract class Ship implements
 
 		getWeapon().percCooled = getWeapon().getCooldown();
 		getWeapon().stopFiring();
-		osp.unregisterShip(this);
+		osp.removeShip(this);
 	}
 
 	public void equipWeapon(Weapon w)
@@ -293,10 +290,6 @@ public abstract class Ship implements
 	public boolean isAlive() { return alive; }
 	public boolean isDisabled() { return disabled; }
 	public double percentHealth() { return (double)getHp() /( double)maxHp(); }
-
-    // TODO: Remove
-	public int getId() { return id; }
-    public void setId(int k) { id = k; }
 
     // Destructable
     /////////////

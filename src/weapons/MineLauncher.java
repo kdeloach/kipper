@@ -17,7 +17,7 @@ public class MineLauncher extends Weapon
 	}
 
 	@Override public Image getIcon() { return icon; }
-	@Override public int getDefaultDamage() { return 5; }
+	@Override public int getDefaultDamage() { return 15; }
 	@Override public int getDefaultCooldown() { return 200; }
 
     @Override

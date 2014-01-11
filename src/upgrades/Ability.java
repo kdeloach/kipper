@@ -26,10 +26,6 @@ public abstract class Ability
 	abstract public String getTitle();
 	abstract public Color getColor();
 
-	private int id;
-	public void setId(int n) { id = n; }
-	public int getId() { return id; }
-
 	public AbilityIconDrawer getIconDrawer()
     {
         return new AbilityIconDrawer(getTitle(), getColor());

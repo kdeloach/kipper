@@ -10,7 +10,7 @@ public class MarqueeStars
 {
 	Point2D.Double[] stars;
     int size;
-    double angle, speed;
+    public double angle, speed;
     Color color;
 
 	public MarqueeStars(int numStars, double angle, double speed, int size, Color color)
@@ -27,6 +27,9 @@ public class MarqueeStars
 
 	public void update()
     {
+        if (speed <= 0) {
+            return;
+        }
         for (int i = 0; i < stars.length; i++) {
             stars[i].x += Math.cos(angle) * speed;
             stars[i].y += Math.sin(angle) * speed;

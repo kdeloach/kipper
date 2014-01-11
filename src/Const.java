@@ -24,29 +24,11 @@ public class Const {
 	public static final int RECOIL    = 3;
 	public static final int ROTATE    = 4;
 
-	public static final int EXPLODE   = 5;
-	public static final int GUARD     = 6;
-	public static final int REGEN     = 7;
-	public static final int SHIELD    = 8;
-	public static final int PENETRATE = 9;
-	public static final int SEEK      = 10;
-	public static final int POISON    = 11;
-	public static final int SHOCK     = 12;
-	public static final int CLOAK     = 13;
-
-
 	public static final int UPGRADES_QT = 5;
-
-	// Weapon spread range
-	public static final int MIN_SPREAD = 1;
-	public static final int MAX_SPREAD = 5;
 
 	// teams
 	public static final int NPC     = 0;
 	public static final int PLAYER  = 1;
 	public static final int NIETHER = 2;
-
-	// ID
-	public static final int UNREGISTERED = -1;
 
 }
