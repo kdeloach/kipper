@@ -21,14 +21,12 @@ public class Enterprise extends Ship
 		super(x, y, c);
         panel = c;
 
-		setSize(141, 52);
-
-		equipWeapon(new Shooter(x, y, width, height / 2 + 4, this));
+		equipWeapon(new Shooter(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
         // The shooter can become a Blaster easily so there's no point to this gun
 		//equipWeapon(new Blaster(x, y, width, height / 2 + 4, this));
-		equipWeapon(new LaserGun(x, y, width, height / 2 + 4, this));
-		equipWeapon(new MineLauncher(x, y, width + 15, height / 2 + 4, this));
-		equipWeapon(new LightningGun(x, y, width, height / 2 + 6, this));
+		equipWeapon(new LaserGun(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
+		equipWeapon(new MineLauncher(getX(), getY(), getWidth() + 15, getHeight() / 2 + 4, this));
+		equipWeapon(new LightningGun(getX(), getY(), getWidth(), getHeight() / 2 + 6, this));
 		selectWeapon(0);
 
 		img = Util.instance.loadImage("/assets/enterprise2.gif");
@@ -37,12 +35,12 @@ public class Enterprise extends Ship
     @Override
 	public void die()
     {
-		new ShipExplosion1(x + width / 2, y + height / 2, osp)
+		new ShipExplosion1(getX() + getWidth() / 2, getY() + getHeight() / 2, osp)
         {
 			@Override public Color getColor() { return Color.YELLOW; }
 			@Override public int getAmount() { return 50; }
 		};
-		new ShipExplosion1(x + width / 2, y + height / 2, osp)
+		new ShipExplosion1(getX() + getWidth() / 2, getY() + getHeight() / 2, osp)
         {
 			@Override public Color getColor() { return Color.RED; }
 		};
@@ -58,7 +56,7 @@ public class Enterprise extends Ship
     @Override
 	public void draw(Graphics g)
     {
-		g.drawImage(img, (int)x, (int)y, osp);
+		g.drawImage(img, (int)getX(), (int)getY(), osp);
         if (getWeapon() != null) {
             getWeapon().draw(g);
         }
@@ -75,6 +73,8 @@ public class Enterprise extends Ship
 		);
 	}
 
+	@Override public int getWidth() { return 141; }
+	@Override public int getHeight() { return 52; }
 	@Override public String getName() { return "ENTERPRISE";}
 	@Override public int defaultTeam() { return Const.PLAYER; }
     @Override public int getDefaultOrientation() { return Const.LEFT_TO_RIGHT; }

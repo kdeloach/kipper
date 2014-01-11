@@ -10,10 +10,9 @@ import kipper.effects.*;
 
 public class Bullet implements Projectile
 {
-	protected int width, height;
 	private int speed;
 	private double damage;
-	protected double dx, dy;
+	private double x, y;
 
 	// bullet trajectory
 	protected double theta;
@@ -25,14 +24,10 @@ public class Bullet implements Projectile
     {
 		this.weapon = w;
 		this.theta = t;
-		dx = x;
-		dy = y;
+		this.x = x;
+		this.y = y;
 
 		setLocation(x, y);
-
-		if (getSize() != null) {
-			setSize(getSize().width, getSize().height);
-        }
 
 		speed = getDefaultSpeed();
 		damage = dmg;
@@ -44,28 +39,28 @@ public class Bullet implements Projectile
 	public void explode()
     {
 		weapon.ship().panel().removeProjectile(this);
-		new Explosion(getX(), getY(), weapon.ship.panel());
+		new Explosion(getX(), getY(), weapon.ship().panel());
 	}
 
     @Override
 	public void move()
     {
 		setLocation(
-			dx + Const.BULLET_SPEED * Math.cos(theta),
-			dy + Const.BULLET_SPEED * Math.sin(theta)
+			x + Const.BULLET_SPEED * Math.cos(theta),
+			y + Const.BULLET_SPEED * Math.sin(theta)
 		);
 	}
 
     @Override
 	public void update()
     {
-		if (weapon.ship.panel().contains(getX(), getY())) {
+		if (weapon.ship().panel().contains(getX(), getY())) {
 			Ship ship = weapon.ship().panel().intersects(this);
             boolean collision = ship != null;
             boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
 			if (collision && validTarget) {
 				ship.hit(damage);
-				weapon.ship.target = ship;
+				weapon.ship().target = ship;
 				explode();
 				return;
 			}
@@ -78,15 +73,17 @@ public class Bullet implements Projectile
     @Override
 	public void draw(Graphics g)
     {
-		g.setColor(Color.YELLOW);
-		g.drawOval((int)getX(), (int)getY(), width, height);
+		g.setColor(getColor());
+		g.drawOval((int)getX(), (int)getY(), getWidth(), getHeight());
 	}
 
 	protected int getDefaultSpeed() { return 15; }
-	protected Dimension getSize() { return new Dimension(1, 1); }
+    public Color getColor() { return Color.YELLOW; }
 
-	@Override public double getX(){ return dx; }
-	@Override public double getY(){ return dy; }
+	@Override public double getX() { return x; }
+	@Override public double getY() { return y; }
+	@Override public int getWidth() { return 1; }
+	@Override public int getHeight() { return 1; }
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override
@@ -113,23 +110,17 @@ public class Bullet implements Projectile
 		return getRectangle().contains(x,y);
 	}
 
-	protected void setSize(int w, int h)
-    {
-        this.width = w;
-        this.height = h;
-    }
-
 	protected void setLocation(double x, double y)
     {
-        dx = x;
-        dy = y;
+        this.x = x;
+        this.y = y;
     }
 
     protected Rectangle getRectangle()
     {
-        return new Rectangle((int)getX() - width / 2,
-                             (int)getY() - height / 2,
-                             width,
-                             height);
+        return new Rectangle((int)getX() - getWidth() / 2,
+                             (int)getY() - getHeight() / 2,
+                             getWidth(),
+                             getHeight());
     }
 }

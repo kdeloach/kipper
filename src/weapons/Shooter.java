@@ -14,6 +14,8 @@ public class Shooter extends Weapon
 		icon = Util.instance.loadImage("/assets/shooter_icon.gif");
 	}
 
+    @Override public int getWidth() { return 1; }
+	@Override public int getHeight() { return 1; }
     @Override public Image getIcon() { return icon; }
     @Override public int getDefaultDamage() { return 4; }
     @Override public int getDefaultCooldown() { return 50; }
@@ -26,6 +28,6 @@ public class Shooter extends Weapon
     @Override
 	public void fireProjectile(double heading)
     {
-		new Bullet(x, y, heading, getDamage(), this);
+		new Bullet(getX(), getY(), heading, getDamage(), this);
 	}
 }

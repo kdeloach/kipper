@@ -39,14 +39,14 @@ public class LaserBeam implements Projectile
 
 		setLocation(x, y);
 
-		weapon.ship.panel().addProjectile(this);
+		weapon.ship().panel().addProjectile(this);
 	}
 
     @Override
 	public void explode()
     {
-		weapon.ship.panel().removeProjectile(this);
-		new Explosion(contact.x, contact.y, weapon.ship.panel());
+		weapon.ship().panel().removeProjectile(this);
+		new Explosion(contact.x, contact.y, weapon.ship().panel());
 	}
 
     @Override
@@ -62,12 +62,12 @@ public class LaserBeam implements Projectile
 	public void update()
     {
 		if (weapon.ship().panel().contains(getX(), getY())) {
-			Ship ship = weapon.ship.panel().intersects(this);
+			Ship ship = weapon.ship().panel().intersects(this);
             boolean collision = ship != null;
             boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
 			if (collision && validTarget) {
                 ship.hit(damage);
-                weapon.ship.target = ship;
+                weapon.ship().target = ship;
                 explode();
                 return;
 			}
@@ -89,6 +89,8 @@ public class LaserBeam implements Projectile
 
 	@Override public double getX() { return start.x; }
 	@Override public double getY() { return start.y; }
+	@Override public int getWidth() { return 1; }
+	@Override public int getHeight() { return 1; }
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override

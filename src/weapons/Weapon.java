@@ -49,40 +49,36 @@ import kipper.upgrades.*;
 
 public abstract class Weapon implements Upgradable
 {
-    protected double x, y;
-	protected int width, height;
-
-	// experience of gun, used to determine no. of slots
-	protected int exp;
+    private double x, y;
 
 	// (default) damage this baby can do
 	private int damage;
 
 	// spread is the amount of bullets you can shoot at once
 	// for some added appeal the game should 'split' the stream of bullets by altering the heading()
-	private int spread=1;
+	private int spread = 1;
 
 	// percent cooled down
-	public int percCooled=0;
+	public int percCooled = 0;
 
 	// time to cooldown
 	private int cooldown;
 
 	// control variable,keep shooting gun while true
 	// also a control variable to check if thread is still active
-	protected boolean fire=false;
+	private boolean fire = false;
 
 	// position relative to Ship x&y,this is only set once
-	protected Point rel;
+	private Point rel;
 
 	// position of the mouse
-	protected Point mouse;
+	private Point mouse;
 
 	// list of upgrades
-	protected ArrayList<Ability> upgrades;
+	private ArrayList<Ability> upgrades;
 
 	// owner
-	Ship ship;
+	private Ship ship;
 
 	////////////
 
@@ -91,12 +87,11 @@ public abstract class Weapon implements Upgradable
 		this.x = x + rx;
 		this.y = y + ry;
 		this.ship = s;
-		rel = new Point(rx, ry);
+		this.rel = new Point(rx, ry);
 
 		setLocation(x, y);
 
 		upgrades = new ArrayList<Ability>();
-
 		mouse = new Point();
 		cooldown = getDefaultCooldown();
 		damage = getDefaultDamage();
@@ -104,6 +99,8 @@ public abstract class Weapon implements Upgradable
 
 	////////////
 
+    abstract public int getWidth();
+    abstract public int getHeight();
 	abstract public void fireProjectile(double heading);
 	abstract public void draw(Graphics g);
 	abstract public Image getIcon();
@@ -112,17 +109,17 @@ public abstract class Weapon implements Upgradable
 
 	////////////
 
-	public void startFiring()
-    {
-		// if user releases the mouse real quick,they can
-		// resume shooting without starting a new thread
-		fire = true;
-	}
-
-	public void stopFiring()
-    {
-		fire = false;
-	}
+    public double getX() { return x; }
+    public double getY() { return y; }
+	public void startFiring() { fire = true; }
+	public void stopFiring() { fire = false; }
+	public int getCooldown() { return (int)getValue(Ability.COOLDOWN, cooldown); }
+	public double getDamage() { return getValue(Ability.DAMAGE, damage); }
+	public int getSpread() { return (int)getValue(Ability.SPREAD, spread); }
+	public double percentCooled() { return (double)percCooled / (double)getCooldown(); }
+	public int amountSlots() { return 6; }
+	public double heading() { return getValue(Ability.HEADING, ship.heading()); }
+	public boolean isFiring() { return fire; }
 
 	public void update()
     {
@@ -157,12 +154,6 @@ public abstract class Weapon implements Upgradable
 
 	////////////
 	// Setters
-
-	void setSize(int w, int h)
-    {
-        this.width = w;
-        this.height = h;
-	}
 
 	public void setLocation(double x, double y)
     {
@@ -204,15 +195,6 @@ public abstract class Weapon implements Upgradable
             }
         }
     }
-
-	public int getCooldown() { return (int)getValue(Ability.COOLDOWN, cooldown); }
-	public double getDamage() { return getValue(Ability.DAMAGE, damage); }
-	public int getSpread() { return (int)getValue(Ability.SPREAD, spread); }
-	public int getExperience() { return exp; }
-	public double percentCooled() { return (double)percCooled/(double)getCooldown(); }
-	public int amountSlots() { return 6; }
-	public double heading() { return getValue(Ability.HEADING, ship.heading()); }
-	public boolean isFiring() { return fire; }
 
 	// all attributes are int's (basically)
 	// here's the chance to alter speed,damage,spread,cooldown,enemy damage,heading(?),etc

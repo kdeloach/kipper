@@ -30,18 +30,18 @@ public class ShipUpgradeScreen extends Scene {
 		player = osp.getPlayer();
 
 		for (int i = 0; i < emptySlotRects.length; i++) {
-            emptySlotRects[i] = new Rectangle(player.width + 50 + 100 * i, 20, 90, 90);
+            emptySlotRects[i] = new Rectangle(player.getWidth() + 50 + 100 * i, 20, 90, 90);
         }
 
 		// THERE  ARE ONLY 5 UPGRADES ATM
 		int w = 140, h = 50, p = 5;
 		for (int i = 0, y = 150, x = 0; i < availableUpgradeRects.length; i++, x++) {
-			if (player.width + 50 + (w + p) * x + w >= osp.getWidth()) {
+			if (player.getWidth() + 50 + (w + p) * x + w >= osp.getWidth()) {
 				x = 0;
                 y += h + p;
 			}
             upgradeInstances[i] = Ability.createInstance(i);
-            availableUpgradeRects[i] = new Rectangle(player.width + 50 + (w + p) * x, y, w, h);
+            availableUpgradeRects[i] = new Rectangle(player.getWidth() + 50 + (w + p) * x, y, w, h);
 		}
 	}
 

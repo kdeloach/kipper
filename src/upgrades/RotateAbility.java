@@ -25,8 +25,8 @@ public class RotateAbility extends Ability
 
 	private double heading(Ship ship)
     {
-		double x = ship.mousePressed.x - (ship.x + ship.width);
-		double y = ship.mousePressed.y - (ship.y + ship.height / 2);
+		double x = ship.mousePressed.x - (ship.getX() + ship.getWidth());
+		double y = ship.mousePressed.y - (ship.getY() + ship.getHeight() / 2);
 		return Math.PI * ship.getOrientation() + Math.atan(y / x);
 	}
 

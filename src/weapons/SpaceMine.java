@@ -25,7 +25,7 @@ public class SpaceMine extends Bullet
     {
 		// we want to stop moving at some point
 		if (steps <= 0) {
-            for (Projectile p : weapon.ship.panel().bulletList) {
+            for (Projectile p : weapon.ship().panel().bulletList) {
                 if (p != this && p.intersects(this)) {
                     p.explode();
                     explode();
@@ -35,8 +35,8 @@ public class SpaceMine extends Bullet
 		}
 
 		setLocation(
-			dx + steps / Const.BULLET_SPEED * Math.cos(theta),
-			dy + steps / Const.BULLET_SPEED * Math.sin(theta)
+			getX() + steps / Const.BULLET_SPEED * Math.cos(theta),
+			getY() + steps / Const.BULLET_SPEED * Math.sin(theta)
 		);
 
 		steps--;
@@ -50,16 +50,16 @@ public class SpaceMine extends Bullet
 
 		g.setColor(Color.GREEN);
 
-		int off = width / 6;
+		int off = getWidth() / 6;
 
-		g.drawRect(px - width / 2 + off,
-		           py - height / 2 + off,
-		           width - off * 2,
-		           height - off * 2);
+		g.drawRect(px - getWidth() / 2 + off,
+		           py - getHeight() / 2 + off,
+		           getWidth() - off * 2,
+		           getHeight() - off * 2);
 
 		g.drawPolygon(
-			new int[]{px - width / 2, px, px + width / 2, px},
-			new int[]{py, py - height / 2, py, py + height / 2},
+			new int[]{px - getWidth() / 2, px, px + getWidth() / 2, px},
+			new int[]{py, py - getHeight() / 2, py, py + getHeight() / 2},
 			4
 		);
 	}
@@ -67,6 +67,7 @@ public class SpaceMine extends Bullet
 	public int getDefaultSteps() { return 40; }
 
 	@Override public int getDefaultSpeed() { return 15; }
-	@Override public Dimension getSize() { return new Dimension(25, 25); }
+	@Override public int getWidth() { return 25; }
+	@Override public int getHeight() { return 25; }
     @Override public boolean collidesWithOwner() { return true; }
 }

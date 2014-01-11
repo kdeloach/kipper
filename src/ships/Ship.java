@@ -32,7 +32,6 @@ public abstract class Ship implements
 {
 	// arbitrary dimensions
 	public double x, y;
-    public int width, height;
 
 	// amount of damage taken
 	protected double dmg;
@@ -100,7 +99,6 @@ public abstract class Ship implements
 		team = defaultTeam();
 
 		setLocation(x, y);
-		// hack; changes initial value of [desination] so NPC's don't float to 0,0 onload
 		setDestination(getX(), getY());
 
         osp.addShip(this);
@@ -139,8 +137,8 @@ public abstract class Ship implements
 
     public void move()
     {
-        double mx = x + (destination.x - x - width / 2) / getSpeed();
-        double my = y + (destination.y - y - height / 2) / getSpeed();
+        double mx = x + (destination.x - x - getWidth() / 2) / getSpeed();
+        double my = y + (destination.y - y - getHeight() / 2) / getSpeed();
         setLocation(mx, my);
         if (getWeapon() != null) {
             getWeapon().setLocation(x, y);
@@ -151,15 +149,15 @@ public abstract class Ship implements
     {
 		// don't let the player go off-screen
 		if (underControl()) {
-			if (mx < width / 2) {
-                mx = width / 2;
-            } else if (mx > OuterSpacePanel.WIDTH - width / 2) {
-                mx = OuterSpacePanel.WIDTH - width / 2;
+			if (mx < getWidth() / 2) {
+                mx = getWidth() / 2;
+            } else if (mx > OuterSpacePanel.WIDTH - getWidth() / 2) {
+                mx = OuterSpacePanel.WIDTH - getWidth() / 2;
             }
-			if (my < height / 2) {
-                my = height / 2;
-            } else if (my > OuterSpacePanel.HEIGHT - height / 2) {
-                my = OuterSpacePanel.HEIGHT - height / 2;
+			if (my < getHeight() / 2) {
+                my = getHeight() / 2;
+            } else if (my > OuterSpacePanel.HEIGHT - getHeight() / 2) {
+                my = OuterSpacePanel.HEIGHT - getHeight() / 2;
             }
 		}
         destination = new Point((int)mx, (int)my);
@@ -210,12 +208,6 @@ public abstract class Ship implements
 		}
 	}
 
-	public void setSize(int w, int h)
-    {
-        this.width = w;
-        this.height = h;
-	}
-
 	public void setLocation(double x, double y)
     {
 		this.x = x;
@@ -255,6 +247,8 @@ public abstract class Ship implements
 
 	/////////////
 
+	abstract public int getWidth();
+	abstract public int getHeight();
 	abstract public int getDefaultOrientation();
 	abstract public int defaultMaxHp();
 	abstract public int defaultTeam();
@@ -274,10 +268,8 @@ public abstract class Ship implements
 	}
 
     // TODO: Incorrect reporting of X & Y...Remove
-	public double getX() { return x + width / 2; }
-	public double getY() { return y + height / 2; }
-	public int getWidth() { return width; }
-	public int getHeight() { return height; }
+	public double getX() { return x; }
+	public double getY() { return y; }
 	public int getSlotsAmt() { return slots; }
 	public int getTeam() { return team; }
 	public Ship getTarget() { return target; }

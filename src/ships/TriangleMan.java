@@ -16,10 +16,9 @@ public class TriangleMan extends Ship
     {
 		super(x, y, c);
 
-		setSize(75, 75);
-        setDestination(x + width / 2, y + height / 2);
+        setDestination(getX() + getWidth() / 2, getY() + getHeight() / 2);
 
-        Weapon w1 = new Trigun(x, y, 0, height / 2 - 5, this);
+        Weapon w1 = new Trigun(getX(), getY(), 0, getHeight() / 2 - 5, this);
 		w1.addUpgrade(new RotateAbility());
 
 		//equipWeapon(new LightningGun(x,y,0,height/2-5,this));
@@ -30,18 +29,18 @@ public class TriangleMan extends Ship
     @Override
 	public void die()
     {
-		new ShipExplosion2(x + width / 2, y + height / 2, osp);
+		new ShipExplosion2(getX() + getWidth() / 2, getY() + getHeight() / 2, osp);
 	}
 
     @Override
 	public void draw(Graphics g)
     {
-        int px = (int)x;
-        int py = (int)y;
+        int px = (int)getX();
+        int py = (int)getY();
 		g.setColor(Color.GREEN);
 		g.fillPolygon(
-			new int[]{px, px + width, px + width},
-			new int[]{py + height / 2, py, py + height},
+			new int[] {px, px + getWidth(), px + getWidth()},
+			new int[] {py + getHeight() / 2, py, py + getHeight()},
 			3
 		);
         if (getWeapon() != null) {
@@ -73,8 +72,12 @@ public class TriangleMan extends Ship
 
 	///
 
-	@Override public int getDefaultOrientation() { return Const.RIGHT_TO_LEFT; }
+	@Override public int getWidth() { return 75; }
+	@Override public int getHeight() { return 75; }
 	@Override public String getName() { return "Triangle Man"; }
+    // TODO: Do we need this?
+	@Override public int getDefaultOrientation() { return Const.RIGHT_TO_LEFT; }
+    // TODO: Remove
 	@Override public int defaultTeam() { return Const.NPC; }
 	@Override public int defaultMaxHp() { return 30; }
 	@Override public int getDefaultSpeed() { return 5; }

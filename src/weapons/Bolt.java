@@ -57,7 +57,7 @@ public class Bolt implements Projectile
 		this.theta += offset;
 
 		setLocation(x, y);
-		weapon.ship.panel().addProjectile(this);
+		weapon.ship().panel().addProjectile(this);
 
 		if (length > 10) {
 			splinter();
@@ -85,12 +85,12 @@ public class Bolt implements Projectile
 	public void update()
     {
 		if (life > 0) {
-			Ship ship = weapon.ship.panel().intersects(this);
+			Ship ship = weapon.ship().panel().intersects(this);
             boolean collision = ship != null;
             boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
 			if (collision && validTarget) {
 				ship.hit(damage);
-				weapon.ship.target = ship;
+				weapon.ship().target = ship;
 				explode();
 			}
             move();
@@ -133,6 +133,8 @@ public class Bolt implements Projectile
 
 	@Override public double getX() { return startX(); }
 	@Override public double getY() { return startY(); }
+	@Override public int getWidth() { return 1; }
+	@Override public int getHeight() { return 1; }
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override

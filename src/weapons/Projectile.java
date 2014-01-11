@@ -7,6 +7,8 @@ public interface Projectile
 {
 	public double getX();
 	public double getY();
+	public int getWidth();
+	public int getHeight();
 
 	public boolean intersects(Ship s);
 	public boolean intersects(Projectile s);

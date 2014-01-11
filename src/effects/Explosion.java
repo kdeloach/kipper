@@ -64,7 +64,7 @@ public class Explosion
     {
 		g.setColor(getColor());
 		for (Particle d : shrap) {
-			g.drawOval((int)d.x, (int)d.y, getSize().width, getSize().height);
+			g.drawOval((int)d.x, (int)d.y, getWidth(), getHeight());
 		}
 	}
 
@@ -77,7 +77,8 @@ public class Explosion
     public int getDurationMs() { return 500; }
 	public Color getColor() { return Color.YELLOW; }
 	public int getAmount() { return 10; }
-	public Dimension getSize() { return new Dimension(0, 0); }
+	public int getWidth() { return 0; }
+	public int getHeight() { return 0; }
     public double particleAngle() { return Math.toRadians(Util.randRange(0, 360)); }
     public double particleDistance() { return Math.random() * 20 + 10; }
     public double easingFn(double t, double b, double c, double d) { return Easing.easeOutQuad(t, b, c, d); }

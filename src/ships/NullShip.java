@@ -18,6 +18,8 @@ public class NullShip extends Ship
         super();
     }
 
+	@Override public int getWidth() { throw new UnsupportedOperationException("Not implemented"); }
+	@Override public int getHeight() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public int getDefaultOrientation() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public int defaultMaxHp() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public int defaultTeam() { throw new UnsupportedOperationException("Not implemented"); }

@@ -14,24 +14,22 @@ public class Trigun extends Weapon
 	public Trigun(double x, double y, int rx, int ry, Ship s)
     {
 		super(x, y, rx, ry, s);
-		setSize(10, 10);
 		img = Util.instance.loadImage("/assets/trigun_ico.gif");
 	}
 
     @Override
 	public void fireProjectile(double heading)
     {
-		new Bullet(x - 1, y + height / 2, heading, getDamage(), this)
+        double px = getX() - 1;
+        double py = getY() + getHeight() / 2;
+		new Bullet(px, py, heading, getDamage(), this)
         {
-            @Override
-			public void draw(Graphics g)
-            {
-				g.setColor(Color.GREEN);
-				g.drawOval((int)getX(), (int)getY(), 1, 1);
-			}
+            public Color getColor(Graphics g) { return Color.GREEN; }
 		};
 	}
 
+	@Override public int getWidth() { return 10; }
+	@Override public int getHeight() { return 10; }
 	@Override public Image getIcon() { return img; }
 	@Override public int getDefaultDamage() { return 1; }
 	@Override public int getDefaultCooldown() { return 250; }
@@ -39,12 +37,12 @@ public class Trigun extends Weapon
     @Override
 	public void draw(Graphics g)
     {
-        int px = (int)x;
-        int py = (int)y;
+        int px = (int)getX();
+        int py = (int)getY();
 		g.setColor(Color.RED);
 		g.fillPolygon(
-			new int[]{px, px + width, px + width},
-			new int[]{py + height / 2, py, py + height},
+			new int[]{px, px + getWidth(), px + getWidth()},
+			new int[]{py + getHeight() / 2, py, py + getHeight()},
 			3
 		);
 	}
