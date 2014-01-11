@@ -19,27 +19,28 @@ import kipper.upgrades.*;
 // Edit these properties of the gun BY removing all natural upgrades onSave and then re-applying them
 //
 
-public class LightningGun extends Weapon {
-
-	// icon for weapon
+public class LightningGun extends Weapon
+{
 	Image icon;
 
-	public LightningGun(int x, int y, int rx, int ry, Ship c){
-		super(x,y,rx,ry,c);
+	public LightningGun(double x, double y, int rx, int ry, Ship c)
+    {
+		super(x, y, rx, ry, c);
 		icon = Util.instance.loadImage("/assets/lightning_icon.gif");
 	}
-	public Image getIcon(){
-		return icon;
+
+	@Override public Image getIcon() { return icon; }
+	@Override public int getDefaultDamage() { return 1; }
+	@Override public int getDefaultCooldown() { return 200; }
+
+    @Override
+	public void draw(Graphics g)
+    {
 	}
-	public int getDefaultDamage(){
-		return 1;
-	}
-	public void draw(Graphics g){
-	}
-	public void fireProjectile(double heading){
-		new Bolt(x, y, heading, getDamage(), this );
-	}
-	public int getDefaultCooldown(){
-		return 200;
+
+    @Override
+	public void fireProjectile(double heading)
+    {
+		new Bolt(x, y, heading, getDamage(), this);
 	}
 }

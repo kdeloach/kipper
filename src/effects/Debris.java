@@ -1,20 +1,19 @@
 package kipper.effects;
 
-// Individual particle matter
-// Use to create explosions with many particles
-public class Debris extends java.awt.Point {
-	// angle to travel
+import java.awt.geom.Point2D;
+
+// TODO: Rename to Particle
+public class Debris extends Point2D.Double
+{
 	double theta;
-	// distance from point of explosion	
+
+	// distance from origin
 	double dist;
-	
-	// @x					x coordinate
-	// @y					y coordinate
-	// @theta			trajectory
-	// @dist			distance to travel
-	public Debris(int x,int y,double theta,double dist){
-		super(x,y);
-		this.theta=theta;
-		this.dist=dist;
+
+	public Debris(double x, double y, double theta, double dist)
+    {
+		super(x, y);
+		this.theta = theta;
+		this.dist = dist;
 	}
 }

@@ -14,7 +14,7 @@ public class SpaceMine extends Bullet
 	// amount of steps to take before resting
 	private int steps;
 
-	public SpaceMine(int x, int y, double t, double dmg, Weapon w)
+	public SpaceMine(double x, double y, double t, double dmg, Weapon w)
     {
 		super(x, y, t, dmg, w);
 		steps = getDefaultSteps();
@@ -47,19 +47,21 @@ public class SpaceMine extends Bullet
     @Override
 	public void draw(Graphics g)
     {
+        int px = (int)getX();
+        int py = (int)getY();
+
 		g.setColor(Color.GREEN);
 
 		int off = width / 6;
-		//g.drawOval(getX()-width/2,getY()-height/2,width,height);
 
-		g.drawRect(getX() - width / 2 + off,
-		           getY() - height / 2 + off,
+		g.drawRect(px - width / 2 + off,
+		           py - height / 2 + off,
 		           width - off * 2,
 		           height - off * 2);
 
 		g.drawPolygon(
-			new int[]{getX() - width / 2, getX(), getX() + width / 2, getX()},
-			new int[]{getY(), getY() - height / 2, getY(), getY() + height / 2},
+			new int[]{px - width / 2, px, px + width / 2, px},
+			new int[]{py, py - height / 2, py, py + height / 2},
 			4
 		);
 	}

@@ -7,11 +7,12 @@ import kipper.*;
 
 public class Explosion implements Runnable
 {
-	OuterSpacePanel osp;
+    double x, y;
+	int ticks, id;
 	Debris[] shrap;
-	int ticks, id, x, y;
+	OuterSpacePanel osp;
 
-	public Explosion(int x, int y, OuterSpacePanel c)
+	public Explosion(double x, double y, OuterSpacePanel c)
     {
 		this.x = x;
 		this.y = y;
@@ -28,17 +29,18 @@ public class Explosion implements Runnable
 	public void initParticles()
     {
 		shrap = new Debris[getAmount()];
-		for(int i=0;i<shrap.length;i++) {
-			shrap[i] = new Debris(x, y, Math.toRadians(Util.randRange(0,360)), Math.random());
+		for (int i = 0; i < shrap.length; i++) {
+			shrap[i] = new Debris(x, y, Math.toRadians(Util.randRange(0, 360)), Math.random());
 		}
 	}
 
+    @Override
 	public void run()
     {
         while (ticks > 0) {
             tick(ticks);
-            try{ Thread.sleep(Const.EXPLOSION_TIME); }catch (Exception ie) {}
             ticks--;
+            try{ Thread.sleep(Const.EXPLOSION_TIME); }catch (Exception ie) {}
         }
         osp.unregisterExplosion(this);
 	}
@@ -47,7 +49,7 @@ public class Explosion implements Runnable
     {
 		g.setColor(getColor());
 		for (Debris d : shrap) {
-			g.drawOval(d.x, d.y, getSize().width, getSize().height);
+			g.drawOval((int)d.x, (int)d.y, getSize().width, getSize().height);
 		}
 	}
 
@@ -60,26 +62,12 @@ public class Explosion implements Runnable
 		}
 	}
 
+    // TODO: Remove
 	public void setId(int id) { this.id = id; }
 	public int getId() { return id; }
 
-	public Color getColor()
-    {
-		return Color.YELLOW;
-	}
-
-	public int getTicks()
-    {
-		return 10;
-	}
-
-	public int getAmount()
-    {
-		return 10;
-	}
-
-	public Dimension getSize()
-    {
-		return new Dimension(0, 0);
-	}
+	public Color getColor() { return Color.YELLOW; }
+	public int getTicks() { return 10; }
+	public int getAmount() { return 10; }
+	public Dimension getSize() { return new Dimension(0, 0); }
 }

@@ -60,20 +60,25 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             update();
 			repaint();
 			try {
-                Thread.sleep(5);
+                Thread.sleep(10);
             } catch (Exception ie) {
             }
 		}
 	}
 
-    public void update()
+    public synchronized void update()
     {
         statusBar.update(player1);
         starsBg.update();
         starsFg.update();
+        try {
+            for (Ship s: players) {
+                s.update();
+            }
+        } catch (ConcurrentModificationException ie) {}
     }
 
-	public void paint(Graphics g)
+	public synchronized void paint(Graphics g)
     {
 		// bg
 		g.setColor(Color.BLACK);
@@ -126,22 +131,25 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	/////////////////////////
 	// Keyboard Controls
 
-	public void keyTyped(KeyEvent evt){
+	public void keyTyped(KeyEvent evt)
+    {
 		getPlayer().keyTyped(evt);
 	}
-	public void keyPressed(KeyEvent evt){
 
-		if(evt.getKeyCode()==KeyEvent.VK_Q){
+	public void keyPressed(KeyEvent evt)
+    {
+		if (evt.getKeyCode() == KeyEvent.VK_Q) {
             if (scene.name() == "upgrade") {
                 changeScene(new DemoLevel(this));
             } else {
                 changeScene(new ShipUpgradeScreen(this));
             }
 		}
-
 		getPlayer().keyPressed(evt);
 	}
-	public void keyReleased(KeyEvent evt){
+
+	public void keyReleased(KeyEvent evt)
+    {
 		getPlayer().keyReleased(evt);
 	}
 
@@ -254,5 +262,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     {
         player1 = new Enterprise(100, 100, this);
         changeScene(new DemoLevel(this));
+    }
+
+    public boolean contains(double x, double y)
+    {
+        return contains((int)x, (int)y);
     }
 }

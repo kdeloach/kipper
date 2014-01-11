@@ -178,3 +178,5 @@ January 9, 2014
 
 January 10, 2014
 - BUG: Shooting SpaceMine with Laser will somehow orphan the mine (not alive but ignores collisions)
+- TODO: Consolidate die() and explode()
+- TODO: Update all entities to use double for X & Y values

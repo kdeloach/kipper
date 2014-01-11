@@ -28,10 +28,11 @@ import kipper.upgrades.*;
 
 // A standard template all ships can extend
 public abstract class Ship implements
-    Destructable, Controllable, Upgradable, MouseListener, MouseMotionListener, KeyListener, Runnable
+    Destructable, Controllable, Upgradable, MouseListener, MouseMotionListener, KeyListener
 {
 	// arbitrary dimensions
-	public int x, y, width, height;
+	public double x, y;
+    public int width, height;
 
 	// amount of damage taken
 	protected double dmg;
@@ -42,7 +43,7 @@ public abstract class Ship implements
 	private int exp;
 
 	// amount of slots
-	private int slots=6;
+	private int slots = 6;
 
 	// maximum health
 	private int maxhp;
@@ -60,26 +61,23 @@ public abstract class Ship implements
 	protected boolean underControl = false;
 
 	// controller variables
-	protected boolean alive=true,
-	                  disabled=false;
-
-	// last position damge was taken
-	protected Point lastHit=new Point();
+	protected boolean alive = true;
+    protected boolean disabled = false;
 
 	// current position of the mouse,destination
-	public Point destination=new Point(),
-									mouse=new Point(),
-									mousePressed=new Point()
-									;
+	public Point destination = new Point();
+    public Point mouse = new Point();
+    public Point mousePressed = new Point();
 
 	// arsenel,cycle with 0-9
-	public Weapon wpn, wpnList[]=new Weapon[10];
+	public Weapon wpn;
+    public Weapon[] wpnList = new Weapon[10];
 
 	// master panel, access to other ships and elements
 	protected OuterSpacePanel osp;
 
 	// last ship hit
-	public Ship target=null;
+	public Ship target = null;
 
 	// all the upgrades picked up from battle go here
 	private ArrayList<Ability> inventory = new ArrayList<Ability>();
@@ -93,7 +91,7 @@ public abstract class Ship implements
     {
     }
 
-	public Ship(int x, int y,OuterSpacePanel c)
+	public Ship(double x, double y, OuterSpacePanel c)
     {
 		this.osp = c;
 
@@ -106,65 +104,44 @@ public abstract class Ship implements
 
 		setLocation(x, y);
 		// hack; changes initial value of [desination] so NPC's don't float to 0,0 onload
-		move(getX(), getY());
+		setDestination(getX(), getY());
 
-		new Thread(this).start();
+        osp.registerShip(this);
 	}
 
-
-    @Override
-	public void run()
+    public void update()
     {
-		while(alive) {
-			if (!underControl()) {
-				think();
-			}
-			move();
-			// check for collisions
-			Ship o = osp.intersects(this);
-			if (o != null) {
-				double des = Math.min(o.getHp(), getHp());
-				o.hit(des, o.x, o.y);
-				hit(des, x, y);
-			}
-			try { Thread.sleep(Const.DEFAULT_SLEEP_MS - getSpeed()); } catch (Exception ie) {}
-		}
-	}
-
-	public void move()
-    {
-		if (destination == null || disabled) {
+		if (!alive) {
             return;
         }
 
-		double a = destination.x - (x + width / 2);
-		double b = destination.y - (y + height / 2);
-		double c = Math.sqrt(a*a + b*b);
-
-		int spd = getSpeed();
-        int oldx = x;
-        int oldy = y;
-
-		setLocation(
-			x + a / ((Const.SPEED_CAP + 1) - spd),
-			y + b / ((Const.SPEED_CAP + 1) - spd));
-
-		//REMEMBER to update the weapon pos
-		if (getWeapon() != null) {
-			getWeapon().setLocation(x, y);
+        if (!underControl()) {
+            think();
         }
 
-		if (x == oldx && y == oldy) {
-			destination=null;
-		}
-	}
+        move();
 
-	public void move(int mx, int my)
+        Ship o = osp.intersects(this);
+        if (o != null) {
+            double dmg = Math.min(o.getHp(), getHp());
+            o.hit(dmg);
+            hit(dmg);
+        }
+    }
+
+    public void move()
     {
-		if (destination == null) {
-			destination = new Point();
-		}
-		// don't let the player take the ship off-screen
+        double mx = x + (destination.x - x - width / 2) / getSpeed();
+        double my = y + (destination.y - y - height / 2) / getSpeed();
+        setLocation(mx, my);
+        if (getWeapon() != null) {
+            getWeapon().setLocation(x, y);
+        }
+    }
+
+	public void setDestination(double mx, double my)
+    {
+		// don't let the player go off-screen
 		if (underControl()) {
 			if (mx < width / 2) {
                 mx = width / 2;
@@ -177,8 +154,7 @@ public abstract class Ship implements
                 my = OuterSpacePanel.HEIGHT - height / 2;
             }
 		}
-		destination.x = mx;
-		destination.y = my;
+        destination = new Point((int)mx, (int)my);
 	}
 
 	// Here is where you can put AI for a NPC
@@ -191,9 +167,8 @@ public abstract class Ship implements
 		setMousePressedLocation(x, y);
 	}
 
-	public void hit(double dmg, int x, int y)
+	public void hit(double dmg)
     {
-		lastHit.setLocation(x, y);
 		if (getHp() <= 0) {
             return;
         }
@@ -233,14 +208,8 @@ public abstract class Ship implements
         this.height = h;
 	}
 
-	private void setLocation(double x, double y)
+	public void setLocation(double x, double y)
     {
-		setLocation((int)x, (int)y);
-	}
-
-	public void setLocation(int x, int y)
-    {
-		mask.translate(x - this.x, y - this.y);
 		this.x = x;
 		this.y = y;
 	}
@@ -297,8 +266,8 @@ public abstract class Ship implements
 	}
 
     // TODO: Incorrect reporting of X & Y...Remove
-	public int getX() { return x + width / 2; }
-	public int getY() { return y + height / 2; }
+	public double getX() { return x + width / 2; }
+	public double getY() { return y + height / 2; }
 	public int getWidth() { return width; }
 	public int getHeight() { return height; }
 	public int getSlotsAmt() { return slots; }
@@ -338,14 +307,18 @@ public abstract class Ship implements
     @Override
 	public boolean contains(Rectangle r)
     {
-		return mask.contains(r);
+        Polygon tmp = new Polygon(mask.xpoints, mask.ypoints, mask.npoints);
+        tmp.translate((int)x, (int)y);
+		return tmp.contains(r);
 	}
 
     @Override
 	public boolean intersects(Destructable s)
     {
-		for (int i = 0; i < mask.npoints; i++) {
-			if (s.contains(mask.xpoints[i], mask.ypoints[i])) {
+        Polygon tmp = new Polygon(mask.xpoints, mask.ypoints, mask.npoints);
+        tmp.translate((int)x, (int)y);
+		for (int i = 0; i < tmp.npoints; i++) {
+			if (s.contains(tmp.xpoints[i], tmp.ypoints[i])) {
 				return true;
             }
 		}
@@ -355,7 +328,9 @@ public abstract class Ship implements
     @Override
 	public boolean intersects(Rectangle r)
     {
-		return mask.intersects(r);
+        Polygon tmp = new Polygon(mask.xpoints, mask.ypoints, mask.npoints);
+        tmp.translate((int)x, (int)y);
+		return tmp.intersects(r);
 	}
 
     // Controllable
@@ -410,13 +385,13 @@ public abstract class Ship implements
     {
 		setMouseLocation(evt.getX(), evt.getY());
 		getWeapon().setMouseLocation(evt.getX(), evt.getY());
-        move(evt.getX(), evt.getY());
+        setDestination(evt.getX(), evt.getY());
 	}
 
     // KeyListener
     /////////////
-	@Override public void keyTyped(KeyEvent evt) {}
-	@Override public void keyReleased(KeyEvent evt) {}
+    @Override public void keyTyped(KeyEvent evt) {}
+    @Override public void keyReleased(KeyEvent evt) {}
 
     @Override
 	public void keyPressed(KeyEvent evt)

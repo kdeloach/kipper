@@ -12,7 +12,8 @@ import java.awt.Graphics;
 // is there a maximum amount of weapons a Ship can hold?
 // ARRAY
 
-public abstract class Scene implements MouseListener, MouseMotionListener, KeyListener {
+public abstract class Scene implements MouseListener, MouseMotionListener, KeyListener
+{
 	//public abstract transition(Ship s, Weapon[] arsenal);
 
 	//public abstract Ship getPlayer1();

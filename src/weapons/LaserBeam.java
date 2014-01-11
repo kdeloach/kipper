@@ -28,7 +28,7 @@ public class LaserBeam implements Projectile, Runnable
 	// master panel
 	protected Weapon weapon;
 
-	public LaserBeam(int x, int y, double t, double dmg, Weapon w)
+	public LaserBeam(double x, double y, double t, double dmg, Weapon w)
     {
 		this.weapon = w;
 		this.theta = t;
@@ -50,7 +50,7 @@ public class LaserBeam implements Projectile, Runnable
 	public void explode()
     {
 		weapon.ship.panel().unregisterProjectile(this);
-		new Explosion((int)contact.x, (int)contact.y, weapon.ship.panel());
+		new Explosion(contact.x, contact.y, weapon.ship.panel());
 	}
 
     @Override
@@ -58,8 +58,8 @@ public class LaserBeam implements Projectile, Runnable
     {
 		start.x += Const.BULLET_SPEED * Math.cos(theta);
 		start.y += Const.BULLET_SPEED * Math.sin(theta);
-		stop.x  += Const.BULLET_SPEED * Math.cos(theta);
-		stop.y  += Const.BULLET_SPEED * Math.sin(theta);
+		stop.x += Const.BULLET_SPEED * Math.cos(theta);
+		stop.y += Const.BULLET_SPEED * Math.sin(theta);
 	}
 
     @Override
@@ -68,12 +68,14 @@ public class LaserBeam implements Projectile, Runnable
 		while (weapon.ship().panel().contains(getX(), getY())) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if(o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(damage,(int)contact.x, (int)contact.y);
-				weapon.ship.target=o;
+				o.hit(damage);
+				weapon.ship.target = o;
 				explode();
 				break;
 			}
+
 			move();
+
 			try{ Thread.sleep(speed); } catch (Exception ie) {}
 		}
         weapon.ship().panel().unregisterProjectile(this);
@@ -89,9 +91,10 @@ public class LaserBeam implements Projectile, Runnable
     public int getDefaultSpeed() { return 15; }
     public int getDefaultLength() { return 10; }
 
-	@Override public int getX(){ return (int)start.x; }
-	@Override public int getY(){ return (int)start.y; }
-	@Override public int getId(){ return id; }
+	@Override public double getX() { return start.x; }
+	@Override public double getY() { return start.y; }
+	@Override public int getId() { return id; }
+	@Override public void setId(int k) { id = k; }
 
     @Override
 	public boolean intersects(Ship s)
@@ -110,16 +113,9 @@ public class LaserBeam implements Projectile, Runnable
     @Override public boolean contains(int x, int y) { throw new UnsupportedOperationException("Not implemented yet"); }
     @Override public boolean contains(double x, double y) { throw new UnsupportedOperationException("Not implemented yet"); }
 
-	private void setLocation(int x, int y)
-    {
-        setLocation((double)x, (double)y);
-    }
-
 	private void setLocation(double x, double y)
     {
-		start.setLocation(x,y);
+		start.setLocation(x, y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
-
-	@Override public void setId(int k){ id = k; }
 }

@@ -35,7 +35,7 @@ public class Bolt implements Projectile, Runnable
 	// master panel
 	protected Weapon weapon;
 
-	public Bolt(int x, int y, double t, double dmg, Weapon w)
+	public Bolt(double x, double y, double t, double dmg, Weapon w)
     {
         x = x - w.ship().x;
         y = y - w.ship().y;
@@ -83,7 +83,6 @@ public class Bolt implements Projectile, Runnable
     @Override
     public void move()
     {
-
     }
 
     @Override
@@ -92,7 +91,7 @@ public class Bolt implements Projectile, Runnable
 		while (span >= 0) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if (o != null && o.getId() != weapon.ship().getId()) {
-				o.hit(damage, (int)contact.x, (int)contact.y);
+				o.hit(damage);
 				weapon.ship.target = o;
 				explode();
 				break;
@@ -132,8 +131,8 @@ public class Bolt implements Projectile, Runnable
 	protected int getAmtChildrenBranches(){ return 5; }
 	protected int getDefaultThickness(){ return 4; }
 
-	@Override public int getX() { return (int)startX(); }
-	@Override public int getY() { return (int)startY(); }
+	@Override public double getX() { return startX(); }
+	@Override public double getY() { return startY(); }
 	@Override public int getId() {return id; }
     @Override public void setId(int k) { id = k; }
 
@@ -170,11 +169,6 @@ public class Bolt implements Projectile, Runnable
     {
 		return new Rectangle.Double(startX(), startY(), 1, 1).contains(x, y)
             || new Rectangle.Double(stopX(), stopY(), 1, 1).contains(x, y);
-	}
-
-	protected void setLocation(int x, int y)
-    {
-		setLocation((double)x, (double)y);
 	}
 
 	protected void setLocation(double x, double y)

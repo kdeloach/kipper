@@ -47,8 +47,8 @@ public class ShipUpgradeScreen extends Scene {
 
     public void createScene()
     {
-		player.releaseControl();
-		player.move(player.getWidth() / 2 + 10, player.getHeight() / 2 + 20);
+		player.setDestination(player.getWidth() / 2 + 10,
+                              player.getHeight() / 2 + 20);
 		osp.addMouseListener(this);
     }
 
@@ -100,8 +100,5 @@ public class ShipUpgradeScreen extends Scene {
 		}
 	}
 
-    public String name()
-    {
-        return "upgrade";
-    }
+    @Override public String name() { return "upgrade"; }
 }

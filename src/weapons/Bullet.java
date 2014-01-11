@@ -24,7 +24,7 @@ public class Bullet implements Projectile, Runnable
 	// master panel
 	protected Weapon weapon;
 
-	public Bullet(int x, int y, double t, double dmg, Weapon w)
+	public Bullet(double x, double y, double t, double dmg, Weapon w)
     {
 		this.weapon = w;
 		this.theta = t;
@@ -67,7 +67,7 @@ public class Bullet implements Projectile, Runnable
 		while (weapon.ship.panel().contains(getX(), getY()) && registered()) {
 			Ship o = weapon.ship().panel().intersects(this);
 			if (o != null) {
-				o.hit(damage, getX(), getY());
+				o.hit(damage);
 				weapon.ship.target = o;
 				explode();
 				break;
@@ -82,14 +82,15 @@ public class Bullet implements Projectile, Runnable
 	public void draw(Graphics g)
     {
 		g.setColor(Color.YELLOW);
-		g.drawOval(getX(), getY(), width, height);
+		g.drawOval((int)getX(), (int)getY(), width, height);
 	}
 
 	protected int getDefaultSpeed() { return 15; }
 	protected Dimension getSize() { return new Dimension(1, 1); }
 
-	@Override public int getX(){ return (int)dx; }
-	@Override public int getY(){ return (int)dy; }
+	@Override public double getX(){ return dx; }
+	@Override public double getY(){ return dy; }
+
 	@Override public int getId(){ return id; }
     @Override public void setId(int k){ id = k; }
 
@@ -123,11 +124,6 @@ public class Bullet implements Projectile, Runnable
         this.height = h;
     }
 
-	protected void setLocation(int x, int y)
-    {
-        setLocation((double)x, (double)y);
-    }
-
 	protected void setLocation(double x, double y)
     {
         dx = x;
@@ -136,7 +132,10 @@ public class Bullet implements Projectile, Runnable
 
     protected Rectangle getRectangle()
     {
-        return new Rectangle(getX() - width / 2, getY() - height / 2, width, height);
+        return new Rectangle((int)getX() - width / 2,
+                             (int)getY() - height / 2,
+                             width,
+                             height);
     }
 
     // TODO: Remove

@@ -33,8 +33,8 @@ public class RecoilAbility extends Ability
 			return;
         }
 
-        s.move((int)(s.getX() - distance * Math.cos(w.heading())),
-               (int)(s.getY() - distance * Math.sin(w.heading())));
+        s.setDestination(s.getX() - distance * Math.cos(w.heading()),
+                         s.getY() - distance * Math.sin(w.heading()));
 	}
 
 	@Override public String getTitle() { return "Recoil"; }

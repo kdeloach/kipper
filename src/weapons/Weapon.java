@@ -47,9 +47,10 @@ import kipper.upgrades.*;
 
 // !!!SOON - start implementing upgrades
 
-public abstract class Weapon implements Upgradable, Runnable {
-
-	protected int x, y, width, height;
+public abstract class Weapon implements Upgradable, Runnable
+{
+    protected double x, y;
+	protected int width, height;
 
 	// experience of gun, used to determine no. of slots
 	protected int exp;
@@ -85,19 +86,20 @@ public abstract class Weapon implements Upgradable, Runnable {
 
 	////////////
 
-	public Weapon(int x, int y, int rx, int ry, Ship s){
-		this.x=x+rx;
-		this.y=y+ry;
-		this.ship=s;
-		rel=new Point(rx,ry);
+	public Weapon(double x, double y, int rx, int ry, Ship s)
+    {
+		this.x = x + rx;
+		this.y = y + ry;
+		this.ship = s;
+		rel = new Point(rx, ry);
 
-		setLocation(x,y);
+		setLocation(x, y);
 
 		upgrades = new ArrayList<Ability>();
 
-		mouse=new Point();
-		cooldown=getDefaultCooldown();
-		damage=getDefaultDamage();
+		mouse = new Point();
+		cooldown = getDefaultCooldown();
+		damage = getDefaultDamage();
 	}
 
 	////////////
@@ -110,82 +112,79 @@ public abstract class Weapon implements Upgradable, Runnable {
 
 	////////////
 
-	public void startFiring(){
+	public void startFiring()
+    {
 		// if user releases the mouse real quick,they can
 		// resume shooting without starting a new thread
-		fire=true;
+		fire = true;
 
 		// if firethread is active,dont start a new thread
-		if(fireThreadActive)
+		if (fireThreadActive) {
 			return;
+        }
+
+		fire = true;
+		fireThreadActive = true;
 
 		new Thread(this).start();
-		fire=true;
-		fireThreadActive=true;
 	}
-	public void stopFiring(){
-		fire=false;
-	}
-	public void run(){
-		while(fire){
 
-			for(Ability a : upgrades) {
+	public void stopFiring()
+    {
+		fire = false;
+	}
+
+	public void run()
+    {
+		while (fire) {
+			for (Ability a : upgrades) {
 				a.weaponFired(this);
             }
 
-			if(!fire)
+			if (!fire) {
 				return;
+            }
 
-			// lay down the law
-			int n = getSpread();
-			double h = heading();
+			int spread = getSpread();
+			double heading = heading();
 
-			if(n<=1){
-				fireProjectile( h );
+			if (spread <= 1) {
+				fireProjectile(heading);
 			} else {
-				for(int i=0;i<n;i++)
-					fireProjectile(Math.toRadians( 180*ship.getOrientation()-(90/(n-1)*i-45) ) + h );
+				for (int i = 0; i < spread; i++) {
+					fireProjectile(Math.toRadians(180 * ship.getOrientation() - (90 / (spread - 1) * i - 45)) + heading);
+                }
 			}
 
-			// catch your breathe
-			while(percCooled<getCooldown()){
-				try{ Thread.sleep(getCooldown()/10); } catch (Exception ie) {}
-				percCooled+=10;
+			while (percCooled < getCooldown()) {
+				try { Thread.sleep(getCooldown() / 10); } catch (Exception ie) {}
+				percCooled += 10;
 			}
-			percCooled=0;
+			percCooled = 0;
 		}
 
-		fireThreadActive=false;
+		fireThreadActive = false;
 	}
 
 	////////////
 	// Setters
 
-	void setSize(int w,int h){
-			this.width=w;
-			this.height=h;
-	}
-	public void setLocation(int x,int y){
-		this.x=x+rel.x;
-		this.y=y+rel.y;
-	}
-	public void setMouseLocation(int x,int y){
-		mouse.x=x;
-		mouse.y=y;
-	}
-	public void setCooldown(int n){
-		cooldown=n;
-	}
-	protected void setSpread(int n){
-		if(n<Const.MIN_SPREAD||n>Const.MAX_SPREAD)
-			throw new IllegalArgumentException("Cannot set spread to "+n+".  Acceptable values are ["+Const.MIN_SPREAD+"-"+Const.MAX_SPREAD+"]");
-
-		spread=n;
+	void setSize(int w, int h)
+    {
+			this.width = w;
+			this.height = h;
 	}
 
-	// LATER: check if exp is enough to levelUp()
-	public void addExperience(int xp){
-		exp+=xp;
+	public void setLocation(double x, double y)
+    {
+		this.x = x + rel.x;
+		this.y = y + rel.y;
+	}
+
+	public void setMouseLocation(int x, int y)
+    {
+		mouse.x = x;
+		mouse.y = y;
 	}
 
     @Override
