@@ -5,8 +5,9 @@ import java.awt.geom.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.ConcurrentModificationException;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.LinkedList;
 import kipper.ships.*;
 import kipper.effects.*;
 import kipper.weapons.*;
@@ -30,6 +31,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public ArrayList<Projectile> bulletList;
 	private ArrayList<Explosion> explosionList;
 
+    private Queue<Ship> deleteShips;
+    private Queue<Projectile> deleteProjectiles;
+    private Queue<Explosion> deleteExplosions;
+
     // TODO: Get rid of this stuff
 	int bulletId = 0;
     int explosionId = 0;
@@ -44,6 +49,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		players = new ArrayList<Ship>();
 		bulletList = new ArrayList<Projectile>();
 		explosionList = new ArrayList<Explosion>();
+
+		deleteShips = new LinkedList<Ship>();
+		deleteProjectiles = new LinkedList<Projectile>();
+		deleteExplosions = new LinkedList<Explosion>();
 
         starsBg = new MarqueeStars(500, Math.toRadians(180), 0.05, 0, Color.GRAY);
         starsFg = new MarqueeStars(25, Math.toRadians(180), 0.099, 2, Color.WHITE);
@@ -75,29 +84,49 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		}
 	}
 
-    public synchronized void update()
+    public void update()
     {
         statusBar.update(player1);
         starsBg.update();
         starsFg.update();
-        try {
-            for (Ship s: players) {
-                s.update();
+        for (int i = 0; i < players.size(); i++) {
+            Ship p = players.get(i);
+            if (p.isAlive()) {
+                p.update();
+            } else {
+                // TODO: Do we still need this?
+                removeShip(p);
             }
-        } catch (ConcurrentModificationException ie) {}
-		try {
-			for(Projectile b : bulletList) {
-                b.update();
-			}
-		} catch(ConcurrentModificationException ie) {}
-		try {
-			for (Explosion e : explosionList) {
-                e.update();
-			}
-		} catch(ConcurrentModificationException ie){}
+        }
+        for (int i = 0; i < bulletList.size(); i++) {
+            bulletList.get(i).update();
+        }
+        for (int i = 0; i < explosionList.size(); i++) {
+            explosionList.get(i).update();
+        }
+        cleanup();
     }
 
-	public synchronized void paint(Graphics g)
+    protected void cleanup()
+    {
+        Object head = deleteShips.poll();
+        while (head != null) {
+            players.remove(head);
+            head = deleteShips.poll();
+        }
+        head = deleteProjectiles.poll();
+        while (head != null) {
+            bulletList.remove(head);
+            head = deleteProjectiles.poll();
+        }
+        head = deleteExplosions.poll();
+        while (head != null) {
+            explosionList.remove(head);
+            head = deleteExplosions.poll();
+        }
+    }
+
+	public void paint(Graphics g)
     {
 		// bg
 		g.setColor(Color.BLACK);
@@ -106,35 +135,15 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         statusBar.repaint();
         starsBg.paint(g);
         starsFg.paint(g);
-
-		// paint players
-		try {
-			for (Ship p : players) {
-				if (p.isAlive()) {
-					p.draw(g);
-                } else {
-                    // XXX: This really shouldn't be in the render phase...
-                    players.remove(p);
-                }
-			}
-		} catch(ConcurrentModificationException ie) {}
-
-		// paint bullets
-		try {
-			for(Projectile b : bulletList) {
-                b.draw(g);
-			}
-		} catch(ConcurrentModificationException ie) {}
-		  catch(NullPointerException ie){ System.out.println("whered that bullet go"); }
-
-		// paint explosion
-		try {
-			for(Explosion e : explosionList) {
-                e.draw(g);
-			}
-		} catch(ConcurrentModificationException ie) {}
-
-		// draw Scene elements if any need be
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).draw(g);
+        }
+        for (int i = 0; i < bulletList.size(); i++) {
+            bulletList.get(i).draw(g);
+        }
+        for (int i = 0; i < explosionList.size(); i++) {
+            explosionList.get(i).draw(g);
+        }
 		scene.paint(g);
 	}
 
@@ -173,24 +182,24 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 	////////////////////////
 
-	public synchronized void registerProjectile(Projectile b)
+	public void registerProjectile(Projectile b)
     {
 		b.setId(bulletId++);
 		bulletList.add(b);
 	}
 
-	public synchronized void unregisterProjectile(Projectile b)
+    // TODO: Remove
+	public void unregisterProjectile(Projectile b)
     {
-		for (int i = 0; i < bulletList.size(); i++) {
-			if (bulletList.get(i).getId() == b.getId()) {
-				bulletList.get(i).setId(Const.UNREGISTERED);
-				bulletList.remove(i);
-				return;
-			}
-		}
+		removeProjectile(b);
 	}
 
-    public synchronized void clearProjectiles()
+    public void removeProjectile(Projectile p)
+    {
+        deleteProjectiles.add(p);
+    }
+
+    public void clearProjectiles()
     {
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).setId(Const.UNREGISTERED);
@@ -198,40 +207,41 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         bulletList.clear();
     }
 
-	public synchronized void registerExplosion(Explosion e)
+	public void registerExplosion(Explosion e)
     {
 		e.setId(explosionId++);
 		explosionList.add(e);
 	}
 
-	public synchronized void unregisterExplosion(Explosion e)
+    // TODO: Remove
+	public void unregisterExplosion(Explosion e)
     {
-		for (int i = 0; i < explosionList.size(); i++) {
-			if (explosionList.get(i).getId() == e.getId()) {
-				explosionList.get(i).setId(Const.UNREGISTERED);
-				explosionList.remove(i);
-				return;
-			}
-		}
+		removeExplosion(e);
 	}
 
-	public synchronized void registerShip(Ship e)
+    public void removeExplosion(Explosion e)
+    {
+        deleteExplosions.add(e);
+    }
+
+	public void registerShip(Ship e)
     {
 		e.setId(playersId++);
 		players.add(e);
 	}
 
-	public synchronized void unregisterShip(Ship e)
+    // TODO: Remove
+	public void unregisterShip(Ship e)
     {
-		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i) == e) {
-				players.get(i).setId(Const.UNREGISTERED);
-				players.remove(i);
-				return;
-			}
-		}
+		removeShip(e);
 	}
-    public synchronized void killNPCs()
+
+    public void removeShip(Ship s)
+    {
+        deleteShips.add(s);
+    }
+
+    public void killNPCs()
     {
         ArrayList<Ship> npcs = new ArrayList<Ship>();
         for (Ship player : players) {
@@ -245,28 +255,24 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     }
 
 	// @Deprecated
-	public synchronized Ship intersects(Projectile b)
+	public Ship intersects(Projectile b)
     {
-		try {
-			for (Ship s : players) {
-				if (b.intersects(s)) {
-					return s;
-                }
-			}
-		} catch (ConcurrentModificationException ie) {}
+        for (Ship s : players) {
+            if (b.intersects(s)) {
+                return s;
+            }
+        }
 		return null;
 	}
 
-	public synchronized Ship intersects(Ship r)
+	public Ship intersects(Ship r)
     {
-		try {
-			for(Ship p : players) {
-				// NOTE: a ship might want to know if an ally hits it, maybe to push him away?
-				if (p.getId() != r.getId() && p.getTeam() != r.getTeam() && p.intersects((Destructable)r)) {
-					return p;
-                }
-			}
-		} catch (ConcurrentModificationException ie) {}
+        for(Ship p : players) {
+            // NOTE: a ship might want to know if an ally hits it, maybe to push him away?
+            if (p.getId() != r.getId() && p.getTeam() != r.getTeam() && p.intersects((Destructable)r)) {
+                return p;
+            }
+        }
 		return null;
 	}
 

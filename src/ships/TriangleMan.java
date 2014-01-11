@@ -44,7 +44,9 @@ public class TriangleMan extends Ship
 			new int[]{py + height / 2, py, py + height},
 			3
 		);
-		getWeapon().draw(g);
+        if (getWeapon() != null) {
+            getWeapon().draw(g);
+        }
 	}
 
     @Override

@@ -59,7 +59,9 @@ public class Enterprise extends Ship
 	public void draw(Graphics g)
     {
 		g.drawImage(img, (int)x, (int)y, osp);
-		getWeapon().draw(g);
+        if (getWeapon() != null) {
+            getWeapon().draw(g);
+        }
 	}
 
 	// ** generated with MaskMachine ** //

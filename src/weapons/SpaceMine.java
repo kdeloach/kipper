@@ -25,14 +25,12 @@ public class SpaceMine extends Bullet
     {
 		// we want to stop moving at some point
 		if (steps <= 0) {
-			try {
-				for (Projectile p : weapon.ship.panel().bulletList) {
-					if (p.getId() != getId() && p.intersects(this)) {
-						p.explode();
-						explode();
-					}
+            for (Projectile p : weapon.ship.panel().bulletList) {
+                if (p.getId() != getId() && p.intersects(this)) {
+                    p.explode();
+                    explode();
                 }
-			} catch (java.util.ConcurrentModificationException ie) {}
+            }
 			return;
 		}
 
