@@ -39,8 +39,7 @@ public class Enterprise extends Ship
 		new ShipExplosion1(x + width / 2, y + height / 2, osp)
         {
 			@Override public Color getColor() { return Color.YELLOW; }
-			@Override public int getTicks() { return 10; }
-			@Override public int getAmount() { return 25; }
+			@Override public int getAmount() { return 50; }
 		};
 		new ShipExplosion1(x + width / 2, y + height / 2, osp)
         {

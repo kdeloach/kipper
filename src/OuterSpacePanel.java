@@ -56,13 +56,22 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 	public void run()
     {
+        long MS_PER_UPDATE = 10;
+        long previous = System.currentTimeMillis();
+        long lag = 0;
+
 		while (true) {
-            update();
-			repaint();
-			try {
-                Thread.sleep(10);
-            } catch (Exception ie) {
+            long current = System.currentTimeMillis();
+            long elapsed = current - previous;
+            previous = current;
+            lag += elapsed;
+
+            while (lag >= MS_PER_UPDATE) {
+                update();
+                lag -= MS_PER_UPDATE;
             }
+
+			repaint();
 		}
 	}
 
@@ -76,6 +85,11 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
                 s.update();
             }
         } catch (ConcurrentModificationException ie) {}
+		try {
+			for (Explosion e : explosionList) {
+                e.update();
+			}
+		} catch(ConcurrentModificationException ie){}
     }
 
 	public synchronized void paint(Graphics g)
@@ -98,23 +112,22 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
                     players.remove(p);
                 }
 			}
-		} catch (ConcurrentModificationException ie) {
-        }
+		} catch(ConcurrentModificationException ie) {}
 
 		// paint bullets
 		try {
 			for(Projectile b : bulletList) {
                 b.draw(g);
 			}
-		} catch(ConcurrentModificationException ie){}
+		} catch(ConcurrentModificationException ie) {}
 		  catch(NullPointerException ie){ System.out.println("whered that bullet go"); }
 
 		// paint explosion
 		try {
-			for(Explosion e : explosionList){
-					e.draw(g);
+			for(Explosion e : explosionList) {
+                e.draw(g);
 			}
-		} catch(ConcurrentModificationException ie){}
+		} catch(ConcurrentModificationException ie) {}
 
 		// draw Scene elements if any need be
 		scene.paint(g);

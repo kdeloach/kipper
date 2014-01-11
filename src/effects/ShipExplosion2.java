@@ -12,6 +12,7 @@ public class ShipExplosion2 extends Explosion
 	}
 
 	@Override public Color getColor() { return Color.GREEN; }
-	@Override public int getTicks() { return 14; }
-	@Override public int getAmount() { return 30; }
+	@Override public int getTicks() { return 100; }
+	@Override public int getAmount() { return 50; }
+    @Override public double particleDistance() { return Math.random() * 40 + 10; }
 }

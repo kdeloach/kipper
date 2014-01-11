@@ -11,16 +11,7 @@ public class ShipExplosion1 extends Explosion
 		super(x, y, c);
 	}
 
-    @Override
-	public void initParticles()
-    {
-		shrap = new Debris[getAmount()];
-		for (int i = 0; i < shrap.length; i++) {
-			shrap[i] = new Debris(x, y, Math.toRadians(Util.randRange(0, 360)), 0.65);
-		}
-	}
-
 	@Override public Color getColor() { return Color.RED; }
-	@Override public int getTicks() { return 14; }
-	@Override public int getAmount() { return 25; }
+	@Override public int getTicks() { return 125; }
+	@Override public double particleDistance() { return Math.random() * 25 + 25; }
 }

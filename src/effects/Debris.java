@@ -6,6 +6,7 @@ import java.awt.geom.Point2D;
 public class Debris extends Point2D.Double
 {
 	double theta;
+    double startX, startY, endX, endY;
 
 	// distance from origin
 	double dist;
@@ -15,5 +16,9 @@ public class Debris extends Point2D.Double
 		super(x, y);
 		this.theta = theta;
 		this.dist = dist;
+        this.startX = x;
+        this.startY = y;
+        this.endX = x + Math.cos(theta) * dist;
+        this.endY = y + Math.sin(theta) * dist;
 	}
 }

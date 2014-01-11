@@ -109,10 +109,7 @@ public class Bolt implements Projectile, Runnable
 		weapon.ship().panel().unregisterProjectile(this);
 		new Explosion(getX(), getY(), weapon.ship().panel())
         {
-			public Color getColor()
-            {
-				return Color.BLUE;
-			}
+			@Override public Color getColor() { return Color.BLUE; }
 		};
 	}
 
