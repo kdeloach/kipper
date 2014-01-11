@@ -93,139 +93,188 @@ public abstract class Ship implements
     {
     }
 
-	public Ship(int x,int y,OuterSpacePanel c){
-		this.osp=c;
+	public Ship(int x, int y,OuterSpacePanel c)
+    {
+		this.osp = c;
 
 		// defaults
 		mask = getDefaultMask();
-		orientation=getDefaultOrientation();
-		speed=getDefaultSpeed();
-		maxhp=defaultMaxHp();
-		team=defaultTeam();
+		orientation = getDefaultOrientation();
+		speed = getDefaultSpeed();
+		maxhp = defaultMaxHp();
+		team = defaultTeam();
 
-		setLocation(x,y);
+		setLocation(x, y);
 		// hack; changes initial value of [desination] so NPC's don't float to 0,0 onload
-		move(getX(),getY());
+		move(getX(), getY());
 
 		new Thread(this).start();
 	}
 
-	////////////
 
+    @Override
 	public void run()
     {
-		while(alive){
-
-			if(!underControl()){
+		while(alive) {
+			if (!underControl()) {
 				think();
 			}
-
 			move();
-
 			// check for collisions
-			Ship o=osp.intersects(this);
-			if(o!=null){
-				double des = Math.min(o.getHp(),getHp());
-				o.hit(des,o.x,o.y);
-				hit(des,x,y);
+			Ship o = osp.intersects(this);
+			if (o != null) {
+				double des = Math.min(o.getHp(), getHp());
+				o.hit(des, o.x, o.y);
+				hit(des, x, y);
 			}
-
-			//Const.DEFAULT_SLEEP_MS-getSpeed()
-			try{Thread.sleep(Const.DEFAULT_SLEEP_MS-getSpeed());}catch(Exception ie){}
+			try { Thread.sleep(Const.DEFAULT_SLEEP_MS - getSpeed()); } catch (Exception ie) {}
 		}
 	}
 
 	public void move()
     {
-		if(destination==null||disabled) return;
+		if (destination == null || disabled) {
+            return;
+        }
 
-		double a = destination.x-(x+width/2);
-		double b = destination.y-(y+height/2);
-		double c = Math.sqrt(a*a+b*b);
+		double a = destination.x - (x + width / 2);
+		double b = destination.y - (y + height / 2);
+		double c = Math.sqrt(a*a + b*b);
 
-		int spd=getSpeed(), oldx=x, oldy=y;
+		int spd = getSpeed();
+        int oldx = x;
+        int oldy = y;
 
 		setLocation(
-			x + a/((Const.SPEED_CAP+1)-spd),
-			y + b/((Const.SPEED_CAP+1)-spd)
-			);
+			x + a / ((Const.SPEED_CAP + 1) - spd),
+			y + b / ((Const.SPEED_CAP + 1) - spd));
 
 		//REMEMBER to update the weapon pos
-		if(getWeapon()!=null)
-			getWeapon().setLocation(x,y);
+		if (getWeapon() != null) {
+			getWeapon().setLocation(x, y);
+        }
 
-		if(x==oldx&&y==oldy){
+		if (x == oldx && y == oldy) {
 			destination=null;
 		}
 	}
 
-	public void move(int mx,int my){
-		if(destination==null) {
-			destination=new Point();
+	public void move(int mx, int my)
+    {
+		if (destination == null) {
+			destination = new Point();
 		}
-
 		// don't let the player take the ship off-screen
-		if(underControl()){
-			if(mx<width/2) mx=width/2;
-			else if(mx>OuterSpacePanel.WIDTH-width/2) mx=OuterSpacePanel.WIDTH-width/2;
-
-			if(my<height/2) my=height/2;
-			else if(my>OuterSpacePanel.HEIGHT-height/2) my=OuterSpacePanel.HEIGHT-height/2;
+		if (underControl()) {
+			if (mx < width / 2) {
+                mx = width / 2;
+            } else if (mx > OuterSpacePanel.WIDTH - width / 2) {
+                mx = OuterSpacePanel.WIDTH - width / 2;
+            }
+			if (my < height / 2) {
+                my = height / 2;
+            } else if (my > OuterSpacePanel.HEIGHT - height / 2) {
+                my = OuterSpacePanel.HEIGHT - height / 2;
+            }
 		}
-
-		destination.x=mx;
-		destination.y=my;
+		destination.x = mx;
+		destination.y = my;
 	}
 
 	// Here is where you can put AI for a NPC
 	// think() is called every "round"
-	public void think(){}
+	public void think() {}
+
 	// NPC's ONLY Please; hack(ish)
-	public void targetLocation(int x, int y){
+	public void targetLocation(int x, int y)
+    {
 		setMousePressedLocation(x, y);
 	}
 
-	public void hit(double dmg, int x, int y){
-		lastHit.setLocation(x,y);
-
-		if(getHp()<=0) return;
-
-		if(getHp()-dmg<=0){
-			this.dmg=maxHp();
+	public void hit(double dmg, int x, int y)
+    {
+		lastHit.setLocation(x, y);
+		if (getHp() <= 0) {
+            return;
+        }
+		if (getHp() - dmg <= 0) {
+			this.dmg = maxHp();
 			explode();
-		}
-		else
-			this.dmg+=dmg;
+		} else {
+			this.dmg += dmg;
+        }
 	}
 
-	public void explode(){
-		alive=false;
-		disabled=true;
+	public void explode()
+    {
+		alive = false;
+		disabled = true;
 
 		die();
 
-		getWeapon().percCooled=getWeapon().getCooldown();
+		getWeapon().percCooled = getWeapon().getCooldown();
 		getWeapon().stopFiring();
 		osp.unregisterShip(this);
 	}
 
-	public void equipWeapon(Weapon w){
-		for(int i=0;i<wpnList.length;i++){
-			if(wpnList[i]==null){
-				wpnList[i]=w;
+	public void equipWeapon(Weapon w)
+    {
+		for (int i = 0; i < wpnList.length; i++) {
+			if (wpnList[i] == null) {
+				wpnList[i] = w;
 				return;
 			}
 		}
 	}
 
-	public double heading(){
-		// 0 or 1 default
-		return Math.toRadians(orientation*180);
+	public void setSize(int w, int h)
+    {
+        this.width = w;
+        this.height = h;
 	}
 
-	public OuterSpacePanel panel(){
-		return osp;
+	private void setLocation(double x, double y)
+    {
+		setLocation((int)x, (int)y);
 	}
+
+	public void setLocation(int x, int y)
+    {
+		mask.translate(x - this.x, y - this.y);
+		this.x = x;
+		this.y = y;
+	}
+
+	public void selectWeapon(int n)
+    {
+		if (n < 0 || n >= wpnList.length) {
+			throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
+        }
+		if (wpnList[n] == null) {
+			return;
+        }
+		wpn = wpnList[n];
+		wpn.setLocation(x, y);
+	}
+
+	public void setMouseLocation(int x, int y)
+    {
+		mouse.x = x;
+		mouse.y = y;
+	}
+
+	public void setMousePressedLocation(int x, int y)
+    {
+		mousePressed.x = x;
+		mousePressed.y = y;
+	}
+
+	public double heading() {
+		// 0 or 1 default
+		return Math.toRadians(orientation * 180);
+	}
+
+	public OuterSpacePanel panel() { return osp; }
 
 	/////////////
 
@@ -239,165 +288,103 @@ public abstract class Ship implements
 
 	/////////////
 
-	// EXPERIMENTAL
-	public int getX(){
-		return x+width/2;
-	}
-	public int getY(){
-		return y+height/2;
-	}
-	public int getWidth(){
-		return width;
-	}
-	public int getHeight(){
-		return height;
-	}
-	public int getSlotsAmt(){
-		return slots;
-	}
-	public int getTeam(){
-		return team;
-	}
-	public Ship getTarget(){
-		return target;
-	}
-	public Point getDesination(){
-		return destination;
-	}
-	public int getOrientation(){
-		return orientation;
-	}
-	public boolean underControl(){
-		return underControl;
-	}
-	public int maxHp(){
-		return maxhp;
-	}
-	public int getSpeed(){
-		return speed;
-	}
-	public int getExperience(){
-		return exp;
-	}
-	public Weapon getWeapon(){
-		return wpn;
-	}
-	public Weapon getWeapon(int n){
-		if(n<0||n>=wpnList.length)
-			throw new IllegalArgumentException("Weapon ["+n+"] does not exist");
-
+	public Weapon getWeapon(int n)
+    {
+		if(n < 0 || n >= wpnList.length) {
+			throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
+        }
 		return wpnList[n];
 	}
-	public int getLevel(){
-		return 5+maxHp();
+
+    // TODO: Incorrect reporting of X & Y...Remove
+	public int getX() { return x + width / 2; }
+	public int getY() { return y + height / 2; }
+	public int getWidth() { return width; }
+	public int getHeight() { return height; }
+	public int getSlotsAmt() { return slots; }
+	public int getTeam() { return team; }
+	public Ship getTarget() { return target; }
+	public Point getDesination() { return destination; }
+	public int getOrientation() { return orientation; }
+	public int maxHp() { return maxhp; }
+	public int getSpeed() { return speed; }
+	public Weapon getWeapon() { return wpn; }
+	public double getHp() { return maxHp() - dmg; }
+	public boolean isAlive() { return alive; }
+	public boolean isDisabled() { return disabled; }
+	public double percentHealth() { return (double)getHp() /( double)maxHp(); }
+
+    // TODO: Remove
+	public int getId() { return id; }
+    public void setId(int k) { id = k; }
+
+    // Destructable
+    /////////////
+    @Override abstract public void die();
+    @Override public Polygon getMask() { return mask; }
+
+    @Override
+	public boolean contains(int x, int y)
+    {
+		return contains(new Rectangle(x, y, 1, 1));
 	}
-	public Polygon getMask(){
-		return mask;
+
+    @Override
+	public boolean contains(Point p)
+    {
+		return contains(new Rectangle(p.x, p.y, 1, 1));
 	}
-	public double getHp(){
-		return maxHp()-dmg;
-	}
-	public boolean isAlive(){
-		return alive;
-	}
-	public boolean isDisabled(){
-		return disabled;
-	}
-	public boolean contains(int x, int y){
-		return contains(new Rectangle(x,y,1,1));
-	}
-	public boolean contains(Point p){
-		return contains(new Rectangle(p.x,p.y,1,1));
-	}
-	public boolean contains(Rectangle r){
+
+    @Override
+	public boolean contains(Rectangle r)
+    {
 		return mask.contains(r);
 	}
-	public boolean intersects(Destructable s){
 
-		for(int i=0;i<mask.npoints;i++){
-			if(s.contains(mask.xpoints[i],mask.ypoints[i]))
+    @Override
+	public boolean intersects(Destructable s)
+    {
+		for (int i = 0; i < mask.npoints; i++) {
+			if (s.contains(mask.xpoints[i], mask.ypoints[i])) {
 				return true;
+            }
 		}
-
 		return false;
 	}
-	public boolean intersects(Rectangle r){
+
+    @Override
+	public boolean intersects(Rectangle r)
+    {
 		return mask.intersects(r);
-		/*return mask.contains( r.x,         r.y ) ||
-		       mask.contains( r.x+r.width, r.y ) ||
-		       mask.contains( r.x+r.width, r.y+r.height ) ||
-		       mask.contains( r.x,         r.y+r.height );*/
-	}
-	public double percentHealth(){
-		return (double)getHp()/(double)maxHp();
-	}
-	public int getId(){
-		return id;
 	}
 
+    // Controllable
 	/////////////
+    @Override public boolean underControl() { return underControl; }
 
-	public void gainControl(){
+    @Override
+	public void gainControl()
+    {
 		osp.addMouseListener(this);
 		osp.addMouseMotionListener(this);
-
-		underControl=true;
+		underControl = true;
 	}
-	public void releaseControl(){
+
+    @Override
+	public void releaseControl()
+    {
 		osp.removeMouseListener(this);
 		osp.removeMouseMotionListener(this);
-
-		underControl=false;
-	}
-	// LATER: split exp into chunks,divide between weapons and ship
-	public void addExperience(int xp){
-		exp+=xp;
+		underControl = false;
 	}
 
-	/////////////
+    // MouseListener
+    /////////////
+	@Override public void mouseEntered(MouseEvent evt) {}
+	@Override public void mouseExited(MouseEvent evt) {}
+	@Override public void mouseClicked(MouseEvent evt) {}
 
-	public void setSize(int w,int h){
-			this.width=w;
-			this.height=h;
-	}
-	private void setLocation(double x, double y){
-		setLocation((int)x,(int)y);
-	}
-	public void setLocation(int x,int y){
-		// update mask
-		mask.translate(x-this.x, y-this.y);
-
-		this.x=x;
-		this.y=y;
-	}
-	public void selectWeapon(int n){
-		if(n<0||n>=wpnList.length)
-			throw new IllegalArgumentException("Weapon ["+n+"] does not exist");
-		if(wpnList[n]==null)
-			return;
-
-		wpn=wpnList[n];
-		wpn.setLocation(x,y);
-	}
-	public void setMouseLocation(int x, int y){
-		mouse.x=x;
-		mouse.y=y;
-	}
-	public void setMousePressedLocation(int x, int y){
-		mousePressed.x=x;
-		mousePressed.y=y;
-	}
-	public void setId(int k){
-		id=k;
-	}
-
-	/////////////////////
-	// Mouse Controls
-
-	public void mouseEntered(MouseEvent evt){}
-	public void mouseExited(MouseEvent evt){}
-	public void mouseClicked(MouseEvent evt){}
-
+    @Override
 	public void mousePressed(MouseEvent evt)
     {
 		setMousePressedLocation(evt.getX(), evt.getY());
@@ -406,6 +393,7 @@ public abstract class Ship implements
 		}
 	}
 
+    @Override
 	public void mouseReleased(MouseEvent evt)
     {
 		if (evt.getButton() == MouseEvent.BUTTON1) {
@@ -413,11 +401,11 @@ public abstract class Ship implements
 		}
 	}
 
-	public void mouseDragged(MouseEvent evt)
-    {
-		mouseMoved(evt);
-	}
+    // MouseMotionListener
+    /////////////
+    @Override public void mouseDragged(MouseEvent evt) { mouseMoved(evt); }
 
+    @Override
 	public void mouseMoved(MouseEvent evt)
     {
 		setMouseLocation(evt.getX(), evt.getY());
@@ -425,20 +413,24 @@ public abstract class Ship implements
         move(evt.getX(), evt.getY());
 	}
 
-	////////////////////////
-	// Keyboard Controls
+    // KeyListener
+    /////////////
+	@Override public void keyTyped(KeyEvent evt) {}
+	@Override public void keyReleased(KeyEvent evt) {}
 
-	public void keyTyped(KeyEvent evt){}
-	public void keyPressed(KeyEvent evt){
-		int code = evt.getKeyCode()-KeyEvent.VK_1;
+    @Override
+	public void keyPressed(KeyEvent evt)
+    {
+		int code = evt.getKeyCode() - KeyEvent.VK_1;
 
 		// only need keys 1-5	(0-4)
 		// and abort if weapon request is already selected
-		if( code<0||code>=5 || wpnList[code]==getWeapon() )
+		if (code < 0 || code >= 5 || wpnList[code] == getWeapon()) {
 			return;
+        }
 
 		// resume firing if weapons switches while the fire button is held down
-		if(getWeapon().isFiring()){
+		if (getWeapon().isFiring()) {
 			getWeapon().stopFiring();
 			selectWeapon(code);
 			getWeapon().startFiring();
@@ -446,11 +438,10 @@ public abstract class Ship implements
 			selectWeapon(code);
 		}
 	}
-	public void keyReleased(KeyEvent evt){}
 
-    ///
-
-    public Ability upgradeAt(int index) { throw new UnsupportedOperationException("Not implemented"); }
-    public void addUpgrade(Ability a) { throw new UnsupportedOperationException("Not implemented"); }
-    public void removeUpgrade(int index) { throw new UnsupportedOperationException("Not implemented"); }
+    // Upgradable
+    /////////////
+    @Override public Ability upgradeAt(int index) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public void addUpgrade(Ability a) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public void removeUpgrade(int index) { throw new UnsupportedOperationException("Not implemented"); }
 }

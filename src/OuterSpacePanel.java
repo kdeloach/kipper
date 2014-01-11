@@ -48,7 +48,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         starsBg = new MarqueeStars(500, Math.toRadians(180), 0.05, 0, Color.GRAY);
         starsFg = new MarqueeStars(25, Math.toRadians(180), 0.099, 2, Color.WHITE);
 
-		player1 = new Enterprise(100,100,this);
+		player1 = new Enterprise(100, 100, this);
 		changeScene(new DemoLevel(this));
 
 		new Thread(this).start();

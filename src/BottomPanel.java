@@ -11,7 +11,6 @@ import kipper.weapons.*;
 public class BottomPanel extends JPanel
 {
     Ship player;
-
     Font smallFont = new Font("Lucida Console", Font.PLAIN, 11);
 
     public BottomPanel()
