@@ -19,7 +19,7 @@ import kipper.effects.*;
 public class Bolt implements Projectile
 {
 	// length is the size of 1 segment of the largest tier branches
-	protected int branches, length, span, thickness;
+	protected int branches, length, life, lifespan, thickness;
 
 	// id of bullet,is set by master panel
 	protected int id;
@@ -39,15 +39,16 @@ public class Bolt implements Projectile
     {
         x = x - w.ship().x;
         y = y - w.ship().y;
-		new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultSpan(), getDefaultThickness(), dmg, w);
+		new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultLifespanTicks(), getDefaultThickness(), dmg, w);
 	}
 
-	public Bolt(double x, double y, double offset, int branches, int length, int span, int thickness, double dmg, Weapon w)
+	public Bolt(double x, double y, double offset, int branches, int length, int lifespan, int thickness, double dmg, Weapon w)
     {
 		this.offset = offset;
 		this.branches = branches;
 		this.length = length;
-		this.span = span;
+		this.life = lifespan;
+		this.lifespan = lifespan;
         this.thickness = thickness;
 		this.damage = dmg;
 		this.weapon = w;
@@ -72,7 +73,7 @@ public class Bolt implements Projectile
         double y = stop.y;
 		for (int i = 0; i < branches; i++) {
             int branches = (int)(Math.random() * getAmtChildrenBranches());
-			Bolt b = new Bolt(x, y, offset, branches, length - 10, span, thickness - 1, damage, weapon);
+			Bolt b = new Bolt(x, y, offset, branches, length - 10, lifespan, thickness - 1, damage, weapon);
 			x = b.stop.x;
 			y = b.stop.y;
 		}
@@ -86,7 +87,7 @@ public class Bolt implements Projectile
     @Override
 	public void update()
     {
-		if (span >= 0) {
+		if (life > 0) {
 			Ship o = weapon.ship.panel().intersects(this);
 			if (o != null && o.getId() != weapon.ship().getId()) {
 				o.hit(damage);
@@ -95,7 +96,7 @@ public class Bolt implements Projectile
 				return;
 			}
             move();
-			span--;
+			life--;
             return;
 		}
 		weapon.ship().panel().unregisterProjectile(this);
@@ -114,13 +115,19 @@ public class Bolt implements Projectile
     @Override
 	public void draw(Graphics g)
     {
-		g.setColor(Color.WHITE);
+        int r = (int)Easing.easeInQuad(life, 0, (double)0xFF, lifespan);
+		g.setColor(new Color(r, r, r));
         Graphics2D g2 = (Graphics2D)g;
         g2.setStroke(new BasicStroke(thickness));
         g2.draw(new Line2D.Double(startX(), startY(), stopX(), stopY()));
 	}
 
-	protected int getDefaultSpan() { return 5; }
+	private int getDefaultLifespanTicks()
+    {
+        return (int)((long)getDefaultLifespanMs() / OuterSpacePanel.FPS);
+    }
+
+	protected int getDefaultLifespanMs() { return 1000; }
 	protected int getDefaultLength() { return 40; }
 	protected int getDefaultBranches() { return 2; }
 	protected int getAmtChildrenBranches(){ return 5; }
