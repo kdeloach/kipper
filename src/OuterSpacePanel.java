@@ -16,6 +16,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 400;
+    // Frame per second (1000 MS / 60 frames)
+    public static long FPS = 1000 / 60;
 
     BottomPanel statusBar;
     MarqueeStars starsBg, starsFg;
@@ -63,9 +65,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		new Thread(this).start();
 	}
 
+    // Author: Bob Nystrom
+    // Source: http://gameprogrammingpatterns.com/game-loop.html
 	public void run()
     {
-        long MS_PER_UPDATE = 10;
         long previous = System.currentTimeMillis();
         long lag = 0;
 
@@ -75,9 +78,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             previous = current;
             lag += elapsed;
 
-            while (lag >= MS_PER_UPDATE) {
+            while (lag >= FPS) {
                 update();
-                lag -= MS_PER_UPDATE;
+                lag -= FPS;
             }
 
 			repaint();

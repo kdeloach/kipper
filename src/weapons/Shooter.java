@@ -16,7 +16,7 @@ public class Shooter extends Weapon
 
     @Override public Image getIcon() { return icon; }
     @Override public int getDefaultDamage() { return 4; }
-    @Override public int getDefaultCooldown() { return 100; }
+    @Override public int getDefaultCooldown() { return 50; }
 
     @Override
 	public void draw(Graphics g)
