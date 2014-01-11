@@ -105,9 +105,25 @@ public class LaserBeam implements Projectile
 		return false;
 	}
 
-    @Override public boolean intersects(Projectile p) { throw new UnsupportedOperationException("Not implemented yet"); }
-    @Override public boolean contains(int x, int y) { throw new UnsupportedOperationException("Not implemented yet"); }
-    @Override public boolean contains(double x, double y) { throw new UnsupportedOperationException("Not implemented yet"); }
+    @Override
+    public boolean intersects(Projectile p)
+    {
+        System.out.println("LaserBeam.intersects not implemented yet");
+        return false;
+    }
+
+    @Override
+    public boolean contains(int x, int y)
+    {
+        System.out.println("LaserBeam.contains not implemented yet");
+        return false;
+    }
+
+    @Override public boolean contains(double x, double y)
+    {
+        System.out.println("LaserBeam.contains not implemented yet");
+        return false;
+    }
 
 	private void setLocation(double x, double y)
     {

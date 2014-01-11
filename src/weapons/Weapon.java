@@ -47,7 +47,7 @@ import kipper.upgrades.*;
 
 // !!!SOON - start implementing upgrades
 
-public abstract class Weapon implements Upgradable, Runnable
+public abstract class Weapon implements Upgradable
 {
     protected double x, y;
 	protected int width, height;
@@ -70,7 +70,7 @@ public abstract class Weapon implements Upgradable, Runnable
 
 	// control variable,keep shooting gun while true
 	// also a control variable to check if thread is still active
-	protected boolean fire=false, fireThreadActive=false;
+	protected boolean fire=false;
 
 	// position relative to Ship x&y,this is only set once
 	protected Point rel;
@@ -117,16 +117,6 @@ public abstract class Weapon implements Upgradable, Runnable
 		// if user releases the mouse real quick,they can
 		// resume shooting without starting a new thread
 		fire = true;
-
-		// if firethread is active,dont start a new thread
-		if (fireThreadActive) {
-			return;
-        }
-
-		fire = true;
-		fireThreadActive = true;
-
-		new Thread(this).start();
 	}
 
 	public void stopFiring()
@@ -134,9 +124,14 @@ public abstract class Weapon implements Upgradable, Runnable
 		fire = false;
 	}
 
-	public void run()
+	public void update()
     {
-		while (fire) {
+        if (percCooled > 0) {
+            percCooled--;
+            return;
+        }
+
+		if (fire) {
 			for (Ability a : upgrades) {
 				a.weaponFired(this);
             }
@@ -156,14 +151,8 @@ public abstract class Weapon implements Upgradable, Runnable
                 }
 			}
 
-			while (percCooled < getCooldown()) {
-				try { Thread.sleep(getCooldown() / 10); } catch (Exception ie) {}
-				percCooled += 10;
-			}
-			percCooled = 0;
+            percCooled = getCooldown();
 		}
-
-		fireThreadActive = false;
 	}
 
 	////////////
@@ -171,8 +160,8 @@ public abstract class Weapon implements Upgradable, Runnable
 
 	void setSize(int w, int h)
     {
-			this.width = w;
-			this.height = h;
+        this.width = w;
+        this.height = h;
 	}
 
 	public void setLocation(double x, double y)

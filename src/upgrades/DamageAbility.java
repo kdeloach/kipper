@@ -9,7 +9,7 @@ import kipper.weapons.*;
 // Increase weapon damage
 public class DamageAbility extends Ability
 {
-	double percent = 1.20;
+	double percent = 1.25;
 
 	public DamageAbility()
     {

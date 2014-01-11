@@ -34,7 +34,7 @@ public class Trigun extends Weapon
 
 	@Override public Image getIcon() { return img; }
 	@Override public int getDefaultDamage() { return 1; }
-	@Override public int getDefaultCooldown() { return 500; }
+	@Override public int getDefaultCooldown() { return 250; }
 
     @Override
 	public void draw(Graphics g)

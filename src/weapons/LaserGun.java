@@ -15,8 +15,8 @@ public class LaserGun extends Weapon
 	}
 
 	@Override public Image getIcon() { return icon; }
-	@Override public int getDefaultDamage() { return 3; }
-	@Override public int getDefaultCooldown() { return 200; }
+	@Override public int getDefaultDamage() { return 2; }
+	@Override public int getDefaultCooldown() { return 50; }
 
     @Override
 	public void draw(Graphics g)

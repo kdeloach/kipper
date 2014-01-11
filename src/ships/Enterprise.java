@@ -24,7 +24,8 @@ public class Enterprise extends Ship
 		setSize(141, 52);
 
 		equipWeapon(new Shooter(x, y, width, height / 2 + 4, this));
-		equipWeapon(new Blaster(x, y, width, height / 2 + 4, this));
+        // The shooter can become a Blaster easily so there's no point to this gun
+		//equipWeapon(new Blaster(x, y, width, height / 2 + 4, this));
 		equipWeapon(new LaserGun(x, y, width, height / 2 + 4, this));
 		equipWeapon(new MineLauncher(x, y, width + 15, height / 2 + 4, this));
 		equipWeapon(new LightningGun(x, y, width, height / 2 + 6, this));

@@ -115,6 +115,8 @@ public abstract class Ship implements
             return;
         }
 
+        updateWeapons();
+
         if (!underControl()) {
             think();
         }
@@ -126,6 +128,15 @@ public abstract class Ship implements
             double dmg = Math.min(o.getHp(), getHp());
             o.hit(dmg);
             hit(dmg);
+        }
+    }
+
+    protected void updateWeapons()
+    {
+        for (Weapon w : wpnList) {
+            if (w != null) {
+                w.update();
+            }
         }
     }
 
