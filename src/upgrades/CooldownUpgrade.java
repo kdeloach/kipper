@@ -6,23 +6,22 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-// Reduces weapon cooldown
-public class SpeedAbility extends Ability
+public class CooldownUpgrade extends Ability
 {
-	double percent = 0.20;
+	double percent = 0.75;
 
-	public SpeedAbility()
+	public CooldownUpgrade()
     {
 	}
 
 	public double getValue(Upgradable sender, String name, double value)
     {
 		if (name == Ability.COOLDOWN) {
-			return value * (1 - percent);
+			return value * percent;
         }
 		return value;
 	}
 
-	@Override public String getTitle() { return "Speed"; }
-	@Override public Color getColor() { return Color.YELLOW; }
+	@Override public String getTitle() { return "Fire Rate"; }
+	@Override public Color getColor() { return Color.CYAN; }
 }

@@ -13,6 +13,7 @@ public abstract class Ability
 	public static final String GUARD = "GUARD";
 	public static final String HEADING = "HEADING";
 	public static final String SIZE = "SIZE";
+	public static final String SPEED = "SPEED";
 
     public void weaponFired(Weapon w) {}
     // Note: Not really needed anymore
@@ -35,12 +36,13 @@ public abstract class Ability
     public static Ability createInstance(int index)
     {
         switch (index) {
-            case Const.SPEED: return new SpeedAbility();
+            case Const.COOLDOWN: return new CooldownUpgrade();
             case Const.DAMAGE: return new DamageAbility();
             case Const.SPREAD: return new SpreadAbility();
             case Const.RECOIL: return new RecoilAbility();
             case Const.ROTATE: return new RotateAbility();
-            case Const.SIZE: return new LargerBulletsUpgrade();
+            case Const.SIZE: return new ProjectileSizeUpgrade();
+            case Const.SPEED: return new ProjectileSpeedUpgrade();
         }
         throw new UnsupportedOperationException("Unable to create ability instance: " + index);
     }

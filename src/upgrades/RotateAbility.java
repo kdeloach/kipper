@@ -31,5 +31,5 @@ public class RotateAbility extends Ability
 	}
 
 	@Override public String getTitle() { return "Rotate"; }
-	@Override public Color getColor() { return Color.CYAN; }
+	@Override public Color getColor() { return Color.YELLOW; }
 }

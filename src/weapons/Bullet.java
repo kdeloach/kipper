@@ -8,10 +8,11 @@ import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
+import kipper.upgrades.*;
 
 public class Bullet implements Entity, Projectile
 {
-	private int speed, life;
+	private int life;
 	private double x, y, theta, damage;
 
 	// master panel
@@ -27,7 +28,6 @@ public class Bullet implements Entity, Projectile
 		setLocation(x, y);
 
         life = 1;
-		speed = 15;
 		damage = dmg;
 
 		weapon.ship().panel().addProjectile(this);
@@ -41,9 +41,10 @@ public class Bullet implements Entity, Projectile
 
 	public void move()
     {
+        double bulletSpeed = weapon.getValue(Ability.SPEED, Const.BULLET_SPEED);
 		setLocation(
-			x + Const.BULLET_SPEED * Math.cos(theta),
-			y + Const.BULLET_SPEED * Math.sin(theta));
+			x + bulletSpeed * Math.cos(theta),
+			y + bulletSpeed * Math.sin(theta));
 	}
 
 	protected void setLocation(double x, double y)

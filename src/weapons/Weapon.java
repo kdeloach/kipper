@@ -200,7 +200,7 @@ public abstract class Weapon implements Upgradable
 
 	// all attributes are int's (basically)
 	// here's the chance to alter speed,damage,spread,cooldown,enemy damage,heading(?),etc
-	private double getValue(String attr, double n)
+	protected double getValue(String attr, double n)
     {
 		for (Ability a : upgrades) {
 			n = a.getValue(this, attr, n);

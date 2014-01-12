@@ -18,14 +18,15 @@ public class Const {
 	public static final int LEFT_TO_RIGHT = 0;
 
 	// possible upgrades
-	public static final int SPEED     = 0;
+	public static final int COOLDOWN  = 0;
 	public static final int DAMAGE    = 1;
 	public static final int SPREAD    = 2;
 	public static final int RECOIL    = 3;
 	public static final int ROTATE    = 4;
 	public static final int SIZE      = 5;
+	public static final int SPEED     = 6;
 
-	public static final int UPGRADES_QT = 6;
+	public static final int UPGRADES_QT = 7;
 
 	// teams
 	public static final int NPC     = 0;

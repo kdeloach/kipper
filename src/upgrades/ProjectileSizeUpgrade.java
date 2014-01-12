@@ -6,11 +6,11 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class LargerBulletsUpgrade extends Ability
+public class ProjectileSizeUpgrade extends Ability
 {
 	double amount = 1.5;
 
-	public LargerBulletsUpgrade()
+	public ProjectileSizeUpgrade()
     {
 	}
 
