@@ -69,7 +69,7 @@ public class Explosion implements Entity
     // Represents number of times update() must be called until animation ends
     private int getDurationTicks()
     {
-        return (int)((long)getDurationMs() / OuterSpacePanel.FPS);
+        return Util.msToTicks(getDurationMs());
     }
 
     public int getDurationMs() { return 500; }

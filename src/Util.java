@@ -17,4 +17,9 @@ public class Util
     {
 		return (int)(Math.random() * (hi - lo + 1) + lo);
 	}
+
+    public static int msToTicks(int ms)
+    {
+        return (int)((long)ms / OuterSpacePanel.FPS);
+    }
 }

@@ -57,8 +57,7 @@ public abstract class Ship implements
 	// formality
 	protected boolean underControl = false;
 
-	// controller variables
-    protected boolean disabled = false;
+    protected int disabledTicks = 0;
 
 	// current position of the mouse,destination
 	public Point destination = new Point();
@@ -105,6 +104,9 @@ public abstract class Ship implements
     @Override
     public void update()
     {
+        if (disabledTicks > 0) {
+            disabledTicks--;
+        }
         updateWeapons();
         if (!underControl()) {
             think();
@@ -137,8 +139,16 @@ public abstract class Ship implements
         }
     }
 
+    public void freezeMovement(int durationMs)
+    {
+        disabledTicks = Util.msToTicks(durationMs);
+    }
+
 	public void setDestination(double mx, double my)
     {
+        if (isDisabled()) {
+            return;
+        }
 		// don't let the player go off-screen
 		if (underControl()) {
 			if (mx < getWidth() / 2) {
@@ -249,8 +259,8 @@ public abstract class Ship implements
 	public int maxHp() { return maxhp; }
 	public int getSpeed() { return speed; }
 	public Weapon getWeapon() { return wpn; }
-	public boolean isDisabled() { return disabled; }
 	public double percentHealth() { return (double)getLife() / ( double)maxHp(); }
+	public boolean isDisabled() { return disabledTicks > 0; }
 
     /////////////
 
@@ -332,7 +342,7 @@ public abstract class Ship implements
 	public void mousePressed(MouseEvent evt)
     {
 		setMousePressedLocation(evt.getX(), evt.getY());
-		if (evt.getButton() == MouseEvent.BUTTON1 && !disabled) {
+		if (evt.getButton() == MouseEvent.BUTTON1) {
 			getWeapon().startFiring();
 		}
 	}

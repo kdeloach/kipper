@@ -163,7 +163,7 @@ public class Bolt implements Entity, Projectile
 
 	private int getDefaultLifespanTicks()
     {
-        return (int)((long)getDefaultLifespanMs() / OuterSpacePanel.FPS);
+        return Util.msToTicks(getDefaultLifespanMs());
     }
 
 	protected int getDefaultLifespanMs() { return 1000; }

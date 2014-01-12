@@ -8,7 +8,7 @@ import kipper.weapons.*;
 
 public class ProjectileSizeUpgrade extends Ability
 {
-	double amount = 1.5;
+	double amount = 1.10;
 
 	public ProjectileSizeUpgrade()
     {
