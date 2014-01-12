@@ -51,6 +51,7 @@ public class Enterprise extends Ship
     @Override
 	public void draw(Graphics g)
     {
+        super.draw(g);
 		g.drawImage(img, (int)getX(), (int)getY(), osp);
         if (getWeapon() != null) {
             getWeapon().draw(g);
@@ -73,6 +74,6 @@ public class Enterprise extends Ship
 	@Override public String getName() { return "ENTERPRISE";}
 	@Override public int defaultTeam() { return Const.PLAYER; }
     @Override public int getDefaultOrientation() { return Const.LEFT_TO_RIGHT; }
-	@Override public int getDefaultSpeed() { return 50; }
+	@Override public int getDefaultSpeed() { return 30; }
 	@Override public int defaultMaxHp() { return 50; }
 }

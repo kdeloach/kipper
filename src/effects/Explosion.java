@@ -88,4 +88,11 @@ public class Explosion implements Entity
     @Override public void hit(double damage) { throw new UnsupportedOperationException("Not implemented"); }
     @Override public boolean intersects(Entity entity) { throw new UnsupportedOperationException("Not implemented"); }
     @Override public void die() { }
+
+    @Override
+    public void setLocation(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 }

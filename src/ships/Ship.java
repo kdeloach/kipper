@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import kipper.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
+import kipper.effects.*;
 
 // IT hasnt been decided yet BUT Ships may have special abilities
 // Abilities applied to ship affect all equiped weapons
@@ -80,6 +81,8 @@ public abstract class Ship implements
 	// mask
 	private Polygon mask;
 
+    private EntityWobble wobble;
+
 	////////////
 
     public Ship()
@@ -96,6 +99,8 @@ public abstract class Ship implements
 		speed = getDefaultSpeed();
 		maxhp = defaultMaxHp();
 		team = defaultTeam();
+
+        wobble = new EntityWobble();
 
 		setLocation(x, y);
 		setDestination(getX(), getY());
@@ -133,7 +138,13 @@ public abstract class Ship implements
     {
         double mx = x + (destination.x - x - getWidth() / 2) / getSpeed();
         double my = y + (destination.y - y - getHeight() / 2) / getSpeed();
+
         setLocation(mx, my);
+
+        //if (this instanceof Enterprise) {
+            wobble.move(this);
+        //}
+
         if (getWeapon() != null) {
             getWeapon().setLocation(x, y);
         }
@@ -185,6 +196,7 @@ public abstract class Ship implements
 		}
 	}
 
+    @Override
 	public void setLocation(double x, double y)
     {
 		this.x = x;
@@ -226,7 +238,13 @@ public abstract class Ship implements
 
 	@Override abstract public int getWidth();
 	@Override abstract public int getHeight();
-	@Override abstract public void draw(Graphics g);
+
+	@Override
+    public void draw(Graphics g)
+    {
+        //g.setColor(Color.GREEN);
+        //g.drawRect((int)getX(), (int)getY(), getWidth(), getHeight());
+    }
 
 	abstract public int getDefaultOrientation();
 	abstract public int defaultMaxHp();
@@ -269,7 +287,6 @@ public abstract class Ship implements
     {
         if (isAlive()) {
             this.dmg += damage;
-            // TODO: Move this logic to main gameloop update()
             if (getLife() <= 0) {
                 die();
             }
@@ -279,8 +296,6 @@ public abstract class Ship implements
     @Override
 	public void die()
     {
-		getWeapon().percCooled = getWeapon().getCooldown();
-		getWeapon().stopFiring();
 	}
 
     @Override

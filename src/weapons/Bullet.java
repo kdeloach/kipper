@@ -47,7 +47,8 @@ public class Bullet implements Entity, Projectile
 			y + bulletSpeed * Math.sin(theta));
 	}
 
-	protected void setLocation(double x, double y)
+    @Override
+	public void setLocation(double x, double y)
     {
         this.x = x;
         this.y = y;

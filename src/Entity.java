@@ -6,6 +6,7 @@ public interface Entity
 {
 	public double getX();
 	public double getY();
+    public void setLocation(double x, double y);
 	public int getWidth();
 	public int getHeight();
     public int getLife();

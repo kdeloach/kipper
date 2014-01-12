@@ -199,7 +199,8 @@ public class Bolt implements Entity, Projectile
             || boundingBox.intersects(stopX(), stopY(), getWidth(), getHeight());
 	}
 
-	protected void setLocation(double x, double y)
+    @Override
+	public void setLocation(double x, double y)
     {
 		start.setLocation(x, y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));

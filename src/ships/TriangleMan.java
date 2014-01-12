@@ -21,9 +21,16 @@ public class TriangleMan extends Ship
         Weapon w1 = new Trigun(getX(), getY(), 0, getHeight() / 2 - 5, this);
 		w1.addUpgrade(new RotateAbility());
 
-		//equipWeapon(new LightningGun(x,y,0,height/2-5,this));
+        Weapon w2 = new LightningGun(getX(), getY(), 0, getHeight() / 2 - 5, this);
+        w2.addUpgrade(new CooldownUpgrade());
+        w2.addUpgrade(new CooldownUpgrade());
+        w2.addUpgrade(new CooldownUpgrade());
+        w2.addUpgrade(new CooldownUpgrade());
+        w2.addUpgrade(new CooldownUpgrade());
+
 		equipWeapon(w1);
-		selectWeapon(0);
+		equipWeapon(w2);
+		selectWeapon((int)(Math.random() * 2.0));
 	}
 
     @Override
@@ -36,6 +43,7 @@ public class TriangleMan extends Ship
     @Override
 	public void draw(Graphics g)
     {
+        super.draw(g);
         int px = (int)getX();
         int py = (int)getY();
 		g.setColor(Color.GREEN);
