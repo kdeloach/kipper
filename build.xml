@@ -10,7 +10,7 @@
     <target name="build">
         <javac srcdir="src" destdir="bin" debug="true" includeAntRuntime="false" />
         <copy todir="bin/assets">
-            <fileset dir="src/assets"/>
+            <fileset dir="assets" />
         </copy>
     </target>
 
