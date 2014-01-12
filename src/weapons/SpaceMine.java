@@ -36,8 +36,8 @@ public class SpaceMine extends Bullet
 		}
 
 		setLocation(
-			getX() + steps / Const.BULLET_SPEED * Math.cos(theta),
-			getY() + steps / Const.BULLET_SPEED * Math.sin(theta)
+			getX() + steps / Const.BULLET_SPEED * Math.cos(getTheta()),
+			getY() + steps / Const.BULLET_SPEED * Math.sin(getTheta())
 		);
 
 		steps--;
@@ -66,7 +66,6 @@ public class SpaceMine extends Bullet
 
 	public int getDefaultSteps() { return 40; }
 
-	@Override public int getDefaultSpeed() { return 15; }
 	@Override public int getWidth() { return 25; }
 	@Override public int getHeight() { return 25; }
     @Override public boolean collidesWithOwner() { return true; }

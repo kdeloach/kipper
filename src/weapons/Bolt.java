@@ -110,10 +110,44 @@ public class Bolt implements Entity, Projectile
     {
         int a = (int)Easing.easeInQuad(life, 0, 0xFF, lifespan);
 		g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
-        Graphics2D g2 = (Graphics2D)g;
-        g2.setStroke(new BasicStroke(thickness));
-        g2.draw(new Line2D.Double(startX(), startY(), stopX(), stopY()));
+        if (thickness == 1) {
+            g.drawLine((int)startX(), (int)startY(), (int)stopX(), (int)stopY());
+        } else {
+            drawThickLine(g, startX(), startY(), stopX(), stopY(), thickness);
+        }
 	}
+
+
+    // Note: Using Graphics2D to draw shape objects is SLOOOW
+    // Source: http://www.rgagnon.com/javadetails/java-0260.html
+    public void drawThickLine(Graphics g, double x1, double y1, double x2, double y2, int thickness)
+    {
+        double dX = x2 - x1;
+        double dY = y2 - y1;
+        // line length
+        double lineLength = Math.sqrt(dX * dX + dY * dY);
+
+        double scale = ((double)thickness) / (2.0 * lineLength);
+
+        // The x,y increments from an endpoint needed to create a rectangle...
+        double ddx = -scale * dY;
+        double ddy = scale * dX;
+        ddx += (ddx > 0) ? 0.5 : -0.5;
+        ddy += (ddy > 0) ? 0.5 : -0.5;
+        int dx = (int)ddx;
+        int dy = (int)ddy;
+
+        // Now we can compute the corner points...
+        int xPoints[] = new int[4];
+        int yPoints[] = new int[4];
+
+        xPoints[0] = (int)x1 + dx; yPoints[0] = (int)y1 + dy;
+        xPoints[1] = (int)x1 - dx; yPoints[1] = (int)y1 - dy;
+        xPoints[2] = (int)x2 - dx; yPoints[2] = (int)y2 - dy;
+        xPoints[3] = (int)x2 + dx; yPoints[3] = (int)y2 + dy;
+
+        g.fillPolygon(xPoints, yPoints, 4);
+    }
 
     @Override
     public void hit(double damage)

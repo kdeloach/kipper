@@ -11,28 +11,23 @@ import kipper.effects.*;
 
 public class Bullet implements Entity, Projectile
 {
-	private int speed;
-    private int life;
-	private double damage;
-	private double x, y;
-
-	// bullet trajectory
-	protected double theta;
+	private int speed, life;
+	private double x, y, theta, damage;
 
 	// master panel
 	protected Weapon weapon;
 
-	public Bullet(double x, double y, double t, double dmg, Weapon w)
+	public Bullet(double x, double y, double theta, double dmg, Weapon w)
     {
-		this.weapon = w;
-		this.theta = t;
 		this.x = x;
 		this.y = y;
+		this.theta = theta;
+		this.weapon = w;
 
 		setLocation(x, y);
 
         life = 1;
-		speed = getDefaultSpeed();
+		speed = 15;
 		damage = dmg;
 
 		weapon.ship().panel().addProjectile(this);
@@ -48,9 +43,14 @@ public class Bullet implements Entity, Projectile
     {
 		setLocation(
 			x + Const.BULLET_SPEED * Math.cos(theta),
-			y + Const.BULLET_SPEED * Math.sin(theta)
-		);
+			y + Const.BULLET_SPEED * Math.sin(theta));
 	}
+
+	protected void setLocation(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 
     @Override
 	public void update()
@@ -74,16 +74,16 @@ public class Bullet implements Entity, Projectile
 		g.fillOval((int)getX(), (int)getY(), getWidth(), getHeight());
 	}
 
-	protected int getDefaultSpeed() { return 15; }
     public Color getColor() { return Color.YELLOW; }
+    public double getTheta() { return theta; }
 
 	@Override public double getX() { return x; }
 	@Override public double getY() { return y; }
-	@Override public int getWidth() { return 6; }
-	@Override public int getHeight() { return 6; }
+	@Override public int getWidth() { return (int)(6 * weapon.getSizeBonus()); }
+	@Override public int getHeight() { return (int)(6 * weapon.getSizeBonus()); }
     @Override public int getLife() { return life; }
-    @Override public boolean collidesWithOwner() { return false; }
     @Override public double getDamage() { return damage; }
+    @Override public boolean collidesWithOwner() { return false; }
 
 	@Override
     public boolean isAlive()
@@ -105,6 +105,11 @@ public class Bullet implements Entity, Projectile
     @Override
 	public boolean intersects(Entity e)
     {
+        return intersectsPoint(e, getX(), getY(), getWidth(), getHeight());
+    }
+
+	protected boolean intersectsPoint(Entity e, double x, double y, int w, int h)
+    {
         if (!isAlive()) {
             return false;
         }
@@ -112,15 +117,9 @@ public class Bullet implements Entity, Projectile
             Polygon tmp = ((MaskedEntity)e).getMask();
             Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
             mask.translate((int)e.getX(), (int)e.getY());
-            return mask.intersects(getX(), getY(), getWidth(), getHeight());
+            return mask.intersects(x, y, w, h);
         }
         Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return boundingBox.intersects(getX(), getY(), getWidth(), getHeight());
+        return boundingBox.intersects(x, y, w, h);
 	}
-
-	protected void setLocation(double x, double y)
-    {
-        this.x = x;
-        this.y = y;
-    }
 }

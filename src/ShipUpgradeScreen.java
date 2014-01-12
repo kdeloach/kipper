@@ -14,7 +14,7 @@ public class ShipUpgradeScreen extends Scene {
 	int upgrades = 0;
 	int slots = 1;
 
-    Rectangle[] emptySlotRects = new Rectangle[6]; // Arbitrary
+    Rectangle[] emptySlotRects = new Rectangle[12]; // Arbitrary
     Rectangle[] availableUpgradeRects = new Rectangle[Const.UPGRADES_QT];
 
     private Font f = new Font("Arial", Font.PLAIN, 16);
@@ -30,10 +30,11 @@ public class ShipUpgradeScreen extends Scene {
 		player = osp.getPlayer();
 
 		for (int i = 0; i < emptySlotRects.length; i++) {
-            emptySlotRects[i] = new Rectangle(player.getWidth() + 50 + 100 * i, 20, 90, 90);
+            int x = player.getWidth() + 50 + 100 * (i % 6);
+            int y = 20 + 55 * (int)Math.floor(i / 6);
+            emptySlotRects[i] = new Rectangle(x, y, 90, 45);
         }
 
-		// THERE  ARE ONLY 5 UPGRADES ATM
 		int w = 140, h = 50, p = 5;
 		for (int i = 0, y = 150, x = 0; i < availableUpgradeRects.length; i++, x++) {
 			if (player.getWidth() + 50 + (w + p) * x + w >= osp.getWidth()) {
@@ -66,7 +67,9 @@ public class ShipUpgradeScreen extends Scene {
             g.setColor(Color.GRAY);
 			g.fillRoundRect(slot.x, slot.y, slot.width, slot.height, 15, 15);
 			g.setColor(Color.LIGHT_GRAY);
-			g.drawString("Slot " + (i + 1), slot.x + 8 * 3 + 2, slot.y + slot.height / 2);
+            String title = "Slot " + (i + 1);
+            int titleWidth = g.getFontMetrics(f).stringWidth(title);
+			g.drawString(title, slot.x + slot.width / 2 - titleWidth / 2, slot.y + slot.height / 2);
             Ability a = player.getWeapon().upgradeAt(i);
 			if (a != null) {
                 AbilityIconDrawer drawer = a.getIconDrawer();

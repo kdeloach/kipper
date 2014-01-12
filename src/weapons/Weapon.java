@@ -111,15 +111,17 @@ public abstract class Weapon implements Upgradable
 
     public double getX() { return x; }
     public double getY() { return y; }
+	public boolean isFiring() { return fire; }
 	public void startFiring() { fire = true; }
 	public void stopFiring() { fire = false; }
+	public double percentCooled() { return (double)percCooled / (double)getCooldown(); }
+	public int amountSlots() { return 12; }
+
 	public int getCooldown() { return (int)getValue(Ability.COOLDOWN, cooldown); }
 	public double getDamage() { return getValue(Ability.DAMAGE, damage); }
 	public int getSpread() { return (int)getValue(Ability.SPREAD, spread); }
-	public double percentCooled() { return (double)percCooled / (double)getCooldown(); }
-	public int amountSlots() { return 6; }
 	public double heading() { return getValue(Ability.HEADING, ship.heading()); }
-	public boolean isFiring() { return fire; }
+	public double getSizeBonus() { return getValue(Ability.SIZE, 1); }
 
 	public void update()
     {
@@ -144,7 +146,7 @@ public abstract class Weapon implements Upgradable
 				fireProjectile(heading);
 			} else {
 				for (int i = 0; i < spread; i++) {
-					fireProjectile(Math.toRadians(180 * ship.getOrientation() - (90 / (spread - 1) * i - 45)) + heading);
+					fireProjectile(Math.toRadians(180 * ship.getOrientation() - (60 / (spread - 1) * i - 30)) + heading);
                 }
 			}
 

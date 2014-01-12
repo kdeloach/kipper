@@ -23,8 +23,9 @@ public class Const {
 	public static final int SPREAD    = 2;
 	public static final int RECOIL    = 3;
 	public static final int ROTATE    = 4;
+	public static final int SIZE      = 5;
 
-	public static final int UPGRADES_QT = 5;
+	public static final int UPGRADES_QT = 6;
 
 	// teams
 	public static final int NPC     = 0;

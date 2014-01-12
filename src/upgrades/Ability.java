@@ -12,6 +12,7 @@ public abstract class Ability
 	public static final String SPREAD = "SPREAD";
 	public static final String GUARD = "GUARD";
 	public static final String HEADING = "HEADING";
+	public static final String SIZE = "SIZE";
 
     public void weaponFired(Weapon w) {}
     // Note: Not really needed anymore
@@ -39,6 +40,7 @@ public abstract class Ability
             case Const.SPREAD: return new SpreadAbility();
             case Const.RECOIL: return new RecoilAbility();
             case Const.ROTATE: return new RotateAbility();
+            case Const.SIZE: return new LargerBulletsUpgrade();
         }
         throw new UnsupportedOperationException("Unable to create ability instance: " + index);
     }
