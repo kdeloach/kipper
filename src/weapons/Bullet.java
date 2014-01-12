@@ -1,16 +1,18 @@
 package kipper.weapons;
 
-import java.awt.Rectangle;
+import java.awt.Color;
+import java.awt.Polygon;
 import java.awt.Graphics;
 import java.awt.Dimension;
-import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
 
-public class Bullet implements Projectile
+public class Bullet implements Entity, Projectile
 {
 	private int speed;
+    private int life;
 	private double damage;
 	private double x, y;
 
@@ -29,6 +31,7 @@ public class Bullet implements Projectile
 
 		setLocation(x, y);
 
+        life = 1;
 		speed = getDefaultSpeed();
 		damage = dmg;
 
@@ -36,13 +39,11 @@ public class Bullet implements Projectile
 	}
 
     @Override
-	public void explode()
+	public void die()
     {
-		weapon.ship().panel().removeProjectile(this);
 		new Explosion(getX(), getY(), weapon.ship().panel());
 	}
 
-    @Override
 	public void move()
     {
 		setLocation(
@@ -54,27 +55,23 @@ public class Bullet implements Projectile
     @Override
 	public void update()
     {
-		if (weapon.ship().panel().contains(getX(), getY())) {
-			Ship ship = weapon.ship().panel().intersects(this);
-            boolean collision = ship != null;
-            boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
-			if (collision && validTarget) {
-				ship.hit(damage);
-				weapon.ship().target = ship;
-				explode();
-				return;
-			}
-			move();
+        Ship ship = weapon.ship().panel().intersects(this);
+        boolean collision = ship != null;
+        boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
+        if (collision && validTarget) {
+            weapon.ship().target = ship;
+            ship.hit(getDamage());
+            hit(getLife());
             return;
-		}
-        weapon.ship().panel().removeProjectile(this);
+        }
+        move();
 	}
 
     @Override
 	public void draw(Graphics g)
     {
 		g.setColor(getColor());
-		g.drawOval((int)getX(), (int)getY(), getWidth(), getHeight());
+		g.fillOval((int)getX(), (int)getY(), getWidth(), getHeight());
 	}
 
 	protected int getDefaultSpeed() { return 15; }
@@ -82,45 +79,48 @@ public class Bullet implements Projectile
 
 	@Override public double getX() { return x; }
 	@Override public double getY() { return y; }
-	@Override public int getWidth() { return 1; }
-	@Override public int getHeight() { return 1; }
+	@Override public int getWidth() { return 6; }
+	@Override public int getHeight() { return 6; }
+    @Override public int getLife() { return life; }
     @Override public boolean collidesWithOwner() { return false; }
+    @Override public double getDamage() { return damage; }
+
+	@Override
+    public boolean isAlive()
+    {
+        return life > 0 && weapon.ship().panel().contains(getX(), getY());
+    }
 
     @Override
-	public boolean intersects(Ship s)
+    public void hit(double damage)
     {
-		return s.intersects(getRectangle());
-	}
+        if (isAlive()) {
+            life -= damage;
+            if (life <= 0) {
+                die();
+            }
+        }
+    }
 
     @Override
-	public boolean intersects(Projectile p)
+	public boolean intersects(Entity e)
     {
-		return p.contains(getX(), getY());
-	}
-
-    @Override
-	public boolean contains(double x, double y)
-    {
-		return contains((int)x, (int)y);
-	}
-
-    @Override
-	public boolean contains(int x, int y)
-    {
-		return getRectangle().contains(x,y);
+        if (!isAlive()) {
+            return false;
+        }
+        if (e instanceof MaskedEntity) {
+            Polygon tmp = ((MaskedEntity)e).getMask();
+            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
+            mask.translate((int)e.getX(), (int)e.getY());
+            return mask.intersects(getX(), getY(), getWidth(), getHeight());
+        }
+        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+        return boundingBox.intersects(getX(), getY(), getWidth(), getHeight());
 	}
 
 	protected void setLocation(double x, double y)
     {
         this.x = x;
         this.y = y;
-    }
-
-    protected Rectangle getRectangle()
-    {
-        return new Rectangle((int)getX() - getWidth() / 2,
-                             (int)getY() - getHeight() / 2,
-                             getWidth(),
-                             getHeight());
     }
 }

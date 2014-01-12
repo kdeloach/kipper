@@ -27,8 +27,9 @@ public class SpaceMine extends Bullet
 		if (steps <= 0) {
             for (Projectile p : weapon.ship().panel().bulletList) {
                 if (p != this && p.intersects(this)) {
-                    p.explode();
-                    explode();
+                    p.hit(p.getLife());
+                    hit(getLife());
+                    break;
                 }
             }
 			return;
@@ -52,16 +53,15 @@ public class SpaceMine extends Bullet
 
 		int off = getWidth() / 6;
 
-		g.drawRect(px - getWidth() / 2 + off,
-		           py - getHeight() / 2 + off,
-		           getWidth() - off * 2,
-		           getHeight() - off * 2);
-
-		g.drawPolygon(
-			new int[]{px - getWidth() / 2, px, px + getWidth() / 2, px},
-			new int[]{py, py - getHeight() / 2, py, py + getHeight() / 2},
+		g.fillPolygon(
+			new int[]{px, px + getWidth() / 2, px + getWidth(), px + getWidth() / 2},
+			new int[]{py + getHeight() / 2, py, py + getHeight() / 2, py + getHeight()},
 			4
 		);
+		g.fillRect(px + off,
+		           py + off,
+		           getWidth() - off * 2,
+		           getHeight() - off * 2);
 	}
 
 	public int getDefaultSteps() { return 40; }

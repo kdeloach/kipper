@@ -61,6 +61,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 2, Color.WHITE);
 
 		player1 = new Enterprise(100, 100, this);
+        addShip(player1);
 		changeScene(new DemoLevel(this));
 
 		new Thread(this).start();
@@ -98,15 +99,24 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             if (p.isAlive()) {
                 p.update();
             } else {
-                // TODO: Do we still need this?
                 removeShip(p);
             }
         }
         for (int i = 0; i < bulletList.size(); i++) {
-            bulletList.get(i).update();
+            Projectile p = bulletList.get(i);
+            if (p.isAlive()) {
+                p.update();
+            } else {
+                removeProjectile(p);
+            }
         }
         for (int i = 0; i < explosionList.size(); i++) {
-            explosionList.get(i).update();
+            Explosion p = explosionList.get(i);
+            if (p.isAlive()) {
+                p.update();
+            } else {
+                removeExplosion(p);
+            }
         }
         cleanup();
     }
@@ -250,7 +260,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         return result;
     }
 
-	// @Deprecated
 	public Ship intersects(Projectile b)
     {
         for (Ship s : players) {
@@ -263,9 +272,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 	public Ship intersects(Ship r)
     {
-        for(Ship p : players) {
+        for (Ship p : players) {
             // NOTE: a ship might want to know if an ally hits it, maybe to push him away?
-            if (p != r && p.getTeam() != r.getTeam() && p.intersects((Destructable)r)) {
+            if (p != r && p.getTeam() != r.getTeam() && p.intersects(r)) {
                 return p;
             }
         }
@@ -281,6 +290,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     public void respawnPlayer()
     {
         player1 = new Enterprise(100, 100, this);
+        addShip(player1);
         changeScene(new DemoLevel(this));
     }
 

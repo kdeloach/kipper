@@ -13,11 +13,6 @@ public class NullShip extends Ship
         super();
     }
 
-    public NullShip(int x, int y, OuterSpacePanel c)
-    {
-        super();
-    }
-
 	@Override public int getWidth() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public int getHeight() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public int getDefaultOrientation() { throw new UnsupportedOperationException("Not implemented"); }
@@ -30,7 +25,5 @@ public class NullShip extends Ship
 
     @Override public void die() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public Polygon getMask() { throw new UnsupportedOperationException("Not implemented"); }
-	@Override public boolean contains(int x, int y) { throw new UnsupportedOperationException("Not implemented"); }
-	@Override public boolean contains(Point p) { throw new UnsupportedOperationException("Not implemented"); }
-	@Override public boolean contains(Rectangle r) { throw new UnsupportedOperationException("Not implemented"); }
+	@Override public boolean intersects(Entity e) { throw new UnsupportedOperationException("Not implemented"); }
 }

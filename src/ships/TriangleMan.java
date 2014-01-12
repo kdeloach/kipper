@@ -29,6 +29,7 @@ public class TriangleMan extends Ship
     @Override
 	public void die()
     {
+        super.die();
 		new ShipExplosion2(getX() + getWidth() / 2, getY() + getHeight() / 2, osp);
 	}
 

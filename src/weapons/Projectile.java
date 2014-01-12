@@ -1,24 +1,9 @@
 package kipper.weapons;
 
-import kipper.*;
-import kipper.ships.*;
+import kipper.Entity;
 
-public interface Projectile
+public interface Projectile extends Entity
 {
-	public double getX();
-	public double getY();
-	public int getWidth();
-	public int getHeight();
-
-	public boolean intersects(Ship s);
-	public boolean intersects(Projectile s);
-	public boolean contains(int x, int y);
-	public boolean contains(double x, double y);
-
-	public void draw(java.awt.Graphics g);
-    public void move();
-	public void explode();
-    public void update();
-
+    public double getDamage();
     public boolean collidesWithOwner();
 }

@@ -35,6 +35,7 @@ public class Enterprise extends Ship
     @Override
 	public void die()
     {
+        super.die();
 		new ShipExplosion1(getX() + getWidth() / 2, getY() + getHeight() / 2, osp)
         {
 			@Override public Color getColor() { return Color.YELLOW; }
@@ -44,14 +45,8 @@ public class Enterprise extends Ship
         {
 			@Override public Color getColor() { return Color.RED; }
 		};
-	}
-
-    @Override
-    public void explode()
-    {
-        super.explode();
         panel.respawnPlayer();
-    }
+	}
 
     @Override
 	public void draw(Graphics g)

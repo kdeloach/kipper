@@ -5,12 +5,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import kipper.*;
 
-public class Explosion
+public class Explosion implements Entity
 {
-    double x, y;
-	int ticks = 0;
-	Particle[] shrap;
-	OuterSpacePanel osp;
+    private double x, y;
+	private int ticks = 0;
+	private Particle[] shrap;
+	private OuterSpacePanel osp;
 
 	public Explosion(double x, double y, OuterSpacePanel c)
     {
@@ -23,7 +23,7 @@ public class Explosion
 		osp.addExplosion(this);
 	}
 
-	public void initParticles()
+	protected void initParticles()
     {
 		shrap = new Particle[getAmount()];
 		for (int i = 0; i < shrap.length; i++) {
@@ -35,16 +35,6 @@ public class Explosion
     {
         return new Particle(x, y, theta, distance);
     }
-
-	public void update()
-    {
-        if (ticks <= getDurationTicks()) {
-            tick(ticks);
-            ticks++;
-            return;
-        }
-        osp.removeExplosion(this);
-	}
 
 	public void tick(double t)
     {
@@ -60,6 +50,14 @@ public class Explosion
 		}
 	}
 
+    @Override
+	public void update()
+    {
+        tick(ticks);
+        ticks++;
+	}
+
+    @Override
 	public void draw(Graphics g)
     {
 		g.setColor(getColor());
@@ -77,9 +75,17 @@ public class Explosion
     public int getDurationMs() { return 500; }
 	public Color getColor() { return Color.YELLOW; }
 	public int getAmount() { return 10; }
-	public int getWidth() { return 0; }
-	public int getHeight() { return 0; }
     public double particleAngle() { return Math.toRadians(Util.randRange(0, 360)); }
     public double particleDistance() { return Math.random() * 20 + 10; }
     public double easingFn(double t, double b, double c, double d) { return Easing.easeOutQuad(t, b, c, d); }
+
+	@Override public double getX() { return x; }
+	@Override public double getY() { return y; }
+	@Override public int getWidth() { return 0; }
+	@Override public int getHeight() { return 0; }
+    @Override public int getLife() { return 0; }
+    @Override public boolean isAlive() { return ticks <= getDurationTicks(); }
+    @Override public void hit(double damage) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public boolean intersects(Entity entity) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public void die() { }
 }

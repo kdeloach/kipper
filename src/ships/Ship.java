@@ -2,6 +2,7 @@ package kipper.ships;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.util.ArrayList;
 import kipper.*;
@@ -28,7 +29,7 @@ import kipper.upgrades.*;
 
 // A standard template all ships can extend
 public abstract class Ship implements
-    Destructable, Controllable, Upgradable, MouseListener, MouseMotionListener, KeyListener
+    MaskedEntity, Controllable, Upgradable, MouseListener, MouseMotionListener, KeyListener
 {
 	// arbitrary dimensions
 	public double x, y;
@@ -57,7 +58,6 @@ public abstract class Ship implements
 	protected boolean underControl = false;
 
 	// controller variables
-	protected boolean alive = true;
     protected boolean disabled = false;
 
 	// current position of the mouse,destination
@@ -100,29 +100,21 @@ public abstract class Ship implements
 
 		setLocation(x, y);
 		setDestination(getX(), getY());
-
-        osp.addShip(this);
 	}
 
+    @Override
     public void update()
     {
-		if (!alive) {
-            return;
-        }
-
         updateWeapons();
-
         if (!underControl()) {
             think();
         }
-
         move();
-
-        Ship o = osp.intersects(this);
-        if (o != null) {
-            double dmg = Math.min(o.getHp(), getHp());
-            o.hit(dmg);
-            hit(dmg);
+        Ship ship = osp.intersects(this);
+        if (ship != null) {
+            double leastHp = Math.min(ship.getLife(), getLife());
+            ship.hit(leastHp);
+            hit(leastHp);
         }
     }
 
@@ -171,31 +163,6 @@ public abstract class Ship implements
 	public void targetLocation(int x, int y)
     {
 		setMousePressedLocation(x, y);
-	}
-
-	public void hit(double dmg)
-    {
-		if (getHp() <= 0) {
-            return;
-        }
-		if (getHp() - dmg <= 0) {
-			this.dmg = maxHp();
-			explode();
-		} else {
-			this.dmg += dmg;
-        }
-	}
-
-	public void explode()
-    {
-		alive = false;
-		disabled = true;
-
-		die();
-
-		getWeapon().percCooled = getWeapon().getCooldown();
-		getWeapon().stopFiring();
-		osp.removeShip(this);
 	}
 
 	public void equipWeapon(Weapon w)
@@ -247,15 +214,16 @@ public abstract class Ship implements
 
 	/////////////
 
-	abstract public int getWidth();
-	abstract public int getHeight();
+	@Override abstract public int getWidth();
+	@Override abstract public int getHeight();
+	@Override abstract public void draw(Graphics g);
+
 	abstract public int getDefaultOrientation();
 	abstract public int defaultMaxHp();
 	abstract public int defaultTeam();
 	abstract public int getDefaultSpeed();
 	abstract public Polygon getDefaultMask();
 	abstract public String getName();
-	abstract public void draw(Graphics g);
 
 	/////////////
 
@@ -267,9 +235,12 @@ public abstract class Ship implements
 		return wpnList[n];
 	}
 
-    // TODO: Incorrect reporting of X & Y...Remove
-	public double getX() { return x; }
-	public double getY() { return y; }
+	@Override public double getX() { return x; }
+	@Override public double getY() { return y; }
+	@Override public boolean isAlive() { return dmg < maxHp(); }
+	@Override public int getLife() { return maxHp() - (int)dmg; }
+    @Override public Polygon getMask() { return mask; }
+
 	public int getSlotsAmt() { return slots; }
 	public int getTeam() { return team; }
 	public Ship getTarget() { return target; }
@@ -278,59 +249,61 @@ public abstract class Ship implements
 	public int maxHp() { return maxhp; }
 	public int getSpeed() { return speed; }
 	public Weapon getWeapon() { return wpn; }
-	public double getHp() { return maxHp() - dmg; }
-	public boolean isAlive() { return alive; }
 	public boolean isDisabled() { return disabled; }
-	public double percentHealth() { return (double)getHp() /( double)maxHp(); }
+	public double percentHealth() { return (double)getLife() / ( double)maxHp(); }
 
-    // Destructable
     /////////////
-    @Override abstract public void die();
-    @Override public Polygon getMask() { return mask; }
 
     @Override
-	public boolean contains(int x, int y)
+	public void hit(double damage)
     {
-		return contains(new Rectangle(x, y, 1, 1));
+        if (isAlive()) {
+            this.dmg += damage;
+            // TODO: Move this logic to main gameloop update()
+            if (getLife() <= 0) {
+                die();
+            }
+        }
 	}
 
     @Override
-	public boolean contains(Point p)
+	public void die()
     {
-		return contains(new Rectangle(p.x, p.y, 1, 1));
+		getWeapon().percCooled = getWeapon().getCooldown();
+		getWeapon().stopFiring();
 	}
 
     @Override
-	public boolean contains(Rectangle r)
+	public boolean intersects(Entity e)
     {
-        Polygon tmp = new Polygon(mask.xpoints, mask.ypoints, mask.npoints);
-        tmp.translate((int)x, (int)y);
-		return tmp.contains(r);
-	}
-
-    @Override
-	public boolean intersects(Destructable s)
-    {
-        Polygon tmp = new Polygon(mask.xpoints, mask.ypoints, mask.npoints);
-        tmp.translate((int)x, (int)y);
-		for (int i = 0; i < tmp.npoints; i++) {
-			if (s.contains(tmp.xpoints[i], tmp.ypoints[i])) {
+        if (!isAlive()) {
+            return false;
+        }
+        Polygon tmp = getMask();
+        Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
+        mask.translate((int)getX(), (int)getY());
+		for (int i = 0; i < mask.npoints; i++) {
+            if (contains(e, mask.xpoints[i], mask.ypoints[i])) {
 				return true;
             }
 		}
 		return false;
 	}
 
-    @Override
-	public boolean intersects(Rectangle r)
+    private boolean contains(Entity e, int x, int y)
     {
-        Polygon tmp = new Polygon(mask.xpoints, mask.ypoints, mask.npoints);
-        tmp.translate((int)x, (int)y);
-		return tmp.intersects(r);
-	}
+        if (e instanceof MaskedEntity) {
+            Polygon tmp = ((MaskedEntity)e).getMask();
+            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
+            mask.translate((int)e.getX(), (int)e.getY());
+            return mask.intersects(x, y, 1, 1);
+        }
+        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+        return boundingBox.intersects(x, y, 1, 1);
+    }
 
-    // Controllable
 	/////////////
+
     @Override public boolean underControl() { return underControl; }
 
     @Override
@@ -349,8 +322,8 @@ public abstract class Ship implements
 		underControl = false;
 	}
 
-    // MouseListener
     /////////////
+
 	@Override public void mouseEntered(MouseEvent evt) {}
 	@Override public void mouseExited(MouseEvent evt) {}
 	@Override public void mouseClicked(MouseEvent evt) {}
@@ -372,8 +345,8 @@ public abstract class Ship implements
 		}
 	}
 
-    // MouseMotionListener
     /////////////
+
     @Override public void mouseDragged(MouseEvent evt) { mouseMoved(evt); }
 
     @Override
@@ -384,8 +357,8 @@ public abstract class Ship implements
         setDestination(evt.getX(), evt.getY());
 	}
 
-    // KeyListener
     /////////////
+
     @Override public void keyTyped(KeyEvent evt) {}
     @Override public void keyReleased(KeyEvent evt) {}
 
@@ -410,8 +383,8 @@ public abstract class Ship implements
 		}
 	}
 
-    // Upgradable
     /////////////
+
     @Override public Ability upgradeAt(int index) { throw new UnsupportedOperationException("Not implemented"); }
     @Override public void addUpgrade(Ability a) { throw new UnsupportedOperationException("Not implemented"); }
     @Override public void removeUpgrade(int index) { throw new UnsupportedOperationException("Not implemented"); }

@@ -3,12 +3,14 @@ package kipper.weapons;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Line2D;
 import java.awt.BasicStroke;
-import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
@@ -16,21 +18,24 @@ import kipper.effects.*;
 // Bolts are basically 2 points, whereas the first point is x,y
 //   and the second point is x+length*cos(theta),y+length*sin(theta)
 
-public class Bolt implements Projectile
+// TODO: Extend from bullet...
+public class Bolt implements Entity, Projectile
 {
 	// length is the size of 1 segment of the largest tier branches
-	protected int branches, length, life, lifespan, thickness;
+	private int branches, length, life, lifespan, thickness;
 
-	protected double damage;
+	private double damage;
 
 	// bullet trajectory
-	protected double theta, offset;
+	private double theta, offset;
 
 	// start and end of beam
-	protected Point2D.Double start, stop, contact;
+	private Point2D.Double start, stop;
 
 	// master panel
-	protected Weapon weapon;
+	private Weapon weapon;
+
+    private boolean alive = true;
 
 	public Bolt(double x, double y, double t, double dmg, Weapon w)
     {
@@ -77,36 +82,26 @@ public class Bolt implements Projectile
 	}
 
     @Override
-    public void move()
-    {
-    }
-
-    @Override
 	public void update()
     {
-		if (life > 0) {
-			Ship ship = weapon.ship().panel().intersects(this);
-            boolean collision = ship != null;
-            boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
-			if (collision && validTarget) {
-				ship.hit(damage);
-				weapon.ship().target = ship;
-				explode();
-			}
-            move();
-			life--;
+        Ship ship = weapon.ship().panel().intersects(this);
+        boolean collision = ship != null;
+        boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
+        if (collision && validTarget) {
+            weapon.ship().target = ship;
+            ship.hit(getDamage());
+            hit(getLife());
             return;
-		}
-		weapon.ship().panel().removeProjectile(this);
+        }
+        life--;
 	}
 
     @Override
-	public void explode()
+	public void die()
     {
-        life = 0;
 		new Explosion(getX(), getY(), weapon.ship().panel())
         {
-			@Override public Color getColor() { return Color.BLUE; }
+			@Override public Color getColor() { return Color.WHITE; }
 		};
 	}
 
@@ -119,6 +114,18 @@ public class Bolt implements Projectile
         g2.setStroke(new BasicStroke(thickness));
         g2.draw(new Line2D.Double(startX(), startY(), stopX(), stopY()));
 	}
+
+    @Override
+    public void hit(double damage)
+    {
+        if (isAlive()) {
+            // Life ticks and damage may not exactly be compatible types but we'll ignore this for now
+            life -= damage;
+            if (life <= 0) {
+                die();
+            }
+        }
+    }
 
 	private int getDefaultLifespanTicks()
     {
@@ -135,38 +142,27 @@ public class Bolt implements Projectile
 	@Override public double getY() { return startY(); }
 	@Override public int getWidth() { return 1; }
 	@Override public int getHeight() { return 1; }
+    @Override public int getLife() { return life; }
+	@Override public boolean isAlive() { return life > 0; }
+	@Override public double getDamage() { return damage; }
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override
-	public boolean intersects(Ship s)
+	public boolean intersects(Entity e)
     {
-		if(s.contains((int)startX(), (int)startY())) {
-			contact = start;
-			return true;
-		} else if (s.contains((int)stopX(), (int)stopY())) {
-			contact = stop;
-			return true;
-		}
-		return false;
-	}
-
-    @Override
-	public boolean intersects(Projectile p)
-    {
-		return p.contains(startX(), startY()) || p.contains(stopX(), stopY());
-	}
-
-    @Override
-	public boolean contains(double x, double y)
-    {
-		return contains((int)x, (int)y);
-	}
-
-    @Override
-	public boolean contains(int x, int y)
-    {
-		return new Rectangle.Double(startX(), startY(), 1, 1).contains(x, y)
-            || new Rectangle.Double(stopX(), stopY(), 1, 1).contains(x, y);
+        if (!isAlive()) {
+            return false;
+        }
+        if (e instanceof MaskedEntity) {
+            Polygon tmp = ((MaskedEntity)e).getMask();
+            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
+            mask.translate((int)e.getX(), (int)e.getY());
+            return mask.intersects((int)startX(), (int)startY(), getWidth(), getHeight())
+                || mask.intersects((int)stopX(), (int)stopY(), getWidth(), getHeight());
+        }
+        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+        return boundingBox.intersects(startX(), startY(), getWidth(), getHeight())
+            || boundingBox.intersects(stopX(), stopY(), getWidth(), getHeight());
 	}
 
 	protected void setLocation(double x, double y)

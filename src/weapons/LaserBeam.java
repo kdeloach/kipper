@@ -1,10 +1,14 @@
 package kipper.weapons;
 
-import java.awt.Rectangle;
-import java.awt.Graphics;
-import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Polygon;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Dimension;
+import java.awt.BasicStroke;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
@@ -12,15 +16,17 @@ import kipper.effects.*;
 // LaserBeams are basically 2 points, whereas the first point is x,y
 // and the second point is x+length*cos(theta),y+length*sin(theta)
 
-public class LaserBeam implements Projectile
+// TODO: Extend from bullet...
+public class LaserBeam implements Entity, Projectile
 {
-	protected int length;
+	private int length;
 	private int speed;
 	private double damage;
-	protected double theta;
+	private double theta;
+    private int life;
 
 	// start and end of beam
-	protected Point2D.Double start, stop, contact;
+	protected Point2D.Double start, stop;
 
 	// master panel
 	protected Weapon weapon;
@@ -30,6 +36,7 @@ public class LaserBeam implements Projectile
 		this.weapon = w;
 		this.theta = t;
 
+        life = 1;
 		speed = getDefaultSpeed();
 		length = getDefaultLength();
 		damage = dmg;
@@ -43,13 +50,11 @@ public class LaserBeam implements Projectile
 	}
 
     @Override
-	public void explode()
+	public void die()
     {
-		weapon.ship().panel().removeProjectile(this);
-		new Explosion(contact.x, contact.y, weapon.ship().panel());
+		new Explosion(stop.x, stop.y, weapon.ship().panel());
 	}
 
-    @Override
 	public void move()
     {
 		start.x += Const.BULLET_SPEED * Math.cos(theta);
@@ -61,27 +66,25 @@ public class LaserBeam implements Projectile
     @Override
 	public void update()
     {
-		if (weapon.ship().panel().contains(getX(), getY())) {
-			Ship ship = weapon.ship().panel().intersects(this);
-            boolean collision = ship != null;
-            boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
-			if (collision && validTarget) {
-                ship.hit(damage);
-                weapon.ship().target = ship;
-                explode();
-                return;
-			}
-			move();
+        Ship ship = weapon.ship().panel().intersects(this);
+        boolean collision = ship != null;
+        boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
+        if (collision && validTarget) {
+            weapon.ship().target = ship;
+            ship.hit(getDamage());
+            hit(getLife());
             return;
-		}
-        weapon.ship().panel().removeProjectile(this);
+        }
+        move();
 	}
 
     @Override
 	public void draw(Graphics g)
     {
-		g.setColor(Color.WHITE);
-		g.drawLine((int)start.x, (int)start.y, (int)stop.x, (int)stop.y);
+        g.setColor(Color.WHITE);
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(new BasicStroke(2));
+        g2.draw(new Line2D.Double(start.x, start.y, stop.x, stop.y));
 	}
 
     public int getDefaultSpeed() { return 15; }
@@ -91,40 +94,44 @@ public class LaserBeam implements Projectile
 	@Override public double getY() { return start.y; }
 	@Override public int getWidth() { return 1; }
 	@Override public int getHeight() { return 1; }
+    @Override public int getLife() { return life; }
+	@Override public double getDamage() { return damage; }
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override
-	public boolean intersects(Ship s)
+    public boolean isAlive()
     {
-		if (s.contains((int)start.x, (int)start.y)) {
-			contact = start;
-			return true;
-		} else if (s.contains((int)stop.x, (int)stop.y)) {
-			contact = stop;
-			return true;
-		}
-		return false;
+        return life > 0 && weapon.ship().panel().contains(getX(), getY());
+    }
+
+    @Override
+    public void hit(double damage)
+    {
+        if (isAlive()) {
+            life -= damage;
+            if (life <= 0) {
+                die();
+            }
+        }
+    }
+
+    @Override
+	public boolean intersects(Entity e)
+    {
+        if (!isAlive()) {
+            return false;
+        }
+        if (e instanceof MaskedEntity) {
+            Polygon tmp = ((MaskedEntity)e).getMask();
+            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
+            mask.translate((int)e.getX(), (int)e.getY());
+            return mask.intersects((int)start.x, (int)start.y, getWidth(), getHeight())
+                || mask.intersects((int)stop.x, (int)stop.y, getWidth(), getHeight());
+        }
+        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+        return boundingBox.intersects(start.x, start.y, getWidth(), getHeight())
+            || boundingBox.intersects(stop.x, stop.y, getWidth(), getHeight());
 	}
-
-    @Override
-    public boolean intersects(Projectile p)
-    {
-        System.out.println("LaserBeam.intersects not implemented yet");
-        return false;
-    }
-
-    @Override
-    public boolean contains(int x, int y)
-    {
-        System.out.println("LaserBeam.contains not implemented yet");
-        return false;
-    }
-
-    @Override public boolean contains(double x, double y)
-    {
-        System.out.println("LaserBeam.contains not implemented yet");
-        return false;
-    }
 
 	private void setLocation(double x, double y)
     {
