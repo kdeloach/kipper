@@ -27,7 +27,7 @@ public class Enterprise extends Ship
 		equipWeapon(new LaserGun(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
 		equipWeapon(new MineLauncher(getX(), getY(), getWidth() + 15, getHeight() / 2 + 4, this));
 		equipWeapon(new LightningGun(getX(), getY(), getWidth(), getHeight() / 2 + 6, this));
-		selectWeapon(0);
+		selectWeapon(1);
 
 		img = Util.instance.loadImage("/assets/enterprise2.gif");
 	}

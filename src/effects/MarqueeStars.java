@@ -49,7 +49,7 @@ public class MarqueeStars
     {
 		g.setColor(color);
 		for (int i = 0; i < stars.length; i++) {
-			g.drawOval((int)stars[i].x, (int)stars[i].y, size, size);
+			g.fillOval((int)stars[i].x, (int)stars[i].y, size, size);
         }
     }
 }

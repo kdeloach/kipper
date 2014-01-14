@@ -13,11 +13,9 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
 
-// LaserBeams are basically 2 points, whereas the first point is x,y
-// and the second point is x+length*cos(theta),y+length*sin(theta)
 public class LaserBeam extends Bullet
 {
-	private int length = 10;
+	private int length = 15;
 	protected Point2D.Double stop;
 
 	public LaserBeam(double x, double y, double theta, double dmg, Weapon w)
@@ -28,7 +26,9 @@ public class LaserBeam extends Bullet
     @Override
 	public void die()
     {
-		new Explosion(stop.x, stop.y, weapon.ship().panel());
+		new Explosion(stop.x + getWidth() / 2,
+                      stop.y + getHeight() / 2,
+                      weapon.ship().panel());
 	}
 
     @Override
@@ -39,19 +39,20 @@ public class LaserBeam extends Bullet
             stop = new Point2D.Double();
         }
 		stop.setLocation(
-            x + length * Math.cos(getTheta()),
-            y + length * Math.sin(getTheta()));
+            x + length * weapon.getSizeBonus() * Math.cos(getTheta()),
+            y + length * weapon.getSizeBonus() * Math.sin(getTheta()));
 	}
 
     @Override
 	public void draw(Graphics g)
     {
-         g.setColor(Color.WHITE);
-         g.drawLine((int)getX(), (int)getY(), (int)stop.x, (int)stop.y);
+        g.setColor(Color.WHITE);
+        Util.drawThickLine(g, getX(), getY(), stop.x, stop.y, getWidth());
 	}
 
-	@Override public int getWidth() { return 1; }
-	@Override public int getHeight() { return 1; }
+    // Width and height of each individual point on the beam, NOT the total width and height of the beam.
+	@Override public int getWidth() { return (int)(3 * weapon.getSizeBonus()); }
+	@Override public int getHeight() { return getWidth(); }
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override

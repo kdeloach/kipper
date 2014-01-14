@@ -11,20 +11,21 @@ import kipper.effects.*;
 
 public class SpaceMine extends Bullet
 {
-	// amount of steps to take before resting
-	private int steps;
+	private int ticks = 0;
 
 	public SpaceMine(double x, double y, double t, double dmg, Weapon w)
     {
 		super(x, y, t, dmg, w);
-		steps = getDefaultSteps();
 	}
 
     @Override
 	public void move()
     {
-		// we want to stop moving at some point
-		if (steps <= 0) {
+        super.move();
+
+		// Enable bullet collision
+        // TODO: Move bullet collision into main game loop
+		if (ticks > 40) {
             for (Projectile p : weapon.ship().panel().bulletList) {
                 if (p != this && p.intersects(this)) {
                     p.hit(p.getLife());
@@ -32,15 +33,9 @@ public class SpaceMine extends Bullet
                     break;
                 }
             }
-			return;
 		}
 
-		setLocation(
-			getX() + steps / Const.BULLET_SPEED * Math.cos(getTheta()),
-			getY() + steps / Const.BULLET_SPEED * Math.sin(getTheta())
-		);
-
-		steps--;
+		ticks++;
 	}
 
     @Override
@@ -64,9 +59,15 @@ public class SpaceMine extends Bullet
 		           getHeight() - off * 2);
 	}
 
-	public int getDefaultSteps() { return 40; }
+    // Halves speed every 500 MS
+    private int getDecelerator()
+    {
+        int n = (int)Math.floor(ticks / Util.msToTicks(100)) + 1;
+        return Math.min(n, 10);
+    }
 
 	@Override public int getWidth() { return 25; }
 	@Override public int getHeight() { return 25; }
+    @Override public double getSpeed() { return super.getSpeed() / getDecelerator(); }
     @Override public boolean collidesWithOwner() { return true; }
 }

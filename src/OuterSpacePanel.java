@@ -43,6 +43,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     int explosionId = 0;
     int playersId = 0;
 
+    private boolean paused = false;
+
 	public OuterSpacePanel(BottomPanel statusBar)
     {
         this.statusBar = statusBar;
@@ -57,8 +59,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		deleteProjectiles = new LinkedList<Projectile>();
 		deleteExplosions = new LinkedList<Explosion>();
 
-        starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 0, Color.GRAY);
-        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 2, Color.WHITE);
+        starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 2, Color.GRAY);
+        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 4, Color.WHITE);
 
 		player1 = new Enterprise(100, 100, this);
         addShip(player1);
@@ -75,6 +77,11 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         long lag = 0;
 
 		while (true) {
+
+            while (paused) {
+                previous = System.currentTimeMillis();
+            }
+
             long current = System.currentTimeMillis();
             long elapsed = current - previous;
             previous = current;
@@ -187,18 +194,13 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             }
 		}
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            starsBg.speed = 0.5;
-            starsFg.speed = 4;
+            paused = !paused;
         }
 		getPlayer().keyPressed(e);
 	}
 
 	public void keyReleased(KeyEvent e)
     {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            starsBg.speed = 0;
-            starsFg.speed = 0.5;
-        }
 		getPlayer().keyReleased(e);
 	}
 

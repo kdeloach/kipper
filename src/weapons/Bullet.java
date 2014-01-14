@@ -36,15 +36,15 @@ public class Bullet implements Entity, Projectile
     @Override
 	public void die()
     {
-		new Explosion(getX(), getY(), weapon.ship().panel());
+		new Explosion(getX() + getWidth() / 2,
+                      getY() + getHeight() / 2,
+                      weapon.ship().panel());
 	}
 
 	public void move()
     {
-        double bulletSpeed = weapon.getValue(Ability.SPEED, Const.BULLET_SPEED);
-		setLocation(
-			x + bulletSpeed * Math.cos(theta),
-			y + bulletSpeed * Math.sin(theta));
+		setLocation(getX() + getSpeed() * Math.cos(getTheta()),
+                    getY() + getSpeed() * Math.sin(getTheta()));
 	}
 
     @Override
@@ -78,6 +78,7 @@ public class Bullet implements Entity, Projectile
 
     public Color getColor() { return Color.YELLOW; }
     public double getTheta() { return theta; }
+    public double getSpeed() { return weapon.getValue(Ability.SPEED, Const.BULLET_SPEED); }
 
 	@Override public double getX() { return x; }
 	@Override public double getY() { return y; }
