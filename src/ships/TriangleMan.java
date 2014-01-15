@@ -43,7 +43,6 @@ public class TriangleMan extends Ship
     @Override
 	public void draw(Graphics g)
     {
-        super.draw(g);
         int px = (int)getX();
         int py = (int)getY();
 		g.setColor(Color.GREEN);
