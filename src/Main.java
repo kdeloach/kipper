@@ -1,22 +1,13 @@
 package kipper;
 
-import javax.swing.*;
 import javax.swing.JFrame;
-import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.BorderLayout;
 
-public class Execute
+public class Main
 {
 	public static void main(String[] argv)
     {
-		new Execute();
-	}
-
-	public Execute()
-    {
 		JFrame frame = new JFrame("kipper");
-
 		frame.getContentPane().setLayout(new BorderLayout());
 
         BottomPanel statusBar = new BottomPanel();

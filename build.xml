@@ -17,7 +17,7 @@
     </target>
 
     <target name="exec">
-        <java classpath="bin" classname="kipper.Execute" fork="true" />
+        <java classpath="bin" classname="kipper.Main" fork="true" />
     </target>
 
     <target name="jar" depends="build">
