@@ -18,9 +18,9 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
 import kipper.Util;
-import kipper.Ships.*;
+import kipper.ships.*;
 
-public class MaskMachine
+public class MaskTool
 {
     public static void main(String[] argv)
     {

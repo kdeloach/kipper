@@ -22,7 +22,7 @@
         <jar destfile="bin/kipper.jar" basedir="bin" manifest="src/manifest" />
     </target>
 
-    <target name="masker" depends="build">
-        <java classpath="bin" classname="kipper.tools.MaskMachine" fork="true" />
+    <target name="masktool" depends="build">
+        <java classpath="bin" classname="kipper.tools.MaskTool" fork="true" />
     </target>
 </project>
