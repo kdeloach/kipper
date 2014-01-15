@@ -4,15 +4,19 @@ import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import java.awt.Image;
 import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener ;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -26,29 +30,42 @@ public class MaskTool
     {
         JFrame frame;
         JButton btn;
+        JComboBox<Ship> cbxShips;
+        JPanel pane1, pane2;
         final JTextArea txt = new JTextArea("");
         final DrawPanel drawpanel = new DrawPanel(txt);
 
+
+        Ship[] shipsData = new Ship[] {
+            new Darkwing(0, 0, null),
+            new Enterprise(0, 0, null),
+            new TriangleMan(0, 0, null)};
+
 		frame = new JFrame("mask tool");
-		GridBagLayout layout = new GridBagLayout();
-		frame.setLayout(layout);
+		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
 
-		GridBagConstraints gc = new GridBagConstraints();
-		gc.gridwidth = 1;
-		gc.gridheight = 1;
-		gc.weightx = 0;
-		gc.weighty = 0;
+        pane1 = new JPanel();
+        pane2 = new JPanel();
 
-		gc.gridx = 0;
-		gc.gridy = 1;
+        cbxShips = new JComboBox<Ship>(shipsData);
+        cbxShips.addActionListener(
+			new ActionListener()
+            {
+				public void actionPerformed(ActionEvent e)
+                {
+                    JComboBox<Ship> cb = (JComboBox<Ship>)e.getSource();
+					drawpanel.loadShip((Ship)cb.getSelectedItem());
+				}
+			}
+        );
+        cbxShips.setSelectedIndex(0);
+        pane1.add(cbxShips);
+
 		txt.setRows(10);
 		txt.setColumns(50);
 		txt.setLineWrap(true);
-		layout.setConstraints(txt, gc);
-		frame.add(txt);
+		pane2.add(txt);
 
-		gc.gridx = 1;
-		gc.gridy = 1;
 		btn = new JButton("clear");
 		btn.addActionListener(
 			new ActionListener()
@@ -56,21 +73,15 @@ public class MaskTool
 				public void actionPerformed(ActionEvent evt)
                 {
 					txt.setText("");
-					drawpanel.mask = new Polygon();
-					drawpanel.repaint();
+					drawpanel.clearMask();
 				}
 			}
 		);
-		layout.setConstraints(btn, gc);
-		frame.add(btn);
+		pane2.add(btn);
 
-		gc.gridx = 0;
-		gc.gridy = 0;
-		gc.gridwidth = 2;
-		gc.weightx = 1;
-		gc.weighty = 1;
-		layout.setConstraints(drawpanel, gc);
+        frame.add(pane1);
 		frame.add(drawpanel);
+        frame.add(pane2);
 
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,62 +89,99 @@ public class MaskTool
 	}
 }
 
-class DrawPanel extends JPanel implements MouseListener
+class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
 {
-	Image img;
-	Polygon mask;
-	JTextArea txt;
-	int factor = 10;
-    int imgWidth, imgHeight;
+    private Ship ship;
+	private Polygon mask;
+	private JTextArea txt;
+	private int factor = 10;
+    private int imgX, imgY, imgWidth, imgHeight;
 
 	public DrawPanel(JTextArea t)
     {
 		this.txt = t;
 		addMouseListener(this);
-		mask = new Polygon();
-		img = Util.instance.loadImage("/assets/enterprise2.png");
+		addMouseWheelListener(this);
 	}
 
-    public int getWidth() { return 800; }
-    public int getHeight() { return 600; }
-	public Dimension getMinimumSize() { return new Dimension(getWidth(), getHeight()); }
-	public Dimension getPreferredSize() { return getMinimumSize(); }
+    public void loadShip(Ship ship)
+    {
+        this.ship = ship;
+        this.mask = ship.getDefaultMask();
+        txt.setText(getMaskCode());
+        repaint();
+    }
+
+    public void clearMask()
+    {
+        this.mask = new Polygon();
+        txt.setText(getMaskCode());
+        repaint();
+    }
 
 	public void paint(Graphics g)
     {
 		super.paint(g);
 
-        imgWidth = img.getWidth(this) * factor;
-        imgHeight = img.getHeight(this) * factor;
+        if (ship == null) {
+            return;
+        }
 
-		g.setColor(Color.GRAY);
+        imgWidth = ship.getImage().getWidth(this) * factor;
+        imgHeight = ship.getImage().getHeight(this) * factor;
+
+        imgX = getWidth() / 2 - imgWidth / 2;
+        imgY = getHeight() / 2 - imgHeight / 2;
+
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-        int imgX = getWidth() / 2 - imgWidth / 2;
-        int imgY = getHeight() / 2 - imgHeight / 2;
+		g.drawImage(ship.getImage(), imgX, imgY, imgWidth, imgHeight, this);
 
-        g.setColor(Color.GREEN);
-        g.drawRect(imgX, imgY, imgWidth, imgHeight);
-		g.drawImage(img, imgX, imgY, imgWidth, imgHeight, this);
+        // Display grid lines
+		// g.setColor(Color.BLACK);
+        // for (int y = imgY; y <= imgHeight + imgY; y += factor) {
+            // for (int x = imgX; x <= imgWidth + imgX; x += factor) {
+                // g.drawRect(x, y, factor, factor);
+            // }
+        // }
 
+        Polygon scaledMask = getScaledMask();
 		g.setColor(Color.GRAY);
-		g.drawPolygon(mask);
-		g.setColor(Color.BLACK);
-		for (int i = 0; i < mask.npoints; i++) {
-			g.drawOval(mask.xpoints[i] - 10, mask.ypoints[i] - 10, 20, 20);
+		g.drawPolygon(scaledMask);
+		g.setColor(Color.RED);
+		for (int i = 0; i < scaledMask.npoints; i++) {
+			g.fillRect(scaledMask.xpoints[i], scaledMask.ypoints[i], 6, 6);
         }
 	}
 
-	public void mousePressed(MouseEvent evt)
+    public Polygon getScaledMask()
     {
-		mask.addPoint(evt.getX(), evt.getY());
+        Polygon result = new Polygon();
+        for (int i = 0; i < mask.npoints; i++) {
+            int x = mask.xpoints[i] * factor + imgX;
+            int y = mask.ypoints[i] * factor + imgY;
+            result.addPoint(x, y);
+        }
+        return result;
+    }
+
+	public void mouseReleased(MouseEvent evt)
+    {
+        int x = (evt.getX() - imgX) / factor;
+        int y = (evt.getY() - imgY) / factor;
+		mask.addPoint(x, y);
+        txt.setText(getMaskCode());
+        repaint();
 	}
 
-	public void mouseReleased(MouseEvent e)
+    public void mouseWheelMoved(MouseWheelEvent e)
     {
-		txt.setText(getMaskCode());
-		repaint();
-	}
+        factor += -e.getWheelRotation();
+        factor = Math.max(factor, 1);
+        factor = Math.min(factor, 30);
+        repaint();
+    }
 
     String getMaskCode()
     {
@@ -143,16 +191,14 @@ class DrawPanel extends JPanel implements MouseListener
 
         List<Object> xz = new ArrayList<Object>();
 		for (int i = 0; i < mask.npoints; i++) {
-            int x = (mask.xpoints[i] - getWidth() / 2 + imgWidth / 2) / factor;
-			xz.add(x);
+			xz.add(mask.xpoints[i]);
 		}
 		sb.add(Util.join(xz, ", "));
         sb.add("}, new int[] {");
 
         xz = new ArrayList<Object>();
 		for (int i = 0; i < mask.npoints; i++) {
-            int y = (mask.ypoints[i] - getHeight() / 2 + imgHeight / 2) / factor;
-			xz.add(y);
+            xz.add(mask.ypoints[i]);
 		}
         sb.add(Util.join(xz, ", "));
         sb.add("}, ");
@@ -161,7 +207,13 @@ class DrawPanel extends JPanel implements MouseListener
         return Util.join(sb, "");
     }
 
+    public int getWidth() { return 800; }
+    public int getHeight() { return 600; }
+	public Dimension getMinimumSize() { return new Dimension(getWidth(), getHeight()); }
+	public Dimension getPreferredSize() { return getMinimumSize(); }
+
 	public void mouseExited(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseClicked(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {}
 }

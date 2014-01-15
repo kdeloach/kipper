@@ -244,6 +244,10 @@ public abstract class Ship implements
     {
         //g.setColor(Color.GREEN);
         //g.drawRect((int)getX(), (int)getY(), getWidth(), getHeight());
+		g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
+        if (getWeapon() != null) {
+            getWeapon().draw(g);
+        }
     }
 
 	abstract public int getDefaultOrientation();
@@ -279,6 +283,7 @@ public abstract class Ship implements
 	public Weapon getWeapon() { return wpn; }
 	public double percentHealth() { return (double)getLife() / ( double)maxHp(); }
 	public boolean isDisabled() { return disabledTicks > 0; }
+    public Image getImage() { throw new UnsupportedOperationException("Not implemented"); }
 
     /////////////
 

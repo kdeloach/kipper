@@ -8,7 +8,9 @@
     </target>
 
     <target name="build">
-        <javac srcdir="src" destdir="bin" debug="true" includeAntRuntime="false" />
+        <javac srcdir="src" destdir="bin" debug="true" includeAntRuntime="false">
+            <!--compilerarg value="-Xlint" /-->
+        </javac>
         <copy todir="bin/assets">
             <fileset dir="assets" />
         </copy>

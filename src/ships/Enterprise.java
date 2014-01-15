@@ -48,16 +48,6 @@ public class Enterprise extends Ship
         panel.respawnPlayer();
 	}
 
-    @Override
-	public void draw(Graphics g)
-    {
-        super.draw(g);
-		g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
-        if (getWeapon() != null) {
-            getWeapon().draw(g);
-        }
-	}
-
 	// ** generated with MaskMachine ** //
     @Override
 	public Polygon getDefaultMask()
@@ -76,6 +66,5 @@ public class Enterprise extends Ship
     @Override public int getDefaultOrientation() { return Const.LEFT_TO_RIGHT; }
 	@Override public int getDefaultSpeed() { return 30; }
 	@Override public int defaultMaxHp() { return 50; }
-
-    public Image getImage() { return img; }
+    @Override public Image getImage() { return img; }
 }
