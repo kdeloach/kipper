@@ -2,6 +2,7 @@ package kipper;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Iterator;
 
 public class Util
 {
@@ -23,7 +24,6 @@ public class Util
         return (int)((long)ms / OuterSpacePanel.FPS);
     }
 
-    // Note: Using Graphics2D to draw shape objects is SLOOOW
     // Source: http://www.rgagnon.com/javadetails/java-0260.html
     public static void drawThickLine(Graphics g, double x1, double y1, double x2, double y2, int thickness)
     {
@@ -52,5 +52,18 @@ public class Util
         xPoints[3] = (int)x2 + dx; yPoints[3] = (int)y2 + dy;
 
         g.fillPolygon(xPoints, yPoints, 4);
+    }
+
+    public static String join(Iterable<?> sb, String delim)
+    {
+        StringBuilder result = new StringBuilder();
+        Iterator<?> iter = sb.iterator();
+        while (iter.hasNext()) {
+            result.append(iter.next().toString());
+            if (iter.hasNext()) {
+                result.append(delim);
+            }
+        }
+        return result.toString();
     }
 }
