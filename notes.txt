@@ -181,3 +181,4 @@ January 14, 2014
 January 15, 2014
 - Created a new default ship and added perlin noise background
 - Started to replace oval projectiles with rectangles because the Java drawing library ovals look ugly. Using Graphics2D anti-aliasing is too slow.
+- Updated mask tool so image and mask data load directly from the Ship objects, and added option to adjust the zoom factor

@@ -35,11 +35,10 @@ public class MaskTool
         final JTextArea txt = new JTextArea("");
         final DrawPanel drawpanel = new DrawPanel(txt);
 
-
         Ship[] shipsData = new Ship[] {
             new Darkwing(0, 0, null),
-            new Enterprise(0, 0, null),
-            new TriangleMan(0, 0, null)};
+            new Enterprise(0, 0, null)
+        };
 
 		frame = new JFrame("mask tool");
 		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
@@ -151,7 +150,7 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
 		g.drawPolygon(scaledMask);
 		g.setColor(Color.RED);
 		for (int i = 0; i < scaledMask.npoints; i++) {
-			g.fillRect(scaledMask.xpoints[i], scaledMask.ypoints[i], 6, 6);
+			g.fillRect(scaledMask.xpoints[i]-3, scaledMask.ypoints[i]-3, 6, 6);
         }
 	}
 
