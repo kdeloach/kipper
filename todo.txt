@@ -9,11 +9,10 @@ HIGH
 - Create plasma weapon (different cooldown mechanism)
 
 MED
-- Weapon balancing
-- Create particle emitter tool
 - Particle trails on ship
 
 LOW
+- Weapon balancing
 - Move bolt splinter() into move() to create an animated lightning effect
 - Change foreground stars theta opposite of ship heading; How will this effect look?
 - LaserBeam should support N number of points; Right now only the start and end points are used for collision so it's possible that small projectiles can pass through the middle. Consider adding at least one additional point in the middle.
