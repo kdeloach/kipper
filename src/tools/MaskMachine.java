@@ -21,7 +21,7 @@ public class MaskMachine {
 	JButton btn;
 
 	public MaskMachine(){
-		frame = new JFrame("masking madness");
+		frame = new JFrame("mask tool");
 		GridBagLayout layout = new GridBagLayout();
 		frame.setLayout(layout);
 
@@ -82,7 +82,7 @@ class DrawPanel extends JPanel implements MouseListener {
 	public DrawPanel(JTextArea t){
 		addMouseListener(this);
 
-		img = Util.instance.loadImage("/assets/target.gif");
+		img = Util.instance.loadImage("/assets/enterprise2.png");
 		p=new Polygon();
 		this.txt=t;
 	}

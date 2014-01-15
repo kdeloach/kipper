@@ -21,6 +21,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     public static long FPS = 1000 / 60;
 
     BottomPanel statusBar;
+    LightNoiseBg noiseBg;
     MarqueeStars starsBg, starsFg;
 
 	public Ship player1;
@@ -59,10 +60,11 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		deleteProjectiles = new LinkedList<Projectile>();
 		deleteExplosions = new LinkedList<Explosion>();
 
-        starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 2, Color.GRAY);
-        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 4, Color.WHITE);
+        noiseBg = new LightNoiseBg(this);
+        starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 1, 3, 0x33, 0xFF);
+        starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 3, 6, 0xFF, 0xFF);
 
-		player1 = new Enterprise(100, 100, this);
+		player1 = new Darkwing(100, 100, this);
         addShip(player1);
 		changeScene(new DemoLevel(this));
 
@@ -99,6 +101,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     public void update()
     {
         statusBar.update(player1);
+        noiseBg.update();
         starsBg.update();
         starsFg.update();
         for (int i = 0; i < players.size(); i++) {
@@ -149,11 +152,16 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
 	public void paint(Graphics g)
     {
+        // SLOW
+        //Graphics2D g2 = (Graphics2D)g;
+        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 		// bg
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
         statusBar.repaint();
+        noiseBg.paint(g);
         starsBg.paint(g);
         starsFg.paint(g);
         for (int i = 0; i < players.size(); i++) {
@@ -291,7 +299,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
     public void respawnPlayer()
     {
-        player1 = new Enterprise(100, 100, this);
+        player1 = new Darkwing(100, 100, this);
         addShip(player1);
         changeScene(new DemoLevel(this));
     }

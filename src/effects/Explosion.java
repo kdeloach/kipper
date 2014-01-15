@@ -62,7 +62,7 @@ public class Explosion implements Entity
     {
 		g.setColor(getColor());
 		for (Particle d : shrap) {
-			g.drawOval((int)d.x, (int)d.y, getWidth(), getHeight());
+			g.fillRect((int)d.x, (int)d.y, getWidth(), getHeight());
 		}
 	}
 
@@ -81,8 +81,8 @@ public class Explosion implements Entity
 
 	@Override public double getX() { return x; }
 	@Override public double getY() { return y; }
-	@Override public int getWidth() { return 0; }
-	@Override public int getHeight() { return 0; }
+	@Override public int getWidth() { return 3; }
+	@Override public int getHeight() { return 3; }
     @Override public int getLife() { return 0; }
     @Override public boolean isAlive() { return ticks <= getDurationTicks(); }
     @Override public void hit(double damage) { throw new UnsupportedOperationException("Not implemented"); }

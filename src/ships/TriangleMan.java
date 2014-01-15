@@ -60,7 +60,7 @@ public class TriangleMan extends Ship
     @Override
 	public void think()
     {
-        //doSomethingSmart();
+        doSomethingSmart();
 	}
 
     private void doSomethingSmart()

@@ -163,20 +163,21 @@ March 05, 2007
 ?  Have a master list of all upgrades
 
 January 8, 2014
-- Found backup of kipper project on dioveht.com
+- Found backup of kipper project
 - Added ant build
 - Can now press P to open ship upgrade screen
-- BUG: cannot remove attributes once selected on ship upgrade screen
-- TODO: Improve game loop, put everything on single thread, fix weapon upgrade screen
 
 January 9, 2014
-- TODO: Rename Upgradeable to Upgradable
-- TODO: Delete WeaponListener (not worth the confusion)
-- TODO: Upgrade screen should attach upgrades to weapons directly instead of the entire ship. (rename ShipUpgradeScreen to WeaponUpgradeScreen)
-- TODO: Move bolt splinter() into move() to create an animated lightning effect
-- TODO: Mines should collide with everything
+- Added game loop and moved everything to a single thread
+- Remove pointless abstract classes (StandardWeapon, StandardShip, StandardBullet, etc.)
+- Deleted most of the listener classes (not worth the effort)
+- ShipUpgradeScreen now upgrades individual weapons instead of applying the same upgrades to all weapons
 
-January 10, 2014
-- BUG: Shooting SpaceMine with Laser will somehow orphan the mine (not alive but ignores collisions)
-- TODO: Consolidate die() and explode()
-- TODO: Update all entities to use double for X & Y values
+January 14, 2014
+- Tweaked rendering and fixed a lot of bugs
+- Added some new upgrades for projectile speed & size (not all weapons respect these yet)
+- Added pause option by pressing spacebar
+
+January 15, 2014
+- Created a new default ship and added perlin noise background
+- Started to replace oval projectiles with rectangles because the Java drawing library ovals look ugly. Using Graphics2D anti-aliasing is too slow.

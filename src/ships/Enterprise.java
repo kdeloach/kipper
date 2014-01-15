@@ -29,7 +29,7 @@ public class Enterprise extends Ship
 		equipWeapon(new LightningGun(getX(), getY(), getWidth(), getHeight() / 2 + 6, this));
 		selectWeapon(1);
 
-		img = Util.instance.loadImage("/assets/enterprise2.gif");
+		img = Util.instance.loadImage("/assets/enterprise.gif");
 	}
 
     @Override
@@ -52,7 +52,7 @@ public class Enterprise extends Ship
 	public void draw(Graphics g)
     {
         super.draw(g);
-		g.drawImage(img, (int)getX(), (int)getY(), osp);
+		g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
         if (getWeapon() != null) {
             getWeapon().draw(g);
         }
@@ -76,4 +76,6 @@ public class Enterprise extends Ship
     @Override public int getDefaultOrientation() { return Const.LEFT_TO_RIGHT; }
 	@Override public int getDefaultSpeed() { return 30; }
 	@Override public int defaultMaxHp() { return 50; }
+
+    public Image getImage() { return img; }
 }
