@@ -17,4 +17,5 @@ LOW
 - Change foreground stars theta opposite of ship heading; How will this effect look?
 - LaserBeam should support N number of points; Right now only the start and end points are used for collision so it's possible that small projectiles can pass through the middle. Consider adding at least one additional point in the middle.
 - Update mask tool to assign weapon attach point
-
+- Update mask tool to work with entities that have no image (TriangleMan)
+- Should bullet size be a negative aspect of the damage upgrade?

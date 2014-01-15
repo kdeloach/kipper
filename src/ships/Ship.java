@@ -38,23 +38,6 @@ public abstract class Ship implements
 	// amount of damage taken
 	protected double dmg;
 
-	// speed of ship
-	protected int speed;
-
-	private int exp;
-
-	// amount of slots
-	private int slots = 6;
-
-	// maximum health
-	private int maxhp;
-
-	// direction ship face
-	private int orientation;
-
-	// friend or foe?
-	private int team;
-
 	// formality
 	protected boolean underControl = false;
 
@@ -75,12 +58,6 @@ public abstract class Ship implements
 	// last ship hit
 	public Ship target = null;
 
-	// all the upgrades picked up from battle go here
-	private ArrayList<Ability> inventory = new ArrayList<Ability>();
-
-	// mask
-	private Polygon mask;
-
     private EntityWobble wobble;
 
 	////////////
@@ -92,16 +69,7 @@ public abstract class Ship implements
 	public Ship(double x, double y, OuterSpacePanel c)
     {
 		this.osp = c;
-
-		// defaults
-		mask = getDefaultMask();
-		orientation = getDefaultOrientation();
-		speed = getDefaultSpeed();
-		maxhp = defaultMaxHp();
-		team = defaultTeam();
-
         wobble = new EntityWobble();
-
 		setLocation(x, y);
 		setDestination(getX(), getY());
 	}
@@ -141,9 +109,7 @@ public abstract class Ship implements
 
         setLocation(mx, my);
 
-        //if (this instanceof Enterprise) {
-            wobble.move(this);
-        //}
+        wobble.move(this);
 
         if (getWeapon() != null) {
             getWeapon().setLocation(x, y);
@@ -176,11 +142,10 @@ public abstract class Ship implements
         destination = new Point((int)mx, (int)my);
 	}
 
-	// Here is where you can put AI for a NPC
-	// think() is called every "round"
+	// NPC logic goes here
 	public void think() {}
 
-	// NPC's ONLY Please; hack(ish)
+	// Used by NPC's to simulate mouse click
 	public void targetLocation(int x, int y)
     {
 		setMousePressedLocation(x, y);
@@ -228,8 +193,8 @@ public abstract class Ship implements
 	}
 
 	public double heading() {
-		// 0 or 1 default
-		return Math.toRadians(orientation * 180);
+		// 0 or 1
+		return Math.toRadians(getOrientation() * 180);
 	}
 
 	public OuterSpacePanel panel() { return osp; }
@@ -250,11 +215,10 @@ public abstract class Ship implements
         }
     }
 
-	abstract public int getDefaultOrientation();
-	abstract public int defaultMaxHp();
-	abstract public int defaultTeam();
-	abstract public int getDefaultSpeed();
-	abstract public Polygon getDefaultMask();
+	abstract public int getOrientation();
+	abstract public int getMaxHp();
+    abstract public int getSpeed();
+	abstract public Polygon getMask();
 	abstract public String getName();
 
 	/////////////
@@ -269,19 +233,14 @@ public abstract class Ship implements
 
 	@Override public double getX() { return x; }
 	@Override public double getY() { return y; }
-	@Override public boolean isAlive() { return dmg < maxHp(); }
-	@Override public int getLife() { return maxHp() - (int)dmg; }
-    @Override public Polygon getMask() { return mask; }
+	@Override public boolean isAlive() { return dmg < getMaxHp(); }
+	@Override public int getLife() { return getMaxHp() - (int)dmg; }
 
-	public int getSlotsAmt() { return slots; }
-	public int getTeam() { return team; }
+	public int getSlotsAmt() { return 6; }
 	public Ship getTarget() { return target; }
 	public Point getDesination() { return destination; }
-	public int getOrientation() { return orientation; }
-	public int maxHp() { return maxhp; }
-	public int getSpeed() { return speed; }
 	public Weapon getWeapon() { return wpn; }
-	public double percentHealth() { return (double)getLife() / ( double)maxHp(); }
+	public double percentHealth() { return (double)getLife() / ( double)getMaxHp(); }
 	public boolean isDisabled() { return disabledTicks > 0; }
     public Image getImage() { throw new UnsupportedOperationException("Not implemented"); }
 

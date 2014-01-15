@@ -14,7 +14,7 @@ public class LightNoiseBg
     public LightNoiseBg(OuterSpacePanel osp)
     {
         this.osp = osp;
-        // XXX: No idea why I should need this but otherwise the BufferedImage comes up short.
+        // XXX: No idea why I should need this offset but otherwise the BufferedImage comes up short.
         img = new BufferedImage(OuterSpacePanel.WIDTH + 10, OuterSpacePanel.HEIGHT + 10, BufferedImage.TYPE_INT_RGB);
         for (int y = 0; y < img.getHeight(); y++) {
             for (int x = 0; x < img.getWidth(); x++) {

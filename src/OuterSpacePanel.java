@@ -283,8 +283,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	public Ship intersects(Ship r)
     {
         for (Ship p : players) {
-            // NOTE: a ship might want to know if an ally hits it, maybe to push him away?
-            if (p != r && p.getTeam() != r.getTeam() && p.intersects(r)) {
+            if (p != r && p.intersects(r)) {
                 return p;
             }
         }
