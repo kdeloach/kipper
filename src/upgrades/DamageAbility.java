@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-// Increase weapon damage
 public class DamageAbility extends Ability
 {
 	double percent = 1.25;

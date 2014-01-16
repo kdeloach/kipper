@@ -37,8 +37,6 @@ public abstract class Weapon implements Upgradable
 		damage = getDefaultDamage();
 	}
 
-	////////////
-
     abstract public int getWidth();
     abstract public int getHeight();
 	abstract public void fireProjectile(double heading);
@@ -46,8 +44,6 @@ public abstract class Weapon implements Upgradable
 	abstract public Image getIcon();
 	abstract public int getDefaultCooldown();
 	abstract public int getDefaultDamage();
-
-	////////////
 
     public double getX() { return x; }
     public double getY() { return y; }
@@ -94,9 +90,6 @@ public abstract class Weapon implements Upgradable
 		}
 	}
 
-	////////////
-	// Setters
-
 	public void setLocation(double x, double y)
     {
 		this.x = x + rel.x;
@@ -132,14 +125,11 @@ public abstract class Weapon implements Upgradable
         if (index >= 0 && index < upgrades.size()) {
             Ability a = upgrades.get(index);
             if (a != null) {
-                a.destroy();
                 upgrades.remove(index);
             }
         }
     }
 
-	// all attributes are int's (basically)
-	// here's the chance to alter speed,damage,spread,cooldown,enemy damage,heading(?),etc
 	protected double getValue(String attr, double n)
     {
 		for (Ability a : upgrades) {

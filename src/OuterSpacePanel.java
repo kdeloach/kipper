@@ -29,10 +29,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	// current scene
 	Scene scene;
 
-    // Never call clear() on these! They need to be unregistered first.
 	private ArrayList<Ship> players;
-    // XXX: Expose this to allow collisions with other bullets for spacemine
-	public ArrayList<Projectile> bulletList;
+	private ArrayList<Projectile> bulletList;
 	private ArrayList<Explosion> explosionList;
 
     private Queue<Ship> deleteShips;
@@ -40,7 +38,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     private Queue<Explosion> deleteExplosions;
 
     private boolean paused = false;
-
     private int totalFrames = 0;
     private long totalDurationMs = 0;
 

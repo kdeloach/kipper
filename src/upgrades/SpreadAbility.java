@@ -19,7 +19,6 @@ public class SpreadAbility extends Ability
 		if (name == Ability.SPREAD) {
 			return value + amount;
         } else if (name == Ability.COOLDOWN) {
-            // balancing act - you can fire more bullets at the price of slower firerate
 			return value + 10;
         }
 		return value;

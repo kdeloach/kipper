@@ -16,8 +16,6 @@ public abstract class Ability
 	public static final String SPEED = "SPEED";
 
     public void weaponFired(Weapon w) {}
-    // Note: Not really needed anymore
-    public void destroy() {}
 
     // usage ex: when getSpeed() is called this function gets called first with argument "speed" and is added to weapon speed/cooldown
 	public double getValue(Upgradable sender, String name, double oldvalue)

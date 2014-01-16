@@ -14,8 +14,6 @@ public class Bullet implements Entity, Projectile
 {
 	private int life;
 	private double x, y, theta, damage;
-
-	// master panel
 	protected Weapon weapon;
 
 	public Bullet(double x, double y, double theta, double dmg, Weapon w)

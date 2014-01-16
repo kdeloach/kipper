@@ -119,7 +119,6 @@ public class Bolt implements MaskedEntity, Projectile
     public void hit(double damage)
     {
         if (isAlive()) {
-            // Life ticks and damage may not exactly be compatible types but we'll ignore this for now
             life -= damage;
             if (life <= 0) {
                 die();

@@ -7,7 +7,7 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.weapons.*;
 
-// By default, projectiles may travel only in the orientation of the firing ship (0 or PI)
+// By default, projectile direction is same as orientation of the firing ship (0 or PI)
 // but with this upgrade projectiles can travel in any direction.
 public class RotateAbility extends Ability
 {
