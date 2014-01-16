@@ -19,4 +19,4 @@ Kipper is a 2D space shooter video game written in Java.
 
 To create Polygon masks used for collision detection.
 
-![](https://github.com/kdeloach/kipper/raw/master/images/status 20140114.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/masktool 20140116.png)
