@@ -7,7 +7,8 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.weapons.*;
 
-// Allows weapons to fire at any angle instead of fixed on X axis
+// By default, projectiles may travel only in the orientation of the firing ship (0 or PI)
+// but with this upgrade projectiles can travel in any direction.
 public class RotateAbility extends Ability
 {
 	public RotateAbility()
@@ -25,9 +26,13 @@ public class RotateAbility extends Ability
 
 	private double heading(Ship ship)
     {
-		double x = ship.mousePressed.x - (ship.getX() + ship.getWidth());
-		double y = ship.mousePressed.y - (ship.getY() + ship.getHeight() / 2);
-		return Math.PI * ship.getOrientation() + Math.atan(y / x);
+        // TODO: Replace x1 and y1 with weapon endpoint (initial bullet position)
+        // Note: This is the hard-coded position of the Triangle Man weapon
+        double x1 = ship.getX();
+        double y1 = ship.getY() + ship.getHeight() / 2;
+        double x2 = ship.mousePressed.x;
+        double y2 = ship.mousePressed.y;
+		return Math.atan2(y2 - y1, x2 - x1);
 	}
 
 	@Override public String getTitle() { return "Rotate"; }
