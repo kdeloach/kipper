@@ -9,12 +9,11 @@ import java.awt.BasicStroke;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Ellipse2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
 
-public class LaserBeam extends Bullet implements EllipseMaskedEntity
+public class LaserBeam extends Bullet implements MaskedEntity
 {
 	private int length = 15;
 	protected Point2D.Double stop;
@@ -49,20 +48,22 @@ public class LaserBeam extends Bullet implements EllipseMaskedEntity
     {
         g.setColor(Color.WHITE);
         Util.drawThickLine(g, getX(), getY(), stop.x, stop.y, getWidth());
-        Util.drawMask(g, this);
 	}
 
     // Width and height of each individual point on the beam, NOT the total width and height of the beam.
 	@Override public int getWidth() { return (int)(3 * weapon.getSizeBonus()); }
 	@Override public int getHeight() { return getWidth(); }
     @Override public boolean collidesWithOwner() { return false; }
+    @Override public boolean collidesWithProjectiles() { return false; }
+    @Override public Weapon getOwner() { return weapon; }
 
     @Override
-    public Ellipse2D.Double[] getEllipseMask()
+    public Rectangle2D.Double[] getRectMask()
     {
-        return new Ellipse2D.Double[] {
-            new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight()),
-            new Ellipse2D.Double(stop.x, stop.y, getWidth(), getHeight())
+        double r = getWidth() / 2;
+        return new Rectangle2D.Double[] {
+            new Rectangle2D.Double(getX() - r, getY() - r, getWidth(), getHeight()),
+            new Rectangle2D.Double(stop.x - r, stop.y - r, getWidth(), getHeight())
         };
     }
 }

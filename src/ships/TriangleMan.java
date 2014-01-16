@@ -14,7 +14,7 @@ public class TriangleMan extends Ship
 {
 	public TriangleMan(double x, double y, OuterSpacePanel c)
     {
-		super(x, y, c);
+		super(x, y, 2, c);
 
         setDestination(getX() + getWidth() / 2, getY() + getHeight() / 2);
 
@@ -67,7 +67,7 @@ public class TriangleMan extends Ship
     @Override
 	public void think()
     {
-        doSomethingSmart();
+        //doSomethingSmart();
 	}
 
     private void doSomethingSmart()
@@ -92,7 +92,7 @@ public class TriangleMan extends Ship
 	@Override public int getWidth() { return 75; }
 	@Override public int getHeight() { return 75; }
 	@Override public String getName() { return "Triangle Man"; }
-	@Override public int getOrientation() { return Const.RIGHT_TO_LEFT; }
+	@Override public int getOrientation() { return Const.FACE_LEFT; }
 	@Override public int getMaxHp() { return 30; }
 	@Override public int getSpeed() { return 5; }
 

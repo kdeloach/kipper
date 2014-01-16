@@ -41,6 +41,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
     private boolean paused = false;
 
+    private int totalFrames = 0;
+    private long totalDurationMs = 0;
+
 	public OuterSpacePanel(BottomPanel statusBar)
     {
         this.statusBar = statusBar;
@@ -68,6 +71,7 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
     // Author: Bob Nystrom
     // Source: http://gameprogrammingpatterns.com/game-loop.html
+    @Override
 	public void run()
     {
         long previous = System.currentTimeMillis();
@@ -83,10 +87,12 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             long elapsed = current - previous;
             previous = current;
             lag += elapsed;
+            totalDurationMs += elapsed;
 
             while (lag >= FPS) {
                 update();
                 lag -= FPS;
+                totalFrames++;
             }
 
 			repaint();
@@ -99,6 +105,13 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         noiseBg.update();
         starsBg.update();
         starsFg.update();
+        updateEntities();
+        performCollisions();
+        cleanup();
+    }
+
+    private void updateEntities()
+    {
         for (int i = 0; i < players.size(); i++) {
             Ship p = players.get(i);
             if (p.isAlive()) {
@@ -123,7 +136,48 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
                 removeExplosion(p);
             }
         }
-        cleanup();
+    }
+
+    private void performCollisions()
+    {
+        // Collide ships with projectiles
+        for (int i = 0; i < players.size(); i++) {
+            Ship player = players.get(i);
+            for (int k = 0; k < bulletList.size(); k++) {
+                Projectile bullet = bulletList.get(k);
+                if (Util.intersects(player, bullet)) {
+                    boolean canCollide = player != bullet.getOwner().ship() || bullet.collidesWithOwner();
+                    if (canCollide) {
+                        bullet.getOwner().ship().target = player;
+                        player.hit(bullet.getDamage());
+                        bullet.hit(bullet.getLife());
+                    }
+                }
+            }
+        }
+        // Collide ships
+        for (int i = players.size() - 1; i >= 0; i--) {
+            Ship p1 = players.get(i);
+            for (int k = 0; k < i && p1.isAlive(); k++) {
+                Ship p2 = players.get(k);
+                if (Util.intersects(p1, p2)) {
+                    p1.collide(p2);
+                }
+            }
+        }
+        // Collide projectiles
+        for (int i = bulletList.size() - 1; i >= 0; i--) {
+            Projectile p1 = bulletList.get(i);
+            for (int k = 0; k < i && p1.isAlive(); k++) {
+                Projectile p2 = bulletList.get(k);
+                if (p1.collidesWithProjectiles() || p2.collidesWithProjectiles()) {
+                    if (Util.intersects(p1, p2)) {
+                        p1.hit(p1.getLife());
+                        p2.hit(p2.getLife());
+                    }
+                }
+            }
+        }
     }
 
     protected void cleanup()
@@ -169,6 +223,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             explosionList.get(i).draw(g);
         }
 		scene.paint(g);
+
+        //double fps = (double)totalFrames / totalDurationMs * 1000.0;
+        //g.setColor(Color.WHITE);
+        //g.drawString("FPS: " + fps, 0, 10);
 	}
 
     void changeScene(Scene s)
@@ -183,11 +241,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 	/////////////////////////
 	// Keyboard Controls
 
-	public void keyTyped(KeyEvent e)
-    {
-		getPlayer().keyTyped(e);
-	}
+	@Override public void keyTyped(KeyEvent e) { getPlayer().keyTyped(e); }
+	@Override public void keyReleased(KeyEvent e) { getPlayer().keyReleased(e); }
 
+    @Override
 	public void keyPressed(KeyEvent e)
     {
 		if (e.getKeyCode() == KeyEvent.VK_Q) {
@@ -203,10 +260,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		getPlayer().keyPressed(e);
 	}
 
-	public void keyReleased(KeyEvent e)
-    {
-		getPlayer().keyReleased(e);
-	}
 
 	////////////////////////
 
@@ -265,16 +318,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         }
         return result;
     }
-
-	public Ship intersects(Entity e)
-    {
-        for (Ship p : players) {
-            if (p != e && Util.intersects(p, e)) {
-                return p;
-            }
-        }
-		return null;
-	}
 
 	///
 

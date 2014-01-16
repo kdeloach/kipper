@@ -12,6 +12,7 @@ import kipper.effects.*;
 public class SpaceMine extends Bullet
 {
 	private int ticks = 0;
+    private boolean collide = false;
 
 	public SpaceMine(double x, double y, double t, double dmg, Weapon w)
     {
@@ -22,19 +23,9 @@ public class SpaceMine extends Bullet
 	public void move()
     {
         super.move();
-
-		// Enable bullet collision
-        // TODO: Move bullet collision into main game loop
 		if (ticks > 40) {
-            for (Projectile p : weapon.ship().panel().bulletList) {
-                if (p != this && p.intersects(this)) {
-                    p.hit(p.getLife());
-                    hit(getLife());
-                    break;
-                }
-            }
+            collide = true;
 		}
-
 		ticks++;
 	}
 
@@ -70,4 +61,6 @@ public class SpaceMine extends Bullet
 	@Override public int getHeight() { return 25; }
     @Override public double getSpeed() { return super.getSpeed() / getDecelerator(); }
     @Override public boolean collidesWithOwner() { return true; }
+    @Override public boolean collidesWithProjectiles() { return collide; }
+    @Override public Weapon getOwner() { return weapon; }
 }

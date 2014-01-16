@@ -12,7 +12,6 @@ public class Main
 
         BottomPanel statusBar = new BottomPanel();
 		OuterSpacePanel gamePanel = new OuterSpacePanel(statusBar);
-
 		frame.addKeyListener(gamePanel);
 		frame.getContentPane().add(gamePanel);
 		frame.getContentPane().add(statusBar, BorderLayout.NORTH);

@@ -19,7 +19,7 @@ import kipper.effects.*;
 //   and the second point is x+length*cos(theta),y+length*sin(theta)
 
 // TODO: Extend from bullet...
-public class Bolt implements Entity, Projectile
+public class Bolt implements MaskedEntity, Projectile
 {
 	// length is the size of 1 segment of the largest tier branches
 	private int branches, length, life, lifespan, thickness;
@@ -84,17 +84,15 @@ public class Bolt implements Entity, Projectile
     @Override
 	public void update()
     {
-        Ship ship = weapon.ship().panel().intersects(this);
-        boolean collision = ship != null;
-        boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
-        if (collision && validTarget) {
-            weapon.ship().target = ship;
-            ship.hit(getDamage());
-            hit(getLife());
-            return;
-        }
         life--;
 	}
+
+    @Override
+    public void collide(Entity e)
+    {
+        e.hit(getDamage());
+        hit(getLife());
+    }
 
     @Override
 	public void die()
@@ -145,15 +143,12 @@ public class Bolt implements Entity, Projectile
 	@Override public int getWidth() { return 1; }
 	@Override public int getHeight() { return 1; }
     @Override public int getLife() { return life; }
+    @Override public int getTeam() { return weapon.ship().getTeam(); }
 	@Override public boolean isAlive() { return life > 0; }
 	@Override public double getDamage() { return damage; }
     @Override public boolean collidesWithOwner() { return false; }
-
-    @Override
-	public boolean intersects(Entity e)
-    {
-        return Util.boltIntersects(this, e);
-	}
+    @Override public boolean collidesWithProjectiles() { return false; }
+    @Override public Weapon getOwner() { return weapon; }
 
     @Override
 	public void setLocation(double x, double y)
@@ -161,6 +156,15 @@ public class Bolt implements Entity, Projectile
 		start.setLocation(x, y);
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
+
+    @Override
+    public Rectangle2D.Double[] getRectMask()
+    {
+        return new Rectangle2D.Double[] {
+            new Rectangle2D.Double(startX(), startY(), getWidth(), getHeight()),
+            new Rectangle2D.Double(stopX(), stopY(), getWidth(), getHeight())
+        };
+    }
 
     public double startX() { return start.x + weapon.ship().x; }
     public double startY() { return start.y + weapon.ship().y; }

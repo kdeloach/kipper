@@ -10,11 +10,13 @@ public interface Entity
     public void setLocation(double x, double y);
 	public int getWidth();
 	public int getHeight();
+    public int getTeam();
     public int getLife();
     public boolean isAlive();
+    // It is required that hit method calls die() when damage inflicted is greater than getLife()
     public void hit(double damage);
-	public boolean intersects(Entity entity);
     public void update();
 	public void draw(Graphics g);
+    public void collide(Entity e);
     public void die();
 }

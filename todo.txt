@@ -1,5 +1,4 @@
 HIGH
-- Move all collision to main game loop
 - Create particle emitter
 - Create weapon graphics and fix weapon relative offsets
 - Lightning and spacemine should respect bullet size & bullet speed upgrades

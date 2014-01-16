@@ -57,17 +57,15 @@ public class Bullet implements Entity, Projectile
     @Override
 	public void update()
     {
-        Ship ship = weapon.ship().panel().intersects(this);
-        boolean collision = ship != null;
-        boolean validTarget = collision && (ship != weapon.ship() || collidesWithOwner());
-        if (collision && validTarget) {
-            weapon.ship().target = ship;
-            ship.hit(getDamage());
-            hit(getLife());
-            return;
-        }
         move();
 	}
+
+    @Override
+    public void collide(Entity e)
+    {
+        e.hit(getDamage());
+        hit(getLife());
+    }
 
     @Override
 	public void draw(Graphics g)
@@ -85,8 +83,11 @@ public class Bullet implements Entity, Projectile
 	@Override public int getWidth() { return (int)(6 * weapon.getSizeBonus()); }
 	@Override public int getHeight() { return (int)(6 * weapon.getSizeBonus()); }
     @Override public int getLife() { return life; }
+    @Override public int getTeam() { return weapon.ship().getTeam(); }
     @Override public double getDamage() { return damage; }
     @Override public boolean collidesWithOwner() { return false; }
+    @Override public boolean collidesWithProjectiles() { return false; }
+    @Override public Weapon getOwner() { return weapon; }
 
 	@Override
     public boolean isAlive()
@@ -104,10 +105,4 @@ public class Bullet implements Entity, Projectile
             }
         }
     }
-
-    @Override
-	public boolean intersects(Entity e)
-    {
-        return Util.bulletIntersects(this, e);
-	}
 }

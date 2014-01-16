@@ -2,7 +2,7 @@ package kipper;
 
 import java.awt.*;
 import java.awt.Graphics;
-import java.awt.geom.Ellipse2D;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.Iterator;
@@ -75,87 +75,54 @@ public class Util
     public static void drawMask(Graphics g, Entity e)
     {
         g.setColor(Color.GREEN);
+        if (e instanceof MaskedEntity) {
+            Rectangle2D.Double[] rz = ((MaskedEntity)e).getRectMask();
+            for (int i = 0; i < rz.length; i++) {
+                g.drawRect((int)rz[i].x,
+                           (int)rz[i].y,
+                           (int)rz[i].width,
+                           (int)rz[i].height);
+            }
+        }
         if (e instanceof PolygonMaskedEntity) {
             Polygon p = ((PolygonMaskedEntity)e).getPolygonMask();
             p.translate((int)e.getX(), (int)e.getY());
             g.drawPolygon(p);
         }
-        if (e instanceof EllipseMaskedEntity) {
-            Ellipse2D.Double[] ez = ((EllipseMaskedEntity)e).getEllipseMask();
-            for (int i = 0; i < ez.length; i++) {
-                g.drawOval((int)ez[i].getX(),
-                           (int)ez[i].getY(),
-                           (int)ez[i].getWidth(),
-                           (int)ez[i].getHeight());
-            }
-        }
     }
 
-    public static boolean intersects(Entity a, Entity b)
+    public static boolean intersects(PolygonMaskedEntity a, Entity b)
     {
-        if (a instanceof Ship) {
-            return shipIntersects((Ship)a, b);
-        } else if (a instanceof Bolt) {
-            return boltIntersects((Bolt)a, b);
-        } else if (a instanceof Bullet) {
-            return bulletIntersects((Bullet)a, b);
-        }
-        Rectangle2D.Double r1 = new Rectangle2D.Double(a.getX(), a.getY(), a.getWidth(), a.getHeight());
-        Rectangle2D.Double r2 = new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight());
-        return r1.intersects(r2);
-    }
-
-	public static boolean shipIntersects(Ship s, Entity e)
-    {
-        if (!s.isAlive()) {
+        if (a.equals(b) || !a.isAlive() || !b.isAlive()) {
             return false;
         }
-        Polygon tmp = s.getPolygonMask();
-        Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-        mask.translate((int)s.getX(), (int)s.getY());
-        if (e instanceof PolygonMaskedEntity) {
-            tmp = ((PolygonMaskedEntity)e).getPolygonMask();
-            Polygon otherMask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-            otherMask.translate((int)e.getX(), (int)e.getY());
-            for (int i = 0; i < mask.npoints; i++) {
-                if (otherMask.contains(mask.xpoints[i], mask.ypoints[i])) {
+        Polygon aMask = a.getPolygonMask();
+        aMask.translate((int)a.getX(), (int)a.getY());
+        if (b instanceof PolygonMaskedEntity) {
+            Polygon bMask = ((PolygonMaskedEntity)b).getPolygonMask();
+            bMask.translate((int)b.getX(), (int)b.getY());
+            Area area = new Area(aMask);
+            area.intersect(new Area(bMask));
+            return !area.isEmpty();
+        } else if (b instanceof MaskedEntity) {
+            Rectangle2D.Double[] rz = ((MaskedEntity)b).getRectMask();
+            for (int i = 0; i < rz.length; i++) {
+                if (aMask.intersects(rz[i])) {
                     return true;
                 }
             }
             return false;
         }
-        return mask.intersects(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-	}
+        return aMask.intersects(new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight()));
+    }
 
-	public static boolean boltIntersects(Bolt b, Entity e)
+    public static boolean intersects(Projectile a, Projectile b)
     {
-        if (!b.isAlive()) {
+        if (a.equals(b) || !a.isAlive() || !b.isAlive()) {
             return false;
         }
-        if (e instanceof PolygonMaskedEntity) {
-            Polygon tmp = ((PolygonMaskedEntity)e).getPolygonMask();
-            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-            mask.translate((int)e.getX(), (int)e.getY());
-            return mask.intersects((int)b.startX(), (int)b.startY(), b.getWidth(), b.getHeight())
-                || mask.intersects((int)b.stopX(), (int)b.stopY(), b.getWidth(), b.getHeight());
-        }
-        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return boundingBox.intersects(b.startX(), b.startY(), b.getWidth(), b.getHeight())
-            || boundingBox.intersects(b.stopX(), b.stopY(), b.getWidth(), b.getHeight());
-	}
-
-	public static boolean bulletIntersects(Bullet b, Entity e)
-    {
-        if (!b.isAlive()) {
-            return false;
-        }
-        if (e instanceof PolygonMaskedEntity) {
-            Polygon tmp = ((PolygonMaskedEntity)e).getPolygonMask();
-            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-            mask.translate((int)e.getX(), (int)e.getY());
-            return mask.intersects(b.getX(), b.getY(), b.getWidth(), b.getHeight());
-        }
-        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return boundingBox.intersects(b.getX(), b.getY(), b.getWidth(), b.getHeight());
-	}
+        Rectangle2D.Double r1 = new Rectangle2D.Double(a.getX(), a.getY(), a.getWidth(), a.getHeight());
+        Rectangle2D.Double r2 = new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight());
+        return r1.intersects(r2);
+    }
 }

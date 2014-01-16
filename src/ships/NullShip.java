@@ -20,7 +20,5 @@ public class NullShip extends Ship
 	@Override public int getSpeed() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public Polygon getPolygonMask() { throw new UnsupportedOperationException("Not implemented"); }
 	@Override public String getName() { throw new UnsupportedOperationException("Not implemented"); }
-
     @Override public void die() { throw new UnsupportedOperationException("Not implemented"); }
-	@Override public boolean intersects(Entity e) { throw new UnsupportedOperationException("Not implemented"); }
 }

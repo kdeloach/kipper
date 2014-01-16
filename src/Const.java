@@ -5,8 +5,8 @@ public class Const
 	public static final int BULLET_SPEED = 5;
 
 	// orientation
-	public static final int RIGHT_TO_LEFT = 1;
-	public static final int LEFT_TO_RIGHT = 0;
+	public static final int FACE_LEFT = 1;
+	public static final int FACE_RIGHT = 0;
 
 	// upgrades
 	public static final int COOLDOWN  = 0;

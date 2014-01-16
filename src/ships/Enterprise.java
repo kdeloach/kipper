@@ -18,7 +18,7 @@ public class Enterprise extends Ship
 
 	public Enterprise(int x, int y, OuterSpacePanel c)
     {
-		super(x, y, c);
+		super(x, y, 1, c);
         panel = c;
 
 		equipWeapon(new Shooter(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
@@ -56,7 +56,7 @@ public class Enterprise extends Ship
 	@Override public int getWidth() { return 141; }
 	@Override public int getHeight() { return 52; }
 	@Override public String getName() { return "ENTERPRISE";}
-    @Override public int getOrientation() { return Const.LEFT_TO_RIGHT; }
+    @Override public int getOrientation() { return Const.FACE_RIGHT; }
 	@Override public int getSpeed() { return 30; }
 	@Override public int getMaxHp() { return 50; }
     @Override public Image getImage() { return img; }

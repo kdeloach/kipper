@@ -14,6 +14,7 @@ public abstract class Ship implements
     ImageEntity, PolygonMaskedEntity, Controllable, Upgradable,
     MouseListener, MouseMotionListener, KeyListener
 {
+    public int team;
 	public double x, y;
 
 	// amount of damage taken
@@ -35,14 +36,16 @@ public abstract class Ship implements
 	public Ship target = null;
 
     private EntityWobble wobble;
+    private boolean isShiftDown = false;
 
     public Ship()
     {
     }
 
-	public Ship(double x, double y, OuterSpacePanel c)
+	public Ship(double x, double y, int team, OuterSpacePanel c)
     {
 		this.osp = c;
+        this.team = team;
         wobble = new EntityWobble();
 		setLocation(x, y);
 		setDestination(getX(), getY());
@@ -51,6 +54,9 @@ public abstract class Ship implements
     @Override
     public void update()
     {
+        if (underControl() && isShiftDown) {
+            setDestination(getX() + getWidth() / 2, getY() + getWidth() / 2);
+        }
         if (disabledTicks > 0) {
             disabledTicks--;
         }
@@ -59,12 +65,6 @@ public abstract class Ship implements
             think();
         }
         move();
-        Ship ship = osp.intersects(this);
-        if (ship != null) {
-            double leastHp = Math.min(ship.getLife(), getLife());
-            ship.hit(leastHp);
-            hit(leastHp);
-        }
     }
 
     private void updateWeapons()
@@ -83,11 +83,19 @@ public abstract class Ship implements
 
         setLocation(mx, my);
 
-        //wobble.move(this);
+        wobble.move(this);
 
         if (getWeapon() != null) {
             getWeapon().setLocation(x, y);
         }
+    }
+
+    @Override
+    public void collide(Entity e)
+    {
+        double leastHp = Math.min(e.getLife(), getLife());
+        e.hit(leastHp);
+        hit(leastHp);
     }
 
     public void freezeMovement(int durationMs)
@@ -209,6 +217,7 @@ public abstract class Ship implements
 	@Override public double getY() { return y; }
 	@Override public boolean isAlive() { return dmg < getMaxHp(); }
 	@Override public int getLife() { return getMaxHp() - (int)dmg; }
+	@Override public int getTeam() { return team; }
 
 	public int getSlotsAmt() { return 6; }
 	public Ship getTarget() { return target; }
@@ -234,12 +243,6 @@ public abstract class Ship implements
     @Override
 	public void die()
     {
-	}
-
-    @Override
-	public boolean intersects(Entity e)
-    {
-        return Util.shipIntersects(this, e);
 	}
 
 	/////////////
@@ -287,40 +290,55 @@ public abstract class Ship implements
 
     /////////////
 
-    @Override public void mouseDragged(MouseEvent evt) { mouseMoved(evt); }
+    @Override public void mouseDragged(MouseEvent e)
+    {
+        mousePressed(e);
+        mouseMoved(e);
+    }
 
     @Override
-	public void mouseMoved(MouseEvent evt)
+	public void mouseMoved(MouseEvent e)
     {
-		setMouseLocation(evt.getX(), evt.getY());
-		getWeapon().setMouseLocation(evt.getX(), evt.getY());
-        setDestination(evt.getX(), evt.getY());
+        setMouseLocation(e.getX(), e.getY());
+        getWeapon().setMouseLocation(e.getX(), e.getY());
+        setDestination(e.getX(), e.getY());
 	}
 
     /////////////
 
     @Override public void keyTyped(KeyEvent evt) {}
-    @Override public void keyReleased(KeyEvent evt) {}
 
     @Override
-	public void keyPressed(KeyEvent evt)
+    public void keyReleased(KeyEvent e)
     {
-		int code = evt.getKeyCode() - KeyEvent.VK_1;
-
-		// only need keys 1-5	(0-4)
-		// and abort if weapon request is already selected
-		if (code < 0 || code >= 5 || wpnList[code] == getWeapon()) {
-			return;
+        if (underControl) {
+            isShiftDown = e.isShiftDown();
+            setDestination(mouse.x, mouse.y);
         }
+    }
 
-		// resume firing if weapons switches while the fire button is held down
-		if (getWeapon().isFiring()) {
-			getWeapon().stopFiring();
-			selectWeapon(code);
-			getWeapon().startFiring();
-		} else {
-			selectWeapon(code);
-		}
+    @Override
+	public void keyPressed(KeyEvent e)
+    {
+        if (underControl) {
+            int code = e.getKeyCode() - KeyEvent.VK_1;
+            isShiftDown = e.isShiftDown();
+
+            // only need keys 1-5	(0-4)
+            // and abort if weapon request is already selected
+            if (code < 0 || code >= 5 || wpnList[code] == getWeapon()) {
+                return;
+            }
+
+            // resume firing if weapons switches while the fire button is held down
+            if (getWeapon().isFiring()) {
+                getWeapon().stopFiring();
+                selectWeapon(code);
+                getWeapon().startFiring();
+            } else {
+                selectWeapon(code);
+            }
+        }
 	}
 
     /////////////
