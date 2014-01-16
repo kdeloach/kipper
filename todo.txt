@@ -7,6 +7,7 @@ HIGH
 - Add "split" upgrade
 - Add homing upgrade
 - Create plasma weapon (different cooldown mechanism)
+- Add upgrade to force projectile collision
 
 MED
 - Particle trails on ship

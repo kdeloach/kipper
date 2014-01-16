@@ -20,11 +20,11 @@ public class TriangleMan extends Ship
 
         Weapon w1 = new Trigun(getX(), getY(), 0, getHeight() / 2 - 5, this);
 		w1.addUpgrade(new RotateAbility());
-        // w1.addUpgrade(new CooldownUpgrade());
-        // w1.addUpgrade(new CooldownUpgrade());
-        // w1.addUpgrade(new CooldownUpgrade());
-        // w1.addUpgrade(new CooldownUpgrade());
-        // w1.addUpgrade(new CooldownUpgrade());
+        w1.addUpgrade(new CooldownUpgrade());
+        w1.addUpgrade(new CooldownUpgrade());
+        w1.addUpgrade(new CooldownUpgrade());
+        w1.addUpgrade(new CooldownUpgrade());
+        w1.addUpgrade(new CooldownUpgrade());
         // w1.addUpgrade(new CooldownUpgrade());
         // w1.addUpgrade(new CooldownUpgrade());
 

@@ -170,7 +170,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             Projectile p1 = bulletList.get(i);
             for (int k = 0; k < i && p1.isAlive(); k++) {
                 Projectile p2 = bulletList.get(k);
-                if (p1.collidesWithProjectiles() || p2.collidesWithProjectiles()) {
+                boolean canCollide = p1.getTeam() != p2.getTeam() && (p1.collidesWithProjectiles() || p2.collidesWithProjectiles());
+                if (canCollide) {
                     if (Util.intersects(p1, p2)) {
                         p1.hit(p1.getLife());
                         p2.hit(p2.getLife());

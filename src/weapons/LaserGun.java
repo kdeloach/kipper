@@ -12,18 +12,6 @@ public class LaserGun extends Weapon
 	public LaserGun(double x, double y, int rx, int ry, Ship c)
     {
 		super(x, y, rx, ry, c);
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new ProjectileSizeUpgrade());
-        addUpgrade(new SpreadAbility());
 		icon = Util.instance.loadImage("/assets/laser_icon.gif");
 	}
 

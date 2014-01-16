@@ -11,6 +11,8 @@ import kipper.effects.*;
 
 public class SpaceMine extends Bullet
 {
+    private static int team = 0;
+
 	private int ticks = 0;
     private boolean collide = false;
 
@@ -23,7 +25,7 @@ public class SpaceMine extends Bullet
 	public void move()
     {
         super.move();
-		if (ticks > 40) {
+		if (ticks > 20 * weapon.getSpread() * weapon.getSizeBonus()) {
             collide = true;
 		}
 		ticks++;
@@ -35,7 +37,7 @@ public class SpaceMine extends Bullet
         int px = (int)getX();
         int py = (int)getY();
 
-		g.setColor(Color.GREEN);
+		g.setColor(collide ? Color.GREEN : Color.GRAY);
 
 		int off = getWidth() / 6;
 
@@ -50,17 +52,18 @@ public class SpaceMine extends Bullet
 		           getHeight() - off * 2);
 	}
 
-    // Halves speed every 500 MS
+    // Halves speed every 100 MS
     private int getDecelerator()
     {
         int n = (int)Math.floor(ticks / Util.msToTicks(100)) + 1;
-        return Math.min(n, 10);
+        return Math.min(n, 15);
     }
 
-	@Override public int getWidth() { return 25; }
-	@Override public int getHeight() { return 25; }
+	@Override public int getWidth() { return (int)(20 * weapon.getSizeBonus()); }
+	@Override public int getHeight() { return (int)(20 * weapon.getSizeBonus()); }
     @Override public double getSpeed() { return super.getSpeed() / getDecelerator(); }
     @Override public boolean collidesWithOwner() { return true; }
     @Override public boolean collidesWithProjectiles() { return collide; }
     @Override public Weapon getOwner() { return weapon; }
+    @Override public int getTeam() { return team++; }
 }
