@@ -87,8 +87,6 @@ public class TriangleMan extends Ship
 		}
     }
 
-	///
-
 	@Override public int getWidth() { return 75; }
 	@Override public int getHeight() { return 75; }
 	@Override public String getName() { return "Triangle Man"; }
