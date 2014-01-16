@@ -39,11 +39,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     private Queue<Projectile> deleteProjectiles;
     private Queue<Explosion> deleteExplosions;
 
-    // TODO: Get rid of this stuff
-	int bulletId = 0;
-    int explosionId = 0;
-    int playersId = 0;
-
     private boolean paused = false;
 
 	public OuterSpacePanel(BottomPanel statusBar)
@@ -176,7 +171,8 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 		scene.paint(g);
 	}
 
-    void changeScene(Scene s) {
+    void changeScene(Scene s)
+    {
         if (scene != null) {
             scene.destroyScene();
         }
@@ -270,20 +266,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         return result;
     }
 
-	public Ship intersects(Projectile b)
-    {
-        for (Ship s : players) {
-            if (b.intersects(s)) {
-                return s;
-            }
-        }
-		return null;
-	}
-
-	public Ship intersects(Ship r)
+	public Ship intersects(Entity e)
     {
         for (Ship p : players) {
-            if (p != r && p.intersects(r)) {
+            if (p != e && Util.intersects(p, e)) {
                 return p;
             }
         }

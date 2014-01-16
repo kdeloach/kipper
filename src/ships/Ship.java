@@ -10,57 +10,31 @@ import kipper.weapons.*;
 import kipper.upgrades.*;
 import kipper.effects.*;
 
-// IT hasnt been decided yet BUT Ships may have special abilities
-// Abilities applied to ship affect all equiped weapons
-// Every 3 levels or such you get an extra slot, CAPPED
-// Special abilities will showup on a panel underneath game with cooldown clocks
-// the keys Q-P will activate special abilities
-//
-// Special Abilites MAY include the following:
-//		+hide					- cloak/protect ship from bullets for 3sec,30sec cooldown
-//		+turret				- summon turret to help fight for 30sec,60sec cooldown
-//		+dual-wield		-	can hold 2 weapons,no cooldown
-//		+repair				-	repair 10%hp,cooldown 90sec
-//		+slow					- slow everything down slightly for 10sec,5min cooldown
-//		+stabalizer		- make movement 1:1 ratio instead of gravity
-//		+exp inc			-	ship gets +5% more exp than normal
-
-// NATURAL SHIP ABILITY CANNOT DISABLE
-//		+zone select	- enemies stop spawning and in the BG different zones appear,Spacebar changes zones...
-
-// A standard template all ships can extend
 public abstract class Ship implements
-    MaskedEntity, Controllable, Upgradable, MouseListener, MouseMotionListener, KeyListener
+    ImageEntity, PolygonMaskedEntity, Controllable, Upgradable,
+    MouseListener, MouseMotionListener, KeyListener
 {
-	// arbitrary dimensions
 	public double x, y;
 
 	// amount of damage taken
 	protected double dmg;
 
-	// formality
 	protected boolean underControl = false;
-
     protected int disabledTicks = 0;
 
-	// current position of the mouse,destination
 	public Point destination = new Point();
     public Point mouse = new Point();
     public Point mousePressed = new Point();
 
-	// arsenel,cycle with 0-9
 	public Weapon wpn;
     public Weapon[] wpnList = new Weapon[10];
 
-	// master panel, access to other ships and elements
 	protected OuterSpacePanel osp;
 
 	// last ship hit
 	public Ship target = null;
 
     private EntityWobble wobble;
-
-	////////////
 
     public Ship()
     {
@@ -93,7 +67,7 @@ public abstract class Ship implements
         }
     }
 
-    protected void updateWeapons()
+    private void updateWeapons()
     {
         for (Weapon w : wpnList) {
             if (w != null) {
@@ -109,7 +83,7 @@ public abstract class Ship implements
 
         setLocation(mx, my);
 
-        wobble.move(this);
+        //wobble.move(this);
 
         if (getWeapon() != null) {
             getWeapon().setLocation(x, y);
@@ -170,14 +144,13 @@ public abstract class Ship implements
 
 	public void selectWeapon(int n)
     {
-		if (n < 0 || n >= wpnList.length) {
-			throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
+		if (n >= 0 && n < wpnList.length) {
+            if (wpnList[n] == null) {
+                return;
+            }
+            wpn = wpnList[n];
+            wpn.setLocation(x, y);
         }
-		if (wpnList[n] == null) {
-			return;
-        }
-		wpn = wpnList[n];
-		wpn.setLocation(x, y);
 	}
 
 	public void setMouseLocation(int x, int y)
@@ -192,8 +165,9 @@ public abstract class Ship implements
 		mousePressed.y = y;
 	}
 
-	public double heading() {
-		// 0 or 1
+    // Returns 0 or 1
+	public double heading()
+    {
 		return Math.toRadians(getOrientation() * 180);
 	}
 
@@ -218,7 +192,7 @@ public abstract class Ship implements
 	abstract public int getOrientation();
 	abstract public int getMaxHp();
     abstract public int getSpeed();
-	abstract public Polygon getMask();
+	abstract public Polygon getPolygonMask();
 	abstract public String getName();
 
 	/////////////
@@ -265,31 +239,8 @@ public abstract class Ship implements
     @Override
 	public boolean intersects(Entity e)
     {
-        if (!isAlive()) {
-            return false;
-        }
-        Polygon tmp = getMask();
-        Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-        mask.translate((int)getX(), (int)getY());
-		for (int i = 0; i < mask.npoints; i++) {
-            if (contains(e, mask.xpoints[i], mask.ypoints[i])) {
-				return true;
-            }
-		}
-		return false;
+        return Util.shipIntersects(this, e);
 	}
-
-    private boolean contains(Entity e, int x, int y)
-    {
-        if (e instanceof MaskedEntity) {
-            Polygon tmp = ((MaskedEntity)e).getMask();
-            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-            mask.translate((int)e.getX(), (int)e.getY());
-            return mask.intersects(x, y, 1, 1);
-        }
-        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return boundingBox.intersects(x, y, 1, 1);
-    }
 
 	/////////////
 

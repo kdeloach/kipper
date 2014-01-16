@@ -1,5 +1,6 @@
 package kipper.effects;
 
+import java.awt.Image;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -85,8 +86,8 @@ public class Explosion implements Entity
 	@Override public int getHeight() { return 3; }
     @Override public int getLife() { return 0; }
     @Override public boolean isAlive() { return ticks <= getDurationTicks(); }
-    @Override public void hit(double damage) { throw new UnsupportedOperationException("Not implemented"); }
-    @Override public boolean intersects(Entity entity) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public void hit(double damage) { }
+    @Override public boolean intersects(Entity entity) { return false; }
     @Override public void die() { }
 
     @Override

@@ -152,19 +152,7 @@ public class Bolt implements Entity, Projectile
     @Override
 	public boolean intersects(Entity e)
     {
-        if (!isAlive()) {
-            return false;
-        }
-        if (e instanceof MaskedEntity) {
-            Polygon tmp = ((MaskedEntity)e).getMask();
-            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-            mask.translate((int)e.getX(), (int)e.getY());
-            return mask.intersects((int)startX(), (int)startY(), getWidth(), getHeight())
-                || mask.intersects((int)stopX(), (int)stopY(), getWidth(), getHeight());
-        }
-        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return boundingBox.intersects(startX(), startY(), getWidth(), getHeight())
-            || boundingBox.intersects(stopX(), stopY(), getWidth(), getHeight());
+        return Util.boltIntersects(this, e);
 	}
 
     @Override
@@ -174,8 +162,8 @@ public class Bolt implements Entity, Projectile
 		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
 	}
 
-    protected double startX() { return start.x + weapon.ship().x; }
-    protected double startY() { return start.y + weapon.ship().y; }
-    protected double stopX() { return stop.x + weapon.ship().x; }
-    protected double stopY() { return stop.y + weapon.ship().y; }
+    public double startX() { return start.x + weapon.ship().x; }
+    public double startY() { return start.y + weapon.ship().y; }
+    public double stopX() { return stop.x + weapon.ship().x; }
+    public double stopY() { return stop.y + weapon.ship().y; }
 }

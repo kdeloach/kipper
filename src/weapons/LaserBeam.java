@@ -9,11 +9,12 @@ import java.awt.BasicStroke;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
 
-public class LaserBeam extends Bullet
+public class LaserBeam extends Bullet implements EllipseMaskedEntity
 {
 	private int length = 15;
 	protected Point2D.Double stop;
@@ -48,6 +49,7 @@ public class LaserBeam extends Bullet
     {
         g.setColor(Color.WHITE);
         Util.drawThickLine(g, getX(), getY(), stop.x, stop.y, getWidth());
+        Util.drawMask(g, this);
 	}
 
     // Width and height of each individual point on the beam, NOT the total width and height of the beam.
@@ -56,9 +58,11 @@ public class LaserBeam extends Bullet
     @Override public boolean collidesWithOwner() { return false; }
 
     @Override
-	public boolean intersects(Entity e)
+    public Ellipse2D.Double[] getEllipseMask()
     {
-        return super.intersects(e)
-            || intersectsPoint(e, stop.x, stop.y, getWidth(), getHeight());
-	}
+        return new Ellipse2D.Double[] {
+            new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight()),
+            new Ellipse2D.Double(stop.x, stop.y, getWidth(), getHeight())
+        };
+    }
 }

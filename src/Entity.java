@@ -1,5 +1,6 @@
 package kipper;
 
+import java.awt.Image;
 import java.awt.Graphics;
 
 public interface Entity

@@ -108,21 +108,6 @@ public class Bullet implements Entity, Projectile
     @Override
 	public boolean intersects(Entity e)
     {
-        return intersectsPoint(e, getX(), getY(), getWidth(), getHeight());
-    }
-
-	protected boolean intersectsPoint(Entity e, double x, double y, int w, int h)
-    {
-        if (!isAlive()) {
-            return false;
-        }
-        if (e instanceof MaskedEntity) {
-            Polygon tmp = ((MaskedEntity)e).getMask();
-            Polygon mask = new Polygon(tmp.xpoints, tmp.ypoints, tmp.npoints);
-            mask.translate((int)e.getX(), (int)e.getY());
-            return mask.intersects(x, y, w, h);
-        }
-        Rectangle2D.Double boundingBox = new Rectangle2D.Double(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return boundingBox.intersects(x, y, w, h);
+        return Util.bulletIntersects(this, e);
 	}
 }
