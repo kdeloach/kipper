@@ -8,11 +8,11 @@ import kipper.upgrades.*;
 
 public class ShipUpgradeScreen extends Scene {
 
-	Ship player;
-	OuterSpacePanel osp;
+    Ship player;
+    OuterSpacePanel osp;
 
-	int upgrades = 0;
-	int slots = 1;
+    int upgrades = 0;
+    int slots = 1;
 
     Rectangle[] emptySlotRects = new Rectangle[12]; // Arbitrary
     Rectangle[] availableUpgradeRects = new Rectangle[Const.UPGRADES_QT];
@@ -24,84 +24,84 @@ public class ShipUpgradeScreen extends Scene {
     // Upgrade instance at index N corresponds to rectangle N in availableUpgradeRects array.
     private Ability[] upgradeInstances = new Ability[Const.UPGRADES_QT];
 
-	public ShipUpgradeScreen(OuterSpacePanel osp)
+    public ShipUpgradeScreen(OuterSpacePanel osp)
     {
-		this.osp = osp;
-		player = osp.getPlayer();
+        this.osp = osp;
+        player = osp.getPlayer();
 
-		for (int i = 0; i < emptySlotRects.length; i++) {
+        for (int i = 0; i < emptySlotRects.length; i++) {
             int x = player.getWidth() + 50 + 100 * (i % 6);
             int y = 20 + 55 * (int)Math.floor(i / 6);
             emptySlotRects[i] = new Rectangle(x, y, 90, 45);
         }
 
-		int w = 140, h = 50, p = 5;
-		for (int i = 0, y = 150, x = 0; i < availableUpgradeRects.length; i++, x++) {
-			if (player.getWidth() + 50 + (w + p) * x + w >= osp.getWidth()) {
-				x = 0;
+        int w = 140, h = 50, p = 5;
+        for (int i = 0, y = 150, x = 0; i < availableUpgradeRects.length; i++, x++) {
+            if (player.getWidth() + 50 + (w + p) * x + w >= osp.getWidth()) {
+                x = 0;
                 y += h + p;
-			}
+            }
             upgradeInstances[i] = Ability.createInstance(i);
             availableUpgradeRects[i] = new Rectangle(player.getWidth() + 50 + (w + p) * x, y, w, h);
-		}
-	}
+        }
+    }
 
     public void createScene()
     {
-		player.setDestination(player.getWidth() / 2 + 10,
+        player.setDestination(player.getWidth() / 2 + 10,
                               player.getHeight() / 2 + 20);
-		osp.addMouseListener(this);
+        osp.addMouseListener(this);
     }
 
     public void destroyScene()
     {
-		osp.removeMouseListener(this);
+        osp.removeMouseListener(this);
     }
 
-	public void paint(Graphics g)
+    public void paint(Graphics g)
     {
-		// draw upgrade slots
-		for (int i = 0; i  < player.getWeapon().amountSlots(); i++) {
+        // draw upgrade slots
+        for (int i = 0; i  < player.getWeapon().amountSlots(); i++) {
             Rectangle slot = emptySlotRects[i];
             g.setFont(f);
             g.setColor(Color.GRAY);
-			g.fillRoundRect(slot.x, slot.y, slot.width, slot.height, 15, 15);
-			g.setColor(Color.LIGHT_GRAY);
+            g.fillRoundRect(slot.x, slot.y, slot.width, slot.height, 15, 15);
+            g.setColor(Color.LIGHT_GRAY);
             String title = "Slot " + (i + 1);
             int titleWidth = g.getFontMetrics(f).stringWidth(title);
-			g.drawString(title, slot.x + slot.width / 2 - titleWidth / 2, slot.y + slot.height / 2);
+            g.drawString(title, slot.x + slot.width / 2 - titleWidth / 2, slot.y + slot.height / 2);
             Ability a = player.getWeapon().upgradeAt(i);
-			if (a != null) {
+            if (a != null) {
                 AbilityIconDrawer drawer = a.getIconDrawer();
                 drawer.drawIcon(g, slot.x, slot.y, slot.width, slot.height);
-			}
-		}
+            }
+        }
         // draw available upgrades
-		for (int i = 0; i < availableUpgradeRects.length; i++) {
-			Rectangle r = availableUpgradeRects[i];
+        for (int i = 0; i < availableUpgradeRects.length; i++) {
+            Rectangle r = availableUpgradeRects[i];
             AbilityIconDrawer drawer = upgradeInstances[i].getIconDrawer();
             drawer.drawIcon(g, r.x, r.y, r.width, r.height);
-		}
-	}
+        }
+    }
 
-	public void mousePressed(MouseEvent e)
+    public void mousePressed(MouseEvent e)
     {
-		// if a slot is selected
-		for (int i = 0; i < emptySlotRects.length; i++) {
-			if (emptySlotRects[i].contains(e.getPoint())) {
+        // if a slot is selected
+        for (int i = 0; i < emptySlotRects.length; i++) {
+            if (emptySlotRects[i].contains(e.getPoint())) {
                 player.getWeapon().removeUpgrade(i);
-				return;
-			}
-		}
-		// if an upgrade is selected
-		for (int i = 0; i < availableUpgradeRects.length; i++) {
-			if (availableUpgradeRects[i].contains(e.getPoint())) {
+                return;
+            }
+        }
+        // if an upgrade is selected
+        for (int i = 0; i < availableUpgradeRects.length; i++) {
+            if (availableUpgradeRects[i].contains(e.getPoint())) {
                 Weapon w = player.getWeapon();
                 w.addUpgrade(Ability.createInstance(i));
-				return;
-			}
-		}
-	}
+                return;
+            }
+        }
+    }
 
     @Override public String name() { return "upgrade"; }
 }

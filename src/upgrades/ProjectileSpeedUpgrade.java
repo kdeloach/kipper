@@ -8,20 +8,20 @@ import kipper.weapons.*;
 
 public class ProjectileSpeedUpgrade extends Ability
 {
-	double percent = 1.10;
+    double percent = 1.10;
 
-	public ProjectileSpeedUpgrade()
+    public ProjectileSpeedUpgrade()
     {
-	}
+    }
 
-	public double getValue(Upgradable sender, String name, double value)
+    public double getValue(Upgradable sender, String name, double value)
     {
-		if (name == Ability.SPEED) {
-			return value * percent;
+        if (name == Ability.SPEED) {
+            return value * percent;
         }
-		return value;
-	}
+        return value;
+    }
 
-	@Override public String getTitle() { return "Bullet Speed"; }
-	@Override public Color getColor() { return Color.LIGHT_GRAY; }
+    @Override public String getTitle() { return "Bullet Speed"; }
+    @Override public Color getColor() { return Color.LIGHT_GRAY; }
 }

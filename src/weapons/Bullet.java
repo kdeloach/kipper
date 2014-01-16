@@ -12,51 +12,51 @@ import kipper.upgrades.*;
 
 public class Bullet implements Entity, Projectile
 {
-	private int life;
-	private double x, y, theta, damage;
-	protected Weapon weapon;
+    private int life;
+    private double x, y, theta, damage;
+    protected Weapon weapon;
 
-	public Bullet(double x, double y, double theta, double dmg, Weapon w)
+    public Bullet(double x, double y, double theta, double dmg, Weapon w)
     {
-		this.x = x;
-		this.y = y;
-		this.theta = theta;
-		this.weapon = w;
+        this.x = x;
+        this.y = y;
+        this.theta = theta;
+        this.weapon = w;
 
-		setLocation(x, y);
+        setLocation(x, y);
 
         life = 1;
-		damage = dmg;
+        damage = dmg;
 
-		weapon.ship().panel().addProjectile(this);
-	}
+        weapon.ship().panel().addProjectile(this);
+    }
 
     @Override
-	public void die()
+    public void die()
     {
-		new Explosion(getX() + getWidth() / 2,
+        new Explosion(getX() + getWidth() / 2,
                       getY() + getHeight() / 2,
                       weapon.ship().panel());
-	}
+    }
 
-	public void move()
+    public void move()
     {
-		setLocation(getX() + getSpeed() * Math.cos(getTheta()),
+        setLocation(getX() + getSpeed() * Math.cos(getTheta()),
                     getY() + getSpeed() * Math.sin(getTheta()));
-	}
+    }
 
     @Override
-	public void setLocation(double x, double y)
+    public void setLocation(double x, double y)
     {
         this.x = x;
         this.y = y;
     }
 
     @Override
-	public void update()
+    public void update()
     {
         move();
-	}
+    }
 
     @Override
     public void collide(Entity e)
@@ -66,20 +66,20 @@ public class Bullet implements Entity, Projectile
     }
 
     @Override
-	public void draw(Graphics g)
+    public void draw(Graphics g)
     {
-		g.setColor(getColor());
-		g.fillOval((int)getX(), (int)getY(), getWidth(), getHeight());
-	}
+        g.setColor(getColor());
+        g.fillOval((int)getX(), (int)getY(), getWidth(), getHeight());
+    }
 
     public Color getColor() { return Color.YELLOW; }
     public double getTheta() { return theta; }
     public double getSpeed() { return weapon.getValue(Ability.SPEED, Const.BULLET_SPEED); }
 
-	@Override public double getX() { return x; }
-	@Override public double getY() { return y; }
-	@Override public int getWidth() { return (int)(6 * weapon.getSizeBonus()); }
-	@Override public int getHeight() { return (int)(6 * weapon.getSizeBonus()); }
+    @Override public double getX() { return x; }
+    @Override public double getY() { return y; }
+    @Override public int getWidth() { return (int)(6 * weapon.getSizeBonus()); }
+    @Override public int getHeight() { return (int)(6 * weapon.getSizeBonus()); }
     @Override public int getLife() { return life; }
     @Override public int getTeam() { return weapon.ship().getTeam(); }
     @Override public double getDamage() { return damage; }
@@ -87,7 +87,7 @@ public class Bullet implements Entity, Projectile
     @Override public boolean collidesWithProjectiles() { return false; }
     @Override public Weapon getOwner() { return weapon; }
 
-	@Override
+    @Override
     public boolean isAlive()
     {
         return life > 0 && weapon.ship().panel().contains(getX(), getY());

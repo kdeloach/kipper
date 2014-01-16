@@ -8,19 +8,19 @@ import kipper.weapons.*;
 
 public class DamageAbility extends Ability
 {
-	double percent = 1.25;
+    double percent = 1.25;
 
-	public DamageAbility()
+    public DamageAbility()
     {
-	}
+    }
 
-	public double getValue(Upgradable sender, String name, double value)
+    public double getValue(Upgradable sender, String name, double value)
     {
-		if (name == Ability.DAMAGE) {
-			return value * percent;
+        if (name == Ability.DAMAGE) {
+            return value * percent;
         }
-		return value;
-	}
+        return value;
+    }
 
     @Override public String getTitle() { return "Damage"; }
     @Override public Color getColor() { return Color.GREEN; }

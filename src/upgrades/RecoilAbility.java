@@ -10,28 +10,28 @@ import kipper.weapons.*;
 // Send a ship flying back
 public class RecoilAbility extends Ability
 {
-	// distance to send ship backwards
-	int distance = 100;
+    // distance to send ship backwards
+    int distance = 100;
 
-	public RecoilAbility()
+    public RecoilAbility()
     {
-	}
+    }
 
-	public void weaponFired(Weapon w)
+    public void weaponFired(Weapon w)
     {
-		Ship s = w.ship();
+        Ship s = w.ship();
 
-		// if its a bot, make sure it isn't recoiling offscreen
-		if (!s.underControl() && s.getX() + s.getWidth() >= OuterSpacePanel.WIDTH) {
-			return;
+        // if its a bot, make sure it isn't recoiling offscreen
+        if (!s.underControl() && s.getX() + s.getWidth() >= OuterSpacePanel.WIDTH) {
+            return;
         }
 
         s.setDestination(s.getX() - distance * Math.cos(w.heading()),
                          s.getY() - distance * Math.sin(w.heading()));
 
         s.freezeMovement(100);
-	}
+    }
 
-	@Override public String getTitle() { return "Recoil"; }
-	@Override public Color getColor() { return Color.MAGENTA; }
+    @Override public String getTitle() { return "Recoil"; }
+    @Override public Color getColor() { return Color.MAGENTA; }
 }

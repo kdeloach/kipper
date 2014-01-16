@@ -45,7 +45,7 @@ public class MaskTool
 
     public MaskTool()
     {
-		frame = new JFrame("mask tool");
+        frame = new JFrame("mask tool");
         pane1 = frame.getContentPane();
         pane1.setLayout(new BorderLayout());
 
@@ -60,59 +60,59 @@ public class MaskTool
 
         cbxShips = new JComboBox<Ship>(shipsData);
         cbxShips.addActionListener(
-			new ActionListener()
+            new ActionListener()
             {
-				public void actionPerformed(ActionEvent e)
+                public void actionPerformed(ActionEvent e)
                 {
                     JComboBox cb = (JComboBox)e.getSource();
-					drawpanel.loadShip((Ship)cb.getSelectedItem());
-				}
-			}
+                    drawpanel.loadShip((Ship)cb.getSelectedItem());
+                }
+            }
         );
         cbxShips.setSelectedIndex(0);
 
-		txt.setRows(10);
-		txt.setColumns(50);
-		txt.setLineWrap(true);
-		pane2.add(txt);
+        txt.setRows(10);
+        txt.setColumns(50);
+        txt.setLineWrap(true);
+        pane2.add(txt);
 
-		btn = new JButton("clear");
-		btn.addActionListener(
-			new ActionListener()
+        btn = new JButton("clear");
+        btn.addActionListener(
+            new ActionListener()
             {
-				public void actionPerformed(ActionEvent evt)
+                public void actionPerformed(ActionEvent evt)
                 {
-					txt.setText("");
-					drawpanel.clearMask();
-				}
-			}
-		);
-		pane2.add(btn);
+                    txt.setText("");
+                    drawpanel.clearMask();
+                }
+            }
+        );
+        pane2.add(btn);
 
         pane1.add(cbxShips, BorderLayout.PAGE_START);
-		pane1.add(drawpanel, BorderLayout.CENTER);
+        pane1.add(drawpanel, BorderLayout.CENTER);
         pane1.add(pane2, BorderLayout.PAGE_END);
 
-		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
 }
 
 class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
 {
     private Ship ship;
-	private LinkedList<Point> maskPoints;
-	private JTextArea txt;
-	private int factor = 10;
+    private LinkedList<Point> maskPoints;
+    private JTextArea txt;
+    private int factor = 10;
     private int imgX, imgY, imgWidth, imgHeight;
 
-	public DrawPanel(JTextArea t)
+    public DrawPanel(JTextArea t)
     {
-		this.txt = t;
-		addMouseListener(this);
-		addMouseWheelListener(this);
-	}
+        this.txt = t;
+        addMouseListener(this);
+        addMouseWheelListener(this);
+    }
 
     public void loadShip(Ship ship)
     {
@@ -133,9 +133,9 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
         repaint();
     }
 
-	public void paint(Graphics g)
+    public void paint(Graphics g)
     {
-		super.paint(g);
+        super.paint(g);
 
         if (ship == null) {
             return;
@@ -147,19 +147,19 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
         imgX = getWidth() / 2 - imgWidth / 2;
         imgY = getHeight() / 2 - imgHeight / 2;
 
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
-		g.drawImage(ship.getImage(), imgX, imgY, imgWidth, imgHeight, this);
+        g.drawImage(ship.getImage(), imgX, imgY, imgWidth, imgHeight, this);
 
         Polygon scaledMask = getScaledMask();
-		g.setColor(Color.GRAY);
-		g.drawPolygon(scaledMask);
-		g.setColor(Color.RED);
-		for (int i = 0; i < scaledMask.npoints; i++) {
-			g.fillRect(scaledMask.xpoints[i]-3, scaledMask.ypoints[i]-3, 6, 6);
+        g.setColor(Color.GRAY);
+        g.drawPolygon(scaledMask);
+        g.setColor(Color.RED);
+        for (int i = 0; i < scaledMask.npoints; i++) {
+            g.fillRect(scaledMask.xpoints[i]-3, scaledMask.ypoints[i]-3, 6, 6);
         }
-	}
+    }
 
     public Polygon getScaledMask()
     {
@@ -173,7 +173,7 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
         return result;
     }
 
-	public void mouseReleased(MouseEvent e)
+    public void mouseReleased(MouseEvent e)
     {
         if (e.getButton() > MouseEvent.BUTTON1) {
             try {
@@ -186,7 +186,7 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
         }
         txt.setText(getMaskCode());
         repaint();
-	}
+    }
 
     public void mouseWheelMoved(MouseWheelEvent e)
     {
@@ -198,21 +198,21 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
 
     String getMaskCode()
     {
-		List<Object> sb = new ArrayList<Object>();
+        List<Object> sb = new ArrayList<Object>();
         List<Object> xz = new ArrayList<Object>();
         List<Object> yz = new ArrayList<Object>();
 
-		for (int i = 0; i < maskPoints.size(); i++) {
+        for (int i = 0; i < maskPoints.size(); i++) {
             Point p = maskPoints.get(i);
-			xz.add(p.x);
+            xz.add(p.x);
             yz.add(p.y);
-		}
+        }
 
-		sb.add("// Generated by mask tool\n");
-		sb.add("@Override\npublic Polygon getPolygonMask()\n{\n");
+        sb.add("// Generated by mask tool\n");
+        sb.add("@Override\npublic Polygon getPolygonMask()\n{\n");
 
-		sb.add("    return new Polygon(new int[] {");
-		sb.add(Util.join(xz, ", "));
+        sb.add("    return new Polygon(new int[] {");
+        sb.add(Util.join(xz, ", "));
         sb.add("}, new int[] {");
         sb.add(Util.join(yz, ", "));
         sb.add("}, ");
@@ -221,10 +221,10 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
         return Util.join(sb, "");
     }
 
-	public Dimension getPreferredSize() { return new Dimension(800, 600); }
+    public Dimension getPreferredSize() { return new Dimension(800, 600); }
 
-	public void mouseExited(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
     public void mousePressed(MouseEvent e) {}
 }

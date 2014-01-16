@@ -7,26 +7,26 @@ import kipper.weapons.*;
 
 public abstract class Ability
 {
-	public static final String COOLDOWN = "COOLDOWN";
-	public static final String DAMAGE = "DAMAGE";
-	public static final String SPREAD = "SPREAD";
-	public static final String GUARD = "GUARD";
-	public static final String HEADING = "HEADING";
-	public static final String SIZE = "SIZE";
-	public static final String SPEED = "SPEED";
+    public static final String COOLDOWN = "COOLDOWN";
+    public static final String DAMAGE = "DAMAGE";
+    public static final String SPREAD = "SPREAD";
+    public static final String GUARD = "GUARD";
+    public static final String HEADING = "HEADING";
+    public static final String SIZE = "SIZE";
+    public static final String SPEED = "SPEED";
 
     public void weaponFired(Weapon w) {}
 
     // usage ex: when getSpeed() is called this function gets called first with argument "speed" and is added to weapon speed/cooldown
-	public double getValue(Upgradable sender, String name, double oldvalue)
+    public double getValue(Upgradable sender, String name, double oldvalue)
     {
         return oldvalue;
     }
 
-	abstract public String getTitle();
-	abstract public Color getColor();
+    abstract public String getTitle();
+    abstract public Color getColor();
 
-	public AbilityIconDrawer getIconDrawer()
+    public AbilityIconDrawer getIconDrawer()
     {
         return new AbilityIconDrawer(getTitle(), getColor());
     }

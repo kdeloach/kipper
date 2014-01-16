@@ -9,12 +9,12 @@ import kipper.*;
 // TODO: Refactor into generic partical emitter
 public class MarqueeStars
 {
-	private Star[] stars;
+    private Star[] stars;
     private double angle, speed;
     private int minSize, maxSize;
     private int minAlpha, maxAlpha;
 
-	public MarqueeStars(int numStars, double angle, double speed, int minSize, int maxSize, int minAlpha, int maxAlpha)
+    public MarqueeStars(int numStars, double angle, double speed, int minSize, int maxSize, int minAlpha, int maxAlpha)
     {
         this.angle = angle;
         this.speed = speed;
@@ -23,13 +23,13 @@ public class MarqueeStars
         this.minAlpha = minAlpha;
         this.maxAlpha = maxAlpha;
         stars = new Star[numStars];
-		for (int i = 0; i < numStars; i++) {
-			stars[i] = new Star(Util.randRange(0, OuterSpacePanel.WIDTH),
+        for (int i = 0; i < numStars; i++) {
+            stars[i] = new Star(Util.randRange(0, OuterSpacePanel.WIDTH),
                                 Util.randRange(0, OuterSpacePanel.HEIGHT),
                                 randSize(),
                                 randColor());
-		}
-	}
+        }
+    }
 
     private int randSize()
     {
@@ -46,7 +46,7 @@ public class MarqueeStars
         return new Color(0xFF, 0xFF, 0xFF, randAlpha());
     }
 
-	public void update()
+    public void update()
     {
         if (speed <= 0) {
             return;
@@ -70,14 +70,14 @@ public class MarqueeStars
             // if (stars[i].y < 0)
                 // stars[i] = new Point2D.Double(Math.random() * OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT);
         }
-	}
+    }
 
     public void paint(Graphics g)
     {
-		for (int i = 0; i < stars.length; i++) {
+        for (int i = 0; i < stars.length; i++) {
             Star p = stars[i];
             g.setColor(p.color);
-			g.fillRect((int)p.x, (int)p.y, p.size, p.size);
+            g.fillRect((int)p.x, (int)p.y, p.size, p.size);
             //if (alpha >= 0xFF)
                 //g.drawOval((int)p.x, (int)p.y, p.size, p.size);
         }

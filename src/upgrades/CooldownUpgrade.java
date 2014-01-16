@@ -8,20 +8,20 @@ import kipper.weapons.*;
 
 public class CooldownUpgrade extends Ability
 {
-	double percent = 0.75;
+    double percent = 0.75;
 
-	public CooldownUpgrade()
+    public CooldownUpgrade()
     {
-	}
+    }
 
-	public double getValue(Upgradable sender, String name, double value)
+    public double getValue(Upgradable sender, String name, double value)
     {
-		if (name == Ability.COOLDOWN) {
-			return value * percent;
+        if (name == Ability.COOLDOWN) {
+            return value * percent;
         }
-		return value;
-	}
+        return value;
+    }
 
-	@Override public String getTitle() { return "Fire Rate"; }
-	@Override public Color getColor() { return Color.CYAN; }
+    @Override public String getTitle() { return "Fire Rate"; }
+    @Override public Color getColor() { return Color.CYAN; }
 }

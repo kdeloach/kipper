@@ -8,20 +8,20 @@ import kipper.weapons.*;
 
 public class ProjectileSizeUpgrade extends Ability
 {
-	double amount = 1.10;
+    double amount = 1.10;
 
-	public ProjectileSizeUpgrade()
+    public ProjectileSizeUpgrade()
     {
-	}
+    }
 
-	public double getValue(Upgradable sender, String name, double value)
+    public double getValue(Upgradable sender, String name, double value)
     {
-		if (name == Ability.SIZE) {
-			return value * amount;
+        if (name == Ability.SIZE) {
+            return value * amount;
         }
-		return value;
-	}
+        return value;
+    }
 
-	@Override public String getTitle() { return "Bullet Size"; }
-	@Override public Color getColor() { return Color.ORANGE; }
+    @Override public String getTitle() { return "Bullet Size"; }
+    @Override public Color getColor() { return Color.ORANGE; }
 }

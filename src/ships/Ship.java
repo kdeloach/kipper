@@ -15,25 +15,25 @@ public abstract class Ship implements
     MouseListener, MouseMotionListener, KeyListener
 {
     public int team;
-	public double x, y;
+    public double x, y;
 
-	// amount of damage taken
-	protected double dmg;
+    // amount of damage taken
+    protected double dmg;
 
-	protected boolean underControl = false;
+    protected boolean underControl = false;
     protected int disabledTicks = 0;
 
-	public Point destination = new Point();
+    public Point destination = new Point();
     public Point mouse = new Point();
     public Point mousePressed = new Point();
 
-	public Weapon wpn;
+    public Weapon wpn;
     public Weapon[] wpnList = new Weapon[10];
 
-	protected OuterSpacePanel osp;
+    protected OuterSpacePanel osp;
 
-	// last ship hit
-	public Ship target = null;
+    // last ship hit
+    public Ship target = null;
 
     private EntityWobble wobble;
     private boolean isShiftDown = false;
@@ -42,14 +42,14 @@ public abstract class Ship implements
     {
     }
 
-	public Ship(double x, double y, int team, OuterSpacePanel c)
+    public Ship(double x, double y, int team, OuterSpacePanel c)
     {
-		this.osp = c;
+        this.osp = c;
         this.team = team;
         wobble = new EntityWobble();
-		setLocation(x, y);
-		setDestination(getX(), getY());
-	}
+        setLocation(x, y);
+        setDestination(getX(), getY());
+    }
 
     @Override
     public void update()
@@ -103,134 +103,134 @@ public abstract class Ship implements
         disabledTicks = Util.msToTicks(durationMs);
     }
 
-	public void setDestination(double mx, double my)
+    public void setDestination(double mx, double my)
     {
         if (isDisabled()) {
             return;
         }
-		// don't let the player go off-screen
-		if (underControl()) {
-			if (mx < getWidth() / 2) {
+        // don't let the player go off-screen
+        if (underControl()) {
+            if (mx < getWidth() / 2) {
                 mx = getWidth() / 2;
             } else if (mx > OuterSpacePanel.WIDTH - getWidth() / 2) {
                 mx = OuterSpacePanel.WIDTH - getWidth() / 2;
             }
-			if (my < getHeight() / 2) {
+            if (my < getHeight() / 2) {
                 my = getHeight() / 2;
             } else if (my > OuterSpacePanel.HEIGHT - getHeight() / 2) {
                 my = OuterSpacePanel.HEIGHT - getHeight() / 2;
             }
-		}
+        }
         destination = new Point((int)mx, (int)my);
-	}
+    }
 
-	// NPC logic goes here
-	public void think() {}
+    // NPC logic goes here
+    public void think() {}
 
-	// Used by NPC's to simulate mouse click
-	public void targetLocation(int x, int y)
+    // Used by NPC's to simulate mouse click
+    public void targetLocation(int x, int y)
     {
-		setMousePressedLocation(x, y);
-	}
+        setMousePressedLocation(x, y);
+    }
 
-	public void equipWeapon(Weapon w)
+    public void equipWeapon(Weapon w)
     {
-		for (int i = 0; i < wpnList.length; i++) {
-			if (wpnList[i] == null) {
-				wpnList[i] = w;
-				return;
-			}
-		}
-	}
+        for (int i = 0; i < wpnList.length; i++) {
+            if (wpnList[i] == null) {
+                wpnList[i] = w;
+                return;
+            }
+        }
+    }
 
     @Override
-	public void setLocation(double x, double y)
+    public void setLocation(double x, double y)
     {
-		this.x = x;
-		this.y = y;
-	}
+        this.x = x;
+        this.y = y;
+    }
 
-	public void selectWeapon(int n)
+    public void selectWeapon(int n)
     {
-		if (n >= 0 && n < wpnList.length) {
+        if (n >= 0 && n < wpnList.length) {
             if (wpnList[n] == null) {
                 return;
             }
             wpn = wpnList[n];
             wpn.setLocation(x, y);
         }
-	}
+    }
 
-	public void setMouseLocation(int x, int y)
+    public void setMouseLocation(int x, int y)
     {
-		mouse.x = x;
-		mouse.y = y;
-	}
+        mouse.x = x;
+        mouse.y = y;
+    }
 
-	public void setMousePressedLocation(int x, int y)
+    public void setMousePressedLocation(int x, int y)
     {
-		mousePressed.x = x;
-		mousePressed.y = y;
-	}
+        mousePressed.x = x;
+        mousePressed.y = y;
+    }
 
     // Returns 0 or 1
-	public double heading()
+    public double heading()
     {
-		return Math.toRadians(getOrientation() * 180);
-	}
+        return Math.toRadians(getOrientation() * 180);
+    }
 
-	public OuterSpacePanel panel() { return osp; }
+    public OuterSpacePanel panel() { return osp; }
 
-	/////////////
+    /////////////
 
-	@Override abstract public int getWidth();
-	@Override abstract public int getHeight();
+    @Override abstract public int getWidth();
+    @Override abstract public int getHeight();
 
-	@Override
+    @Override
     public void draw(Graphics g)
     {
         //g.setColor(Color.GREEN);
         //g.drawRect((int)getX(), (int)getY(), getWidth(), getHeight());
-		g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
+        g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
         if (getWeapon() != null) {
             getWeapon().draw(g);
         }
     }
 
-	abstract public int getOrientation();
-	abstract public int getMaxHp();
+    abstract public int getOrientation();
+    abstract public int getMaxHp();
     abstract public int getSpeed();
-	abstract public Polygon getPolygonMask();
-	abstract public String getName();
+    abstract public Polygon getPolygonMask();
+    abstract public String getName();
 
-	/////////////
+    /////////////
 
-	public Weapon getWeapon(int n)
+    public Weapon getWeapon(int n)
     {
-		if(n < 0 || n >= wpnList.length) {
-			throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
+        if(n < 0 || n >= wpnList.length) {
+            throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
         }
-		return wpnList[n];
-	}
+        return wpnList[n];
+    }
 
-	@Override public double getX() { return x; }
-	@Override public double getY() { return y; }
-	@Override public boolean isAlive() { return dmg < getMaxHp(); }
-	@Override public int getLife() { return getMaxHp() - (int)dmg; }
-	@Override public int getTeam() { return team; }
+    @Override public double getX() { return x; }
+    @Override public double getY() { return y; }
+    @Override public boolean isAlive() { return dmg < getMaxHp(); }
+    @Override public int getLife() { return getMaxHp() - (int)dmg; }
+    @Override public int getTeam() { return team; }
 
-	public int getSlotsAmt() { return 6; }
-	public Ship getTarget() { return target; }
-	public Point getDesination() { return destination; }
-	public Weapon getWeapon() { return wpn; }
-	public double percentHealth() { return (double)getLife() / ( double)getMaxHp(); }
-	public boolean isDisabled() { return disabledTicks > 0; }
+    public int getSlotsAmt() { return 6; }
+    public Ship getTarget() { return target; }
+    public Point getDesination() { return destination; }
+    public Weapon getWeapon() { return wpn; }
+    public double percentHealth() { return (double)getLife() / ( double)getMaxHp(); }
+    public boolean isDisabled() { return disabledTicks > 0; }
     public Image getImage() { throw new UnsupportedOperationException("Not implemented"); }
 
     /////////////
 
     @Override
-	public void hit(double damage)
+    public void hit(double damage)
     {
         if (isAlive()) {
             this.dmg += damage;
@@ -238,55 +238,55 @@ public abstract class Ship implements
                 die();
             }
         }
-	}
+    }
 
     @Override
-	public void die()
+    public void die()
     {
-	}
+    }
 
-	/////////////
+    /////////////
 
     @Override public boolean underControl() { return underControl; }
 
     @Override
-	public void gainControl()
+    public void gainControl()
     {
-		osp.addMouseListener(this);
-		osp.addMouseMotionListener(this);
-		underControl = true;
-	}
+        osp.addMouseListener(this);
+        osp.addMouseMotionListener(this);
+        underControl = true;
+    }
 
     @Override
-	public void releaseControl()
+    public void releaseControl()
     {
-		osp.removeMouseListener(this);
-		osp.removeMouseMotionListener(this);
-		underControl = false;
-	}
+        osp.removeMouseListener(this);
+        osp.removeMouseMotionListener(this);
+        underControl = false;
+    }
 
     /////////////
 
-	@Override public void mouseEntered(MouseEvent evt) {}
-	@Override public void mouseExited(MouseEvent evt) {}
-	@Override public void mouseClicked(MouseEvent evt) {}
+    @Override public void mouseEntered(MouseEvent evt) {}
+    @Override public void mouseExited(MouseEvent evt) {}
+    @Override public void mouseClicked(MouseEvent evt) {}
 
     @Override
-	public void mousePressed(MouseEvent evt)
+    public void mousePressed(MouseEvent evt)
     {
-		setMousePressedLocation(evt.getX(), evt.getY());
-		if (evt.getButton() == MouseEvent.BUTTON1) {
-			getWeapon().startFiring();
-		}
-	}
+        setMousePressedLocation(evt.getX(), evt.getY());
+        if (evt.getButton() == MouseEvent.BUTTON1) {
+            getWeapon().startFiring();
+        }
+    }
 
     @Override
-	public void mouseReleased(MouseEvent evt)
+    public void mouseReleased(MouseEvent evt)
     {
-		if (evt.getButton() == MouseEvent.BUTTON1) {
-			getWeapon().stopFiring();
-		}
-	}
+        if (evt.getButton() == MouseEvent.BUTTON1) {
+            getWeapon().stopFiring();
+        }
+    }
 
     /////////////
 
@@ -297,12 +297,12 @@ public abstract class Ship implements
     }
 
     @Override
-	public void mouseMoved(MouseEvent e)
+    public void mouseMoved(MouseEvent e)
     {
         setMouseLocation(e.getX(), e.getY());
         getWeapon().setMouseLocation(e.getX(), e.getY());
         setDestination(e.getX(), e.getY());
-	}
+    }
 
     /////////////
 
@@ -318,13 +318,13 @@ public abstract class Ship implements
     }
 
     @Override
-	public void keyPressed(KeyEvent e)
+    public void keyPressed(KeyEvent e)
     {
         if (underControl) {
             int code = e.getKeyCode() - KeyEvent.VK_1;
             isShiftDown = e.isShiftDown();
 
-            // only need keys 1-5	(0-4)
+            // only need keys 1-5    (0-4)
             // and abort if weapon request is already selected
             if (code < 0 || code >= 5 || wpnList[code] == getWeapon()) {
                 return;
@@ -339,7 +339,7 @@ public abstract class Ship implements
                 selectWeapon(code);
             }
         }
-	}
+    }
 
     /////////////
 

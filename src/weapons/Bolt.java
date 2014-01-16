@@ -21,71 +21,71 @@ import kipper.effects.*;
 // TODO: Extend from bullet...
 public class Bolt implements MaskedEntity, Projectile
 {
-	// length is the size of 1 segment of the largest tier branches
-	private int branches, length, life, lifespan, thickness;
+    // length is the size of 1 segment of the largest tier branches
+    private int branches, length, life, lifespan, thickness;
 
-	private double damage;
+    private double damage;
 
-	// bullet trajectory
-	private double theta, offset;
+    // bullet trajectory
+    private double theta, offset;
 
-	// start and end of beam
-	private Point2D.Double start, stop;
+    // start and end of beam
+    private Point2D.Double start, stop;
 
-	// master panel
-	private Weapon weapon;
+    // master panel
+    private Weapon weapon;
 
     private boolean alive = true;
 
-	public Bolt(double x, double y, double t, double dmg, Weapon w)
+    public Bolt(double x, double y, double t, double dmg, Weapon w)
     {
         x = x - w.ship().x;
         y = y - w.ship().y;
-		new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultLifespanTicks(), getDefaultThickness(), dmg, w);
-	}
+        new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultLifespanTicks(), getDefaultThickness(), dmg, w);
+    }
 
-	public Bolt(double x, double y, double offset, int branches, int length, int lifespan, int thickness, double dmg, Weapon w)
+    public Bolt(double x, double y, double offset, int branches, int length, int lifespan, int thickness, double dmg, Weapon w)
     {
-		this.offset = offset;
-		this.branches = branches;
-		this.length = length;
-		this.life = lifespan;
-		this.lifespan = lifespan;
+        this.offset = offset;
+        this.branches = branches;
+        this.length = length;
+        this.life = lifespan;
+        this.lifespan = lifespan;
         this.thickness = thickness;
-		this.damage = dmg;
-		this.weapon = w;
+        this.damage = dmg;
+        this.weapon = w;
 
-		start = new Point2D.Double();
-		stop = new Point2D.Double();
+        start = new Point2D.Double();
+        stop = new Point2D.Double();
 
-		this.theta =  Math.toRadians(Math.random() * 90 - 45);
-		this.theta += offset;
+        this.theta =  Math.toRadians(Math.random() * 90 - 45);
+        this.theta += offset;
 
-		setLocation(x, y);
-		weapon.ship().panel().addProjectile(this);
+        setLocation(x, y);
+        weapon.ship().panel().addProjectile(this);
 
-		if (length > 10) {
-			splinter();
+        if (length > 10) {
+            splinter();
         }
-	}
+    }
 
-	private void splinter()
+    private void splinter()
     {
-		double x = stop.x;
+        double x = stop.x;
         double y = stop.y;
-		for (int i = 0; i < branches; i++) {
+        for (int i = 0; i < branches; i++) {
             int branches = (int)(Math.random() * getAmtChildrenBranches());
-			Bolt b = new Bolt(x, y, offset, branches, length - 10, lifespan, thickness - 1, damage, weapon);
-			x = b.stop.x;
-			y = b.stop.y;
-		}
-	}
+            Bolt b = new Bolt(x, y, offset, branches, length - 10, lifespan, thickness - 1, damage, weapon);
+            x = b.stop.x;
+            y = b.stop.y;
+        }
+    }
 
     @Override
-	public void update()
+    public void update()
     {
         life--;
-	}
+    }
 
     @Override
     public void collide(Entity e)
@@ -95,25 +95,25 @@ public class Bolt implements MaskedEntity, Projectile
     }
 
     @Override
-	public void die()
+    public void die()
     {
-		new Explosion(getX(), getY(), weapon.ship().panel())
+        new Explosion(getX(), getY(), weapon.ship().panel())
         {
-			@Override public Color getColor() { return Color.WHITE; }
-		};
-	}
+            @Override public Color getColor() { return Color.WHITE; }
+        };
+    }
 
     @Override
-	public void draw(Graphics g)
+    public void draw(Graphics g)
     {
         int a = (int)Easing.easeInQuad(life, 0, 0xFF, lifespan);
-		g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
+        g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
         if (thickness == 1) {
             g.drawLine((int)startX(), (int)startY(), (int)stopX(), (int)stopY());
         } else {
             Util.drawThickLine(g, startX(), startY(), stopX(), stopY(), thickness);
         }
-	}
+    }
 
     @Override
     public void hit(double damage)
@@ -126,35 +126,35 @@ public class Bolt implements MaskedEntity, Projectile
         }
     }
 
-	private int getDefaultLifespanTicks()
+    private int getDefaultLifespanTicks()
     {
         return Util.msToTicks(getDefaultLifespanMs());
     }
 
-	protected int getDefaultLifespanMs() { return 1000; }
-	protected int getDefaultLength() { return 40; }
-	protected int getDefaultBranches() { return 2; }
-	protected int getAmtChildrenBranches(){ return 5; }
-	protected int getDefaultThickness(){ return 4; }
+    protected int getDefaultLifespanMs() { return 1000; }
+    protected int getDefaultLength() { return 40; }
+    protected int getDefaultBranches() { return 2; }
+    protected int getAmtChildrenBranches(){ return 5; }
+    protected int getDefaultThickness(){ return 4; }
 
-	@Override public double getX() { return startX(); }
-	@Override public double getY() { return startY(); }
-	@Override public int getWidth() { return 1; }
-	@Override public int getHeight() { return 1; }
+    @Override public double getX() { return startX(); }
+    @Override public double getY() { return startY(); }
+    @Override public int getWidth() { return 1; }
+    @Override public int getHeight() { return 1; }
     @Override public int getLife() { return life; }
     @Override public int getTeam() { return weapon.ship().getTeam(); }
-	@Override public boolean isAlive() { return life > 0; }
-	@Override public double getDamage() { return damage; }
+    @Override public boolean isAlive() { return life > 0; }
+    @Override public double getDamage() { return damage; }
     @Override public boolean collidesWithOwner() { return false; }
     @Override public boolean collidesWithProjectiles() { return false; }
     @Override public Weapon getOwner() { return weapon; }
 
     @Override
-	public void setLocation(double x, double y)
+    public void setLocation(double x, double y)
     {
-		start.setLocation(x, y);
-		stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
-	}
+        start.setLocation(x, y);
+        stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
+    }
 
     @Override
     public Rectangle2D.Double[] getRectMask()

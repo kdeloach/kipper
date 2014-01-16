@@ -18,11 +18,11 @@ public class Util
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource(filename));
     }
 
-	// inclusive lo, inclusive hi
-	public static int randRange(int lo, int hi)
+    // inclusive lo, inclusive hi
+    public static int randRange(int lo, int hi)
     {
-		return (int)(Math.random() * (hi - lo + 1) + lo);
-	}
+        return (int)(Math.random() * (hi - lo + 1) + lo);
+    }
 
     public static int msToTicks(int ms)
     {

@@ -8,22 +8,22 @@ import kipper.weapons.*;
 
 public class SpreadAbility extends Ability
 {
-	double amount = 2.0;
+    double amount = 2.0;
 
-	public SpreadAbility()
+    public SpreadAbility()
     {
-	}
+    }
 
-	public double getValue(Upgradable sender, String name, double value)
+    public double getValue(Upgradable sender, String name, double value)
     {
-		if (name == Ability.SPREAD) {
-			return value + amount;
+        if (name == Ability.SPREAD) {
+            return value + amount;
         } else if (name == Ability.COOLDOWN) {
-			return value + 10;
+            return value + 10;
         }
-		return value;
-	}
+        return value;
+    }
 
-	@Override public String getTitle() { return "Spread"; }
-	@Override public Color getColor() { return Color.RED; }
+    @Override public String getTitle() { return "Spread"; }
+    @Override public Color getColor() { return Color.RED; }
 }

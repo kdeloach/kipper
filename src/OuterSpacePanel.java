@@ -15,8 +15,8 @@ import kipper.weapons.*;
 
 public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 {
-	public static final int WIDTH = 800;
-	public static final int HEIGHT = 400;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 400;
     // Frame per second (1000 MS / 60 frames)
     public static long FPS = 1000 / 60;
 
@@ -24,14 +24,14 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     LightNoiseBg noiseBg;
     MarqueeStars starsBg, starsFg;
 
-	public Ship player1;
+    public Ship player1;
 
-	// current scene
-	Scene scene;
+    // current scene
+    Scene scene;
 
-	private ArrayList<Ship> players;
-	private ArrayList<Projectile> bulletList;
-	private ArrayList<Explosion> explosionList;
+    private ArrayList<Ship> players;
+    private ArrayList<Projectile> bulletList;
+    private ArrayList<Explosion> explosionList;
 
     private Queue<Ship> deleteShips;
     private Queue<Projectile> deleteProjectiles;
@@ -41,40 +41,40 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     private int totalFrames = 0;
     private long totalDurationMs = 0;
 
-	public OuterSpacePanel(BottomPanel statusBar)
+    public OuterSpacePanel(BottomPanel statusBar)
     {
         this.statusBar = statusBar;
 
-		setSize(getMinumumSize());
+        setSize(getMinumumSize());
 
-		players = new ArrayList<Ship>();
-		bulletList = new ArrayList<Projectile>();
-		explosionList = new ArrayList<Explosion>();
+        players = new ArrayList<Ship>();
+        bulletList = new ArrayList<Projectile>();
+        explosionList = new ArrayList<Explosion>();
 
-		deleteShips = new LinkedList<Ship>();
-		deleteProjectiles = new LinkedList<Projectile>();
-		deleteExplosions = new LinkedList<Explosion>();
+        deleteShips = new LinkedList<Ship>();
+        deleteProjectiles = new LinkedList<Projectile>();
+        deleteExplosions = new LinkedList<Explosion>();
 
         noiseBg = new LightNoiseBg(this);
         starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 1, 3, 0x33, 0xFF);
         starsFg = new MarqueeStars(25, Math.toRadians(180), 0.5, 3, 6, 0xFF, 0xFF);
 
-		player1 = new Darkwing(100, 100, this);
+        player1 = new Darkwing(100, 100, this);
         addShip(player1);
-		changeScene(new DemoLevel(this));
+        changeScene(new DemoLevel(this));
 
-		new Thread(this).start();
-	}
+        new Thread(this).start();
+    }
 
     // Author: Bob Nystrom
     // Source: http://gameprogrammingpatterns.com/game-loop.html
     @Override
-	public void run()
+    public void run()
     {
         long previous = System.currentTimeMillis();
         long lag = 0;
 
-		while (true) {
+        while (true) {
 
             while (paused) {
                 previous = System.currentTimeMillis();
@@ -92,9 +92,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
                 totalFrames++;
             }
 
-			repaint();
-		}
-	}
+            repaint();
+        }
+    }
 
     public void update()
     {
@@ -197,15 +197,15 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         }
     }
 
-	public void paint(Graphics g)
+    public void paint(Graphics g)
     {
         // SLOW
         //Graphics2D g2 = (Graphics2D)g;
         //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// bg
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, getWidth(), getHeight());
+        // bg
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
         statusBar.repaint();
         noiseBg.paint(g);
@@ -220,12 +220,12 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         for (int i = 0; i < explosionList.size(); i++) {
             explosionList.get(i).draw(g);
         }
-		scene.paint(g);
+        scene.paint(g);
 
         //double fps = (double)totalFrames / totalDurationMs * 1000.0;
         //g.setColor(Color.WHITE);
         //g.drawString("FPS: " + fps, 0, 10);
-	}
+    }
 
     void changeScene(Scene s)
     {
@@ -236,35 +236,35 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         scene.createScene();
     }
 
-	/////////////////////////
-	// Keyboard Controls
+    /////////////////////////
+    // Keyboard Controls
 
-	@Override public void keyTyped(KeyEvent e) { getPlayer().keyTyped(e); }
-	@Override public void keyReleased(KeyEvent e) { getPlayer().keyReleased(e); }
+    @Override public void keyTyped(KeyEvent e) { getPlayer().keyTyped(e); }
+    @Override public void keyReleased(KeyEvent e) { getPlayer().keyReleased(e); }
 
     @Override
-	public void keyPressed(KeyEvent e)
+    public void keyPressed(KeyEvent e)
     {
-		if (e.getKeyCode() == KeyEvent.VK_Q) {
+        if (e.getKeyCode() == KeyEvent.VK_Q) {
             if (scene.name() == "upgrade") {
                 changeScene(new DemoLevel(this));
             } else {
                 changeScene(new ShipUpgradeScreen(this));
             }
-		}
+        }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             paused = !paused;
         }
-		getPlayer().keyPressed(e);
-	}
+        getPlayer().keyPressed(e);
+    }
 
 
-	////////////////////////
+    ////////////////////////
 
-	public void addProjectile(Projectile b)
+    public void addProjectile(Projectile b)
     {
-		bulletList.add(b);
-	}
+        bulletList.add(b);
+    }
 
     public void removeProjectile(Projectile p)
     {
@@ -278,20 +278,20 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         }
     }
 
-	public void addExplosion(Explosion e)
+    public void addExplosion(Explosion e)
     {
-		explosionList.add(e);
-	}
+        explosionList.add(e);
+    }
 
     public void removeExplosion(Explosion e)
     {
         deleteExplosions.add(e);
     }
 
-	public void addShip(Ship e)
+    public void addShip(Ship e)
     {
-		players.add(e);
-	}
+        players.add(e);
+    }
 
     public void removeShip(Ship s)
     {
@@ -317,11 +317,11 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         return result;
     }
 
-	///
+    ///
 
-	public Dimension getMinumumSize() { return getPreferredSize(); }
-	public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT); }
-	public Ship getPlayer() { return player1; }
+    public Dimension getMinumumSize() { return getPreferredSize(); }
+    public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT); }
+    public Ship getPlayer() { return player1; }
 
     public void respawnPlayer()
     {
