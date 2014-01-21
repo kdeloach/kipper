@@ -1,0 +1,35 @@
+examples:
+
+theta = 0
+theta = toRadians(45)
+theta = random() * 2 * pi
+
+theta = ticks == 0 ? random() + (pi * 2) :
+        ticks == maxTicks/2 ? theta + toRadians(45) :
+        theta
+
+theta = if (ticks < 1) random() * pi 
+        else if (ticks < 50) -1
+        else if (ticks >= 50) theta
+        else theta
+
+
+
+expression
+    if found '(' then expect '(' + expression + ')'
+    try parse number
+    OR try parse ident
+        if '(' then expect '(' + parse expression + ')'
+    try parse op
+        if found +|-|*|/ then 
+
+
+
+
+stmt = expression
+expr = expr  
+atom = number | ident
+ = expression + op + expression
+number = -?\d+(.\d+)?
+func = ident + '(' + expression + ')'
+

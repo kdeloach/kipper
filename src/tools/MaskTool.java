@@ -36,7 +36,7 @@ public class MaskTool
     JButton btn;
     JComboBox<Ship> cbxShips;
     JTextArea txt;
-    DrawPanel drawpanel;
+    MaskDrawPanel drawpanel;
 
     public static void main(String[] argv)
     {
@@ -52,7 +52,7 @@ public class MaskTool
         pane2.setLayout(new BorderLayout());
 
         txt = new JTextArea("");
-        drawpanel = new DrawPanel(txt);
+        drawpanel = new MaskDrawPanel(txt);
 
         Ship[] shipsData = new Ship[] {
             new Darkwing(0, 0, null),
@@ -100,7 +100,7 @@ public class MaskTool
     }
 }
 
-class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
+class MaskDrawPanel extends JPanel implements MouseListener, MouseWheelListener
 {
     private Ship ship;
     private LinkedList<Point> maskPoints;
@@ -108,7 +108,7 @@ class DrawPanel extends JPanel implements MouseListener, MouseWheelListener
     private int factor = 10;
     private int imgX, imgY, imgWidth, imgHeight;
 
-    public DrawPanel(JTextArea t)
+    public MaskDrawPanel(JTextArea t)
     {
         this.txt = t;
         addMouseListener(this);

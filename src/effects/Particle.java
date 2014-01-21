@@ -1,17 +1,14 @@
 package kipper.effects;
 
-import java.awt.geom.Point2D;
+import java.awt.Color;
 
-public class Particle extends Point2D.Double
+public class Particle
 {
-    double startX, startY, endX, endY;
+    public int id, ticks, size;
+    public double x, y, theta, speed;
+    public Color color;
 
-    public Particle(double x, double y, double theta, double distance)
+    public Particle()
     {
-        super(x, y);
-        this.startX = x;
-        this.startY = y;
-        this.endX = x + Math.cos(theta) * distance;
-        this.endY = y + Math.sin(theta) * distance;
     }
 }

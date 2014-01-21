@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import kipper.Util;
 import kipper.Entity;
 import kipper.OuterSpacePanel;
+import kipper.effects.transitions.EaseOutQuad;
 
 public class Explosion implements Entity
 {
@@ -36,21 +37,12 @@ public class Explosion implements Entity
 
     public Particle createParticle(double x, double y, double theta, double distance)
     {
-        return new Particle(x, y, theta, distance);
+        throw new UnsupportedOperationException();
     }
 
     public void tick(double t)
     {
-        double d = getDurationTicks();
-        for(int i = 0; i < shrap.length; i++) {
-            Particle p = shrap[i];
-            double bx = p.startX;
-            double cx = p.endX - p.startX;
-            double by = p.startY;
-            double cy = p.endY - p.startY;
-            p.x = easingFn(t, bx, cx, d);
-            p.y = easingFn(t, by, cy, d);
-        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -80,7 +72,6 @@ public class Explosion implements Entity
     public int getAmount() { return 10; }
     public double particleAngle() { return Math.toRadians(Util.randRange(0, 360)); }
     public double particleDistance() { return Math.random() * 20 + 10; }
-    public double easingFn(double t, double b, double c, double d) { return Easing.easeOutQuad(t, b, c, d); }
 
     @Override public double getX() { return x; }
     @Override public double getY() { return y; }

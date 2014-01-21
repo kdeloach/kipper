@@ -1,4 +1,7 @@
+Every adjustable attribute should have a min and max value and an easing function
+
 HIGH
+- Fix double buffer strategy on OuterSpacePanel
 - Create particle emitter
 - Create weapon graphics and fix weapon relative offsets
 - Lightning and spacemine should respect bullet size & bullet speed upgrades

@@ -106,7 +106,8 @@ public class Bolt implements MaskedEntity, Projectile
     @Override
     public void draw(Graphics g)
     {
-        int a = (int)Easing.easeInQuad(life, 0, 0xFF, lifespan);
+        //int a = (int)Easing.easeInQuad(life, 0, 0xFF, lifespan);
+        int a = 0xFF;
         g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
         if (thickness == 1) {
             g.drawLine((int)startX(), (int)startY(), (int)stopX(), (int)stopY());

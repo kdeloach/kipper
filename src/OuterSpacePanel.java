@@ -38,8 +38,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
     private Queue<Explosion> deleteExplosions;
 
     private boolean paused = false;
-    private int totalFrames = 0;
-    private long totalDurationMs = 0;
 
     public OuterSpacePanel(BottomPanel statusBar)
     {
@@ -84,12 +82,10 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             long elapsed = current - previous;
             previous = current;
             lag += elapsed;
-            totalDurationMs += elapsed;
 
             while (lag >= FPS) {
                 update();
                 lag -= FPS;
-                totalFrames++;
             }
 
             repaint();
@@ -221,10 +217,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             explosionList.get(i).draw(g);
         }
         scene.paint(g);
-
-        //double fps = (double)totalFrames / totalDurationMs * 1000.0;
-        //g.setColor(Color.WHITE);
-        //g.drawString("FPS: " + fps, 0, 10);
     }
 
     void changeScene(Scene s)
