@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import kipper.*;
-import kipper.func.*;
 import kipper.effects.transitions.*;
 
 public class ParticleEmitterConfig
@@ -25,7 +24,7 @@ public class ParticleEmitterConfig
     // f(particleID) => ticks
     // What is the initial tick for this particle?
     // Return 0 to durationTicks
-    public IFunc2<Integer, Integer> startTick;
+    //public IFunc2<Integer, Integer> startTick;
 
     //
 
@@ -44,15 +43,13 @@ public class ParticleEmitterConfig
         spawnRate = 1;
         continuous = false;
 
-        pcode = "theta = select tick case 0 to 10: ; size=1;"
-        
-        //theta = 
+        //theta =
         //    switch(tick)
         //
         //
         //
         //
-        
+
         red = new ConstantValue(0xFF);
         green = new ConstantValue(0xFF);
         blue = new ConstantValue(0);
