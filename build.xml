@@ -21,7 +21,7 @@
     </target>
 
     <target name="jar" depends="build">
-        <jar destfile="bin/kipper.jar" basedir="bin" manifest="src/manifest" />
+        <jar destfile="bin/kipper.jar" basedir="bin" manifest="src/kipper/manifest" />
     </target>
 
     <target name="masktool" depends="build">
