@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.util.List;
 import kipper.*;
 import kipper.effects.transitions.*;
 import particledsl.*;
@@ -28,10 +29,9 @@ public class ParticleEmitterConfig
 
     public ParticleValueFunc theta;
     public ParticleValueFunc speed;
-    public ParticleValueFunc red;
-    public ParticleValueFunc green;
-    public ParticleValueFunc blue;
-    public ParticleValueFunc alpha;
+    public ParticleValueFunc hue;
+    public ParticleValueFunc saturation;
+    public ParticleValueFunc brightness;
     public ParticleValueFunc size;
 
     public ParticleEmitterConfig()
@@ -41,16 +41,16 @@ public class ParticleEmitterConfig
         spawnRate = 1;
         continuous = false;
 
-        red = new ParticleLang("random()*255").getValue();
-        green = new ParticleLang("255").getValue();
-        blue = new ParticleLang("0").getValue();
-        alpha = new ParticleLang("255").getValue();
+        hue = new ParticleLang("0xFF+linear(0, 180)/180").getValue();
+        saturation = new ParticleLang("1").getValue();
+        brightness = new ParticleLang("linear(1, 0)").getValue();
 
-        size = new EasedValue(new Linear(), new ConstantValue(10), new ConstantValue(0));
+        //size = new EasedValue(new Linear(), new ConstantValue(10), new ConstantValue(0));
         //size = new ParticleLang("linear(10, 1)").getValue()
+        size = new ParticleLang("linear(10, 1)").getValue();
 
         //theta = new RandomValue(0, Math.PI * 2);
-        //theta = new EasedValue(new Linear(), 0, 2*Math.PI);
+        //theta = new EasedValue(new Linear(), new ConstantValue(0), new ConstantValue(2*Math.PI));
         //theta = new RadianValue(new ParticleIdValue());
         // theta = new CondValue(
             // new RangeCond(new ParticleTicksValue(), 0, 1),
@@ -61,20 +61,17 @@ public class ParticleEmitterConfig
                 // new ParticleThetaValue()));
         theta = new CondValue(
             new RangeCond(new ParticleTicksValue(), 0, 1),
-            //new RandomValue(0, Math.PI * 2),
-            new RadianValue(
-                new AddValue(new ParticleIdValue(), new AddValue(new ParticleIdValue(), new ParticleIdValue()))
-            ),
-            new AddValue(new ParticleThetaValue(), new ConstantValue(Math.toRadians(1))));
+            new MultValue(new RandomValue(), new ConstantValue(Math.PI * 2)),
+            new ParticleThetaValue());
 
         //speed = new RandomValue(0, 1);
         //speed = new EasedValue(new Linear(), new RandomValue(0, 1), new ConstantValue(0));
         //speed = new EasedValue(new EaseInQuad(), new RandomValue(0, 1), new ConstantValue(0));
-        //speed = new ConstantValue(1);
-        speed = new CondValue(
-            new RangeCond(new ParticleTicksValue(), 0, 1),
-            new RandomValue(),
-            new ParticleSpeedValue());
+        speed = new ConstantValue(1);
+        // speed = new CondValue(
+            // new RangeCond(new ParticleTicksValue(), 0, 1),
+            // new MultValue(new RandomValue(), new ConstantValue(3)),
+            // new ParticleSpeedValue());
     }
 }
 
@@ -97,7 +94,6 @@ class ParticleLang
     private ParticleValueFunc walk(Token node)
     {
         if (node instanceof NumberToken) {
-            // TODO: Check number base
             return new ConstantValue(Double.parseDouble(node.tokenValue()));
         } else if (node instanceof IdentToken) {
             switch (node.tokenValue().toLowerCase()) {
@@ -126,13 +122,44 @@ class ParticleLang
             return new ModValue(walk(token.left), walk(token.right));
         } else if (node instanceof CallFuncToken) {
             CallFuncToken token = (CallFuncToken)node;
+            List<Token> args = token.args.args;
             switch (token.ident.tokenValue().toLowerCase()) {
-                case "random": return new RandomValue();
-
+                case "random":
+                    validateArgs(token, 0);
+                    return new RandomValue();
+                case "min":
+                    validateArgs(token, 2);
+                    return new MinValue(walk(args.get(0)), walk(args.get(1)));
+                case "max":
+                    validateArgs(token, 2);
+                    return new MaxValue(walk(args.get(0)), walk(args.get(1)));
+                case "abs":
+                    validateArgs(token, 1);
+                    return new AbsValue(walk(args.get(0)));
+                case "linear":
+                    validateArgs(token, 2);
+                    return new EasedValue(new Linear(), walk(args.get(0)), walk(args.get(1)));
+                case "easeinquad":
+                    validateArgs(token, 2);
+                    return new EasedValue(new EaseInQuad(), walk(args.get(0)), walk(args.get(1)));
+                case "easeoutcubic":
+                    validateArgs(token, 2);
+                    return new EasedValue(new EaseOutCubic(), walk(args.get(0)), walk(args.get(1)));
+                case "easeoutquad":
+                    validateArgs(token, 2);
+                    return new EasedValue(new EaseOutQuad(), walk(args.get(0)), walk(args.get(1)));
             }
             throw new UnsupportedOperationException("Function not supported (" + token.ident.tokenValue() + ")");
         }
         throw new UnsupportedOperationException("Not implemented (" + node.tokenValue() + ")");
+    }
+
+    private void validateArgs(CallFuncToken token, int expectedSize)
+    {
+        int actualSize = token.args.args.size();
+        if (actualSize != expectedSize) {
+            throw new UnsupportedOperationException("Expected " + expectedSize + " arguments but received " + actualSize + " arguments (" + token.ident.tokenValue() + ")");
+        }
     }
 }
 
@@ -353,6 +380,56 @@ class RandomValue extends ParticleValueFunc
     public double call(Particle p, int maxTicks)
     {
         return Math.random();
+    }
+}
+
+class MinValue extends ParticleValueFunc
+{
+    ParticleValueFunc a, b;
+
+    public MinValue(ParticleValueFunc a, ParticleValueFunc b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return Math.min(a.call(p, maxTicks), b.call(p, maxTicks));
+    }
+}
+
+class MaxValue extends ParticleValueFunc
+{
+    ParticleValueFunc a, b;
+
+    public MaxValue(ParticleValueFunc a, ParticleValueFunc b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return Math.max(a.call(p, maxTicks), b.call(p, maxTicks));
+    }
+}
+
+class AbsValue extends ParticleValueFunc
+{
+    ParticleValueFunc a;
+
+    public AbsValue(ParticleValueFunc a)
+    {
+        this.a = a;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return Math.abs(a.call(p, maxTicks));
     }
 }
 

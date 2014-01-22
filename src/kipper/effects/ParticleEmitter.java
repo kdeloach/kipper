@@ -83,7 +83,7 @@ public class ParticleEmitter implements Entity
     {
         for (Particle p : pz) {
             g.setColor(p.color);
-            g.fillOval((int)(x + p.x - p.size / 2),
+            g.fillRect((int)(x + p.x - p.size / 2),
                        (int)(y + p.y - p.size / 2), p.size, p.size);
         }
     }
@@ -138,10 +138,9 @@ public class ParticleEmitter implements Entity
 
     private Color getParticleColor(Particle p)
     {
-        int r = (int)config.red.call(p, config.durationTicks);
-        int g = (int)config.green.call(p, config.durationTicks);
-        int b = (int)config.blue.call(p, config.durationTicks);
-        int a = (int)config.alpha.call(p, config.durationTicks);
-        return new Color(r, g, b, a);
+        float hue = (float)config.hue.call(p, config.durationTicks);
+        float saturation = (float)config.saturation.call(p, config.durationTicks);
+        float brightness = (float)config.brightness.call(p, config.durationTicks);
+        return Color.getHSBColor(hue, saturation, brightness);
     }
 }
