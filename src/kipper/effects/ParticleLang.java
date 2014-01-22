@@ -57,7 +57,7 @@ public class ParticleLang
                 }
                 throw new UnsupportedOperationException("Function not supported (" + funcName + ")");
             } catch (NoSuchElementException ex) {
-                throw new UnsupportedOperationException("Too many arguments provided (" + funcName + ")");
+                throw new UnsupportedOperationException("Not enough arguments provided (" + funcName + ")");
             }
         }
         throw new UnsupportedOperationException("Not implemented (" + node.tokenValue() + ")");
