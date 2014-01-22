@@ -31,11 +31,13 @@
         <jar destfile="bin/kipper.jar" basedir="bin" manifest="src/kipper/manifest" />
     </target>
 
+    <target name="mtool" depends="masktool" />
     <target name="masktool" depends="build">
         <java classpath="bin" classname="kipper.tools.MaskTool" fork="true" />
     </target>
 
-    <target name="ptool" depends="build">
+    <target name="ptool" depends="particletool" />
+    <target name="particletool" depends="build">
         <java classpath="bin" classname="kipper.tools.ParticleTool" fork="true" />
     </target>
 </project>
