@@ -1,4 +1,7 @@
 <project default="run">
+
+    <property name="particledsl.path"  location="C:\Users\kevin\Desktop\labs\java\particledsl\src\particledsl" />
+
     <target name="run" depends="build, exec">
     </target>
 
@@ -8,7 +11,11 @@
     </target>
 
     <target name="build">
-        <javac srcdir="src" destdir="bin" debug="true" includeAntRuntime="false">
+        <javac destdir="bin"
+               debug="true"
+               includeAntRuntime="false">
+            <src location="src"/>
+            <src location="${particledsl.path}"/>
             <!--compilerarg value="-Xlint" /-->
         </javac>
         <copy todir="bin/assets">

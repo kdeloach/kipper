@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import kipper.*;
 import kipper.effects.transitions.*;
+import particledsl.*;
+import particledsl.tokens.*;
 
 public class ParticleEmitterConfig
 {
@@ -17,16 +19,12 @@ public class ParticleEmitterConfig
     // TODO: Min theta, max theta, offset theta
     // TODO: Particle shape?
 
-    //
-
     // These get called upon creation:
 
     // f(particleID) => ticks
     // What is the initial tick for this particle?
     // Return 0 to durationTicks
     //public IFunc2<Integer, Integer> startTick;
-
-    //
 
     public ParticleValueFunc theta;
     public ParticleValueFunc speed;
@@ -43,19 +41,13 @@ public class ParticleEmitterConfig
         spawnRate = 1;
         continuous = false;
 
-        //theta =
-        //    switch(tick)
-        //
-        //
-        //
-        //
-
-        red = new ConstantValue(0xFF);
-        green = new ConstantValue(0xFF);
-        blue = new ConstantValue(0);
-        alpha = new ConstantValue(0xFF);
+        red = new ParticleLang("random()*255").getValue();
+        green = new ParticleLang("255").getValue();
+        blue = new ParticleLang("0").getValue();
+        alpha = new ParticleLang("255").getValue();
 
         size = new EasedValue(new Linear(), new ConstantValue(10), new ConstantValue(0));
+        //size = new ParticleLang("linear(10, 1)").getValue()
 
         //theta = new RandomValue(0, Math.PI * 2);
         //theta = new EasedValue(new Linear(), 0, 2*Math.PI);
@@ -81,8 +73,66 @@ public class ParticleEmitterConfig
         //speed = new ConstantValue(1);
         speed = new CondValue(
             new RangeCond(new ParticleTicksValue(), 0, 1),
-            new RandomValue(0, 1),
+            new RandomValue(),
             new ParticleSpeedValue());
+    }
+}
+
+class ParticleLang
+{
+    String program;
+
+    public ParticleLang(String program)
+    {
+        this.program = program;
+    }
+
+    public ParticleValueFunc getValue()
+    {
+        Parser parser = new Parser(new Tokenizer(program));
+        Token ast = parser.expression(0);
+        return walk(ast);
+    }
+
+    private ParticleValueFunc walk(Token node)
+    {
+        if (node instanceof NumberToken) {
+            // TODO: Check number base
+            return new ConstantValue(Double.parseDouble(node.tokenValue()));
+        } else if (node instanceof IdentToken) {
+            switch (node.tokenValue().toLowerCase()) {
+                case "x": return new ParticleXValue();
+                case "y": return new ParticleYValue();
+                case "id": return new ParticleIdValue();
+                case "theta": return new ParticleThetaValue();
+                case "speed": return new ParticleSpeedValue();
+                case "ticks": return new ParticleTicksValue();
+            }
+            throw new UnsupportedOperationException("Identifier not supported (" + node.tokenValue() + ")");
+        } else if (node instanceof PlusToken) {
+            PlusToken token = (PlusToken)node;
+            return new AddValue(walk(token.left), walk(token.right));
+        } else if (node instanceof MinusToken) {
+            MinusToken token = (MinusToken)node;
+            return new MinusValue(walk(token.left), walk(token.right));
+        } else if (node instanceof StarToken) {
+            StarToken token = (StarToken)node;
+            return new MultValue(walk(token.left), walk(token.right));
+        } else if (node instanceof SlashToken) {
+            SlashToken token = (SlashToken)node;
+            return new DivValue(walk(token.left), walk(token.right));
+        } else if (node instanceof PercentToken) {
+            PercentToken token = (PercentToken)node;
+            return new ModValue(walk(token.left), walk(token.right));
+        } else if (node instanceof CallFuncToken) {
+            CallFuncToken token = (CallFuncToken)node;
+            switch (token.ident.tokenValue().toLowerCase()) {
+                case "random": return new RandomValue();
+
+            }
+            throw new UnsupportedOperationException("Function not supported (" + token.ident.tokenValue() + ")");
+        }
+        throw new UnsupportedOperationException("Not implemented (" + node.tokenValue() + ")");
     }
 }
 
@@ -154,6 +204,74 @@ class AddValue extends ParticleValueFunc
     }
 }
 
+class MinusValue extends ParticleValueFunc
+{
+    ParticleValueFunc a, b;
+
+    public MinusValue(ParticleValueFunc a, ParticleValueFunc b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return a.call(p, maxTicks) - b.call(p, maxTicks);
+    }
+}
+
+class MultValue extends ParticleValueFunc
+{
+    ParticleValueFunc a, b;
+
+    public MultValue(ParticleValueFunc a, ParticleValueFunc b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return a.call(p, maxTicks) * b.call(p, maxTicks);
+    }
+}
+
+class DivValue extends ParticleValueFunc
+{
+    ParticleValueFunc a, b;
+
+    public DivValue(ParticleValueFunc a, ParticleValueFunc b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return a.call(p, maxTicks) / b.call(p, maxTicks);
+    }
+}
+
+class ModValue extends ParticleValueFunc
+{
+    ParticleValueFunc a, b;
+
+    public ModValue(ParticleValueFunc a, ParticleValueFunc b)
+    {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return a.call(p, maxTicks) % b.call(p, maxTicks);
+    }
+}
+
 // Convert another value to radian
 class RadianValue extends ParticleValueFunc
 {
@@ -168,6 +286,24 @@ class RadianValue extends ParticleValueFunc
     public double call(Particle p, int maxTicks)
     {
         return Math.toRadians(val.call(p, maxTicks));
+    }
+}
+
+class ParticleXValue extends ParticleValueFunc
+{
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return p.x;
+    }
+}
+
+class ParticleYValue extends ParticleValueFunc
+{
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return p.y;
     }
 }
 
@@ -207,20 +343,16 @@ class ParticleTicksValue extends ParticleValueFunc
     }
 }
 
-class RandomValue  extends ParticleValueFunc
+class RandomValue extends ParticleValueFunc
 {
-    double lo, hi;
-
-    public RandomValue(double lo, double hi)
+    public RandomValue()
     {
-        this.lo = lo;
-        this.hi = hi;
     }
 
     @Override
     public double call(Particle p, int maxTicks)
     {
-        return Math.random() * (hi - lo + 1) + lo;
+        return Math.random();
     }
 }
 
