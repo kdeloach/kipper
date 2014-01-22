@@ -15,7 +15,7 @@ public class ParticleEmitter implements Entity
     private int particleID= 0, ticks = 0;
 
     private LinkedList<Particle> pz;
-    private LinkedList<Particle> pool;
+    private LinkedList<Particle> graveyard;
     private ParticleEmitterConfig config;
 
     public ParticleEmitter(double x, double y, ParticleEmitterConfig config)
@@ -24,7 +24,7 @@ public class ParticleEmitter implements Entity
         this.y = y;
         this.config = config;
         this.pz = new LinkedList<Particle>();
-        this.pool = new LinkedList<Particle>();
+        this.graveyard = new LinkedList<Particle>();
     }
 
     private boolean canSpawnParticle()
@@ -36,7 +36,7 @@ public class ParticleEmitter implements Entity
     {
         Particle p;
         try {
-            p = pool.pop();
+            p = graveyard.pop();
         } catch (NoSuchElementException ex) {
             p = new Particle();
         }
@@ -75,7 +75,7 @@ public class ParticleEmitter implements Entity
                 p.ticks++;
             } else {
                 iter.remove();
-                pool.push(p);
+                graveyard.push(p);
             }
         }
 

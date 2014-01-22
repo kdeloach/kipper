@@ -1,49 +1,16 @@
 package kipper.tools;
 
-import javax.swing.JPanel;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JSlider;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
-import javax.swing.BorderFactory;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.Point;
-import java.awt.Image;
-import java.awt.Color;
-import java.awt.Polygon;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Container;
-import java.awt.Canvas;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.FlowLayout;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Hashtable;
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
-import kipper.Util;
-import kipper.OuterSpacePanel;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
+import particledsl.*;
 
-public class ParticleTool implements ChangeListener
+public class ParticleTool implements ChangeListener, ActionListener
 {
     JFrame frame;
     Container pane;
@@ -53,8 +20,7 @@ public class ParticleTool implements ChangeListener
     ParticleEmitterConfig config;
     JSlider maxParticlesSlider, durationTicksSlider, spawnRateSlider, continuousSlider;
     JLabel lblMaxParticles, lblDuration, lblSpawnRate, lblContinuous;
-    JSlider sizeStartSlider;
-    JLabel lblSizeStart, lblSizeEnd, lblSizeEase;
+    JTextField txtTheta, txtHue, txtSaturation, txtBrightness, txtSize, txtSpeed;
 
     public static void main(String[] argv)
     {
@@ -74,8 +40,9 @@ public class ParticleTool implements ChangeListener
         controls.setLayout(new GridLayout(5, 2));
 
         addBasicControls();
-        addSizeControls();
+        addTextControls();
         updateLabels();
+        updateConfig();
 
         pane.add(drawpanel, BorderLayout.CENTER);
         pane.add(controls, BorderLayout.LINE_END);
@@ -89,19 +56,13 @@ public class ParticleTool implements ChangeListener
 
     public void stateChanged(ChangeEvent e)
     {
-        JSlider source = (JSlider)e.getSource();
-        if (source == maxParticlesSlider) {
-            config.maxParticles = (int)source.getValue();
-        } else if (source == durationTicksSlider) {
-            config.durationTicks = (int)source.getValue();
-        } else if (source == spawnRateSlider) {
-            config.spawnRate = (double)((int)source.getValue() / 100.0);
-        } else if (source == continuousSlider) {
-            config.continuous = (int)source.getValue() == 1 ? true : false;
-        } else if (source == sizeStartSlider) {
-            //
-        }
+        updateConfig();
         updateLabels();
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        updateConfig();
     }
 
     private void addBasicControls()
@@ -154,18 +115,37 @@ public class ParticleTool implements ChangeListener
         controls.add(continuousSlider);
     }
 
-    private void addSizeControls()
+    private void addTextControls()
     {
-        lblSizeStart = new JLabel();
-        sizeStartSlider = new JSlider(JSlider.HORIZONTAL, 0, 10, 3);
-        sizeStartSlider.setPaintTicks(true);
-        sizeStartSlider.setPaintLabels(true);
-        sizeStartSlider.setSnapToTicks(true);
-        sizeStartSlider.setMinorTickSpacing(1);
-        sizeStartSlider.setMajorTickSpacing(2);
-        sizeStartSlider.addChangeListener(this);
-        controls.add(lblSizeStart);
-        controls.add(sizeStartSlider);
+        txtTheta = new JTextField("random()");
+        txtTheta.addActionListener(this);
+        controls.add(new JLabel("Theta"));
+        controls.add(txtTheta);
+
+        txtSpeed = new JTextField("1");
+        txtSpeed.addActionListener(this);
+        controls.add(new JLabel("Speed"));
+        controls.add(txtSpeed);
+
+        txtSize = new JTextField("linear(10, 1)");
+        txtSize.addActionListener(this);
+        controls.add(new JLabel("Size"));
+        controls.add(txtSize);
+
+        txtHue = new JTextField("60/360");
+        txtHue.addActionListener(this);
+        controls.add(new JLabel("Hue"));
+        controls.add(txtHue);
+
+        txtSaturation = new JTextField("1");
+        txtSaturation.addActionListener(this);
+        controls.add(new JLabel("Saturation"));
+        controls.add(txtSaturation);
+
+        txtBrightness = new JTextField("1");
+        txtBrightness.addActionListener(this);
+        controls.add(new JLabel("Brightness"));
+        controls.add(txtBrightness);
     }
 
     private void updateLabels()
@@ -174,9 +154,20 @@ public class ParticleTool implements ChangeListener
         lblDuration.setText("Duration (" + config.durationTicks + ")");
         lblSpawnRate.setText("Spawn Rate (" + config.spawnRate + ")");
         lblContinuous.setText("Continuous? (" + (config.continuous ? "Yes" : "No") + ")");
-        lblSizeStart.setText("Size Start");
-        //lblSizeEnd.setText("Size End");
-        //lblSizeEase.setText("Size Ease");
+    }
+
+    public void updateConfig()
+    {
+        config.maxParticles = maxParticlesSlider.getValue();
+        config.durationTicks = durationTicksSlider.getValue();
+        config.spawnRate = (double)(spawnRateSlider.getValue() / 100.0);
+        config.continuous = continuousSlider.getValue() == 1 ? true : false;
+        config.theta = new ParticleLang(txtTheta.getText()).getValue();
+        config.speed = new ParticleLang(txtSpeed.getText()).getValue();
+        config.size = new ParticleLang(txtSize.getText()).getValue();
+        config.H = new ParticleLang(txtHue.getText()).getValue();
+        config.S = new ParticleLang(txtSaturation.getText()).getValue();
+        config.B = new ParticleLang(txtBrightness.getText()).getValue();
     }
 }
 
@@ -249,5 +240,5 @@ class ParticleDrawPanel extends JComponent implements Runnable
     }
 
     @Override public Dimension getMaximumSize() { return getPreferredSize(); }
-    @Override public Dimension getPreferredSize() { return new Dimension(250, 250); }
+    @Override public Dimension getPreferredSize() { return new Dimension(400, 400); }
 }
