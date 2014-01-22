@@ -165,9 +165,9 @@ public class ParticleTool implements ChangeListener, ActionListener
         config.theta = new ParticleLang(txtTheta.getText()).getValue();
         config.speed = new ParticleLang(txtSpeed.getText()).getValue();
         config.size = new ParticleLang(txtSize.getText()).getValue();
-        config.H = new ParticleLang(txtHue.getText()).getValue();
-        config.S = new ParticleLang(txtSaturation.getText()).getValue();
-        config.B = new ParticleLang(txtBrightness.getText()).getValue();
+        config.hue = new ParticleLang(txtHue.getText()).getValue();
+        config.saturation = new ParticleLang(txtSaturation.getText()).getValue();
+        config.brightness = new ParticleLang(txtBrightness.getText()).getValue();
     }
 }
 

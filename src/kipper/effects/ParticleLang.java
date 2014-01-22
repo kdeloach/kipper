@@ -1,22 +1,22 @@
 package kipper.effects;
 
-import java.util.List;
+import java.util.*;
 import kipper.effects.transitions.*;
 import particledsl.*;
 import particledsl.tokens.*;
 
 public class ParticleLang
 {
-    String program;
+    String expression;
 
-    public ParticleLang(String program)
+    public ParticleLang(String expression)
     {
-        this.program = program;
+        this.expression = expression;
     }
 
     public ParticleValueFunc getValue()
     {
-        Parser parser = new Parser(new Tokenizer(program));
+        Parser parser = new Parser(new Tokenizer(expression));
         Token ast = parser.expression(0);
         return walk(ast);
     }
@@ -27,218 +27,100 @@ public class ParticleLang
             return new ConstantValue(Double.parseDouble(node.tokenValue()));
         } else if (node instanceof IdentToken) {
             switch (node.tokenValue().toLowerCase()) {
-                case "x": return new ParticleXValue();
-                case "y": return new ParticleYValue();
-                case "id": return new ParticleIdValue();
-                case "theta": return new ParticleThetaValue();
-                case "speed": return new ParticleSpeedValue();
-                case "ticks": return new ParticleTicksValue();
-                case "h": return new ParticleHValue();
-                case "s": return new ParticleSValue();
-                case "b": return new ParticleBValue();
                 case "pi": return new ConstantValue(Math.PI);
             }
-            throw new UnsupportedOperationException("Identifier not supported (" + node.tokenValue() + ")");
-        } else if (node instanceof PlusToken) {
-            PlusToken token = (PlusToken)node;
-            return new AddValue(walk(token.left), walk(token.right));
-        } else if (node instanceof MinusToken) {
-            MinusToken token = (MinusToken)node;
-            return new MinusValue(walk(token.left), walk(token.right));
-        } else if (node instanceof StarToken) {
-            StarToken token = (StarToken)node;
-            return new MultValue(walk(token.left), walk(token.right));
-        } else if (node instanceof SlashToken) {
-            SlashToken token = (SlashToken)node;
-            return new DivValue(walk(token.left), walk(token.right));
-        } else if (node instanceof PercentToken) {
-            PercentToken token = (PercentToken)node;
-            return new ModValue(walk(token.left), walk(token.right));
+            return new ParticleValue(node.tokenValue());
+        } else if (node instanceof BinaryMathToken) {
+            BinaryMathToken token = (BinaryMathToken)node;
+            return new BinaryMathValue(token.tokenValue(), walk(token.left), walk(token.right));
         } else if (node instanceof CallFuncToken) {
             CallFuncToken token = (CallFuncToken)node;
-            List<Token> args = token.args.args;
-            switch (token.ident.tokenValue().toLowerCase()) {
-                case "random":
-                    validateArgs(token, 0);
-                    return new RandomValue();
-                case "min":
-                    validateArgs(token, 2);
-                    return new MinValue(walk(args.get(0)), walk(args.get(1)));
-                case "max":
-                    validateArgs(token, 2);
-                    return new MaxValue(walk(args.get(0)), walk(args.get(1)));
-                case "abs":
-                    validateArgs(token, 1);
-                    return new AbsValue(walk(args.get(0)));
-                case "round":
-                    validateArgs(token, 1);
-                    return new RoundValue(walk(args.get(0)));
-                case "floor":
-                    validateArgs(token, 1);
-                    return new FloorValue(walk(args.get(0)));
-                case "ceil":
-                    validateArgs(token, 1);
-                    return new CeilValue(walk(args.get(0)));
-                case "linear":
-                    validateArgs(token, 2);
-                    return new EasedValue(new Linear(), walk(args.get(0)), walk(args.get(1)));
-                case "easeinquad":
-                    validateArgs(token, 2);
-                    return new EasedValue(new EaseInQuad(), walk(args.get(0)), walk(args.get(1)));
-                case "easeoutcubic":
-                    validateArgs(token, 2);
-                    return new EasedValue(new EaseOutCubic(), walk(args.get(0)), walk(args.get(1)));
-                case "easeoutquad":
-                    validateArgs(token, 2);
-                    return new EasedValue(new EaseOutQuad(), walk(args.get(0)), walk(args.get(1)));
+            String funcName = token.ident.tokenValue();
+            LinkedList<Token> args = token.args.args;
+            int numArgs = args.size();
+            try {
+                switch (funcName.toLowerCase()) {
+                    case "random": return new RandomValue();
+                    case "min": return new MinValue(walk(args.pop()), walk(args.pop()));
+                    case "max": return new MaxValue(walk(args.pop()), walk(args.pop()));
+                    case "abs": return new AbsValue(walk(args.pop()));
+                    case "round": return new RoundValue(walk(args.pop()));
+                    case "floor": return new FloorValue(walk(args.pop()));
+                    case "ceil": return new CeilValue(walk(args.pop()));
+                    case "cos": return new CosValue(walk(args.pop()));
+                    case "sin": return new SinValue(walk(args.pop()));
+                    case "tan": return new TanValue(walk(args.pop()));
+                    case "linear": return new EasedValue(new Linear(), walk(args.pop()), walk(args.pop()));
+                    case "easeinquad": return new EasedValue(new EaseInQuad(), walk(args.pop()), walk(args.pop()));
+                    case "easeoutcubic": return new EasedValue(new EaseOutCubic(), walk(args.pop()), walk(args.pop()));
+                    case "easeoutquad": return new EasedValue(new EaseOutQuad(), walk(args.pop()), walk(args.pop()));
+                }
+                throw new UnsupportedOperationException("Function not supported (" + funcName + ")");
+            } catch (NoSuchElementException ex) {
+                throw new UnsupportedOperationException("Too many arguments provided (" + funcName + ")");
             }
-            throw new UnsupportedOperationException("Function not supported (" + token.ident.tokenValue() + ")");
         }
         throw new UnsupportedOperationException("Not implemented (" + node.tokenValue() + ")");
-    }
-
-    private void validateArgs(CallFuncToken token, int expectedSize)
-    {
-        int actualSize = token.args.args.size();
-        if (actualSize != expectedSize) {
-            throw new UnsupportedOperationException("Expected " + expectedSize + " arguments but received " + actualSize + " arguments (" + token.ident.tokenValue() + ")");
-        }
     }
 }
 
 abstract class ParticleValueFunc
 {
-    abstract double call(Particle p, int maxTicks);
+    abstract double call(Particle p, ParticleEmitterConfig config);
 }
 
 abstract class ParticleCondFunc
 {
-    abstract boolean isTrue(Particle p, int maxTicks);
-}
-
-class RangeCond extends ParticleCondFunc
-{
-    ParticleValueFunc val;
-    int minTick, maxTick;
-
-    public RangeCond(ParticleValueFunc val, int minTick, int maxTick)
-    {
-        this.val = val;
-        this.minTick = minTick;
-        this.maxTick = maxTick;
-    }
-
-    @Override
-    public boolean isTrue(Particle p, int maxTicks)
-    {
-        return val.call(p, maxTicks) >= minTick && val.call(p, maxTicks) < maxTick;
-    }
+    abstract boolean isTrue(Particle p, ParticleEmitterConfig config);
 }
 
 class CondValue extends ParticleValueFunc
 {
     ParticleCondFunc cond;
-    ParticleValueFunc aValue, bValue;
+    ParticleValueFunc trueBody, otherBody;
 
-    public CondValue(ParticleCondFunc cond, ParticleValueFunc aValue, ParticleValueFunc bValue)
+    public CondValue(ParticleCondFunc cond, ParticleValueFunc trueBody, ParticleValueFunc otherBody)
     {
         this.cond = cond;
-        this.aValue = aValue;
-        this.bValue = bValue;
+        this.trueBody = trueBody;
+        this.otherBody = otherBody;
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        if (cond.isTrue(p, maxTicks)) {
-            return aValue.call(p, maxTicks);
+        if (cond.isTrue(p, config)) {
+            return trueBody.call(p, config);
         }
-        return bValue.call(p, maxTicks);
+        return otherBody.call(p, config);
     }
 }
 
-class AddValue extends ParticleValueFunc
+class BinaryMathValue extends ParticleValueFunc
 {
-    ParticleValueFunc a, b;
+    String op;
+    ParticleValueFunc left, right;
 
-    public AddValue(ParticleValueFunc a, ParticleValueFunc b)
+    public BinaryMathValue(String op, ParticleValueFunc left, ParticleValueFunc right)
     {
-        this.a = a;
-        this.b = b;
+        this.op = op;
+        this.left = left;
+        this.right = right;
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return a.call(p, maxTicks) + b.call(p, maxTicks);
-    }
-}
-
-class MinusValue extends ParticleValueFunc
-{
-    ParticleValueFunc a, b;
-
-    public MinusValue(ParticleValueFunc a, ParticleValueFunc b)
-    {
-        this.a = a;
-        this.b = b;
-    }
-
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return a.call(p, maxTicks) - b.call(p, maxTicks);
-    }
-}
-
-class MultValue extends ParticleValueFunc
-{
-    ParticleValueFunc a, b;
-
-    public MultValue(ParticleValueFunc a, ParticleValueFunc b)
-    {
-        this.a = a;
-        this.b = b;
-    }
-
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return a.call(p, maxTicks) * b.call(p, maxTicks);
-    }
-}
-
-class DivValue extends ParticleValueFunc
-{
-    ParticleValueFunc a, b;
-
-    public DivValue(ParticleValueFunc a, ParticleValueFunc b)
-    {
-        this.a = a;
-        this.b = b;
-    }
-
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return a.call(p, maxTicks) / b.call(p, maxTicks);
-    }
-}
-
-class ModValue extends ParticleValueFunc
-{
-    ParticleValueFunc a, b;
-
-    public ModValue(ParticleValueFunc a, ParticleValueFunc b)
-    {
-        this.a = a;
-        this.b = b;
-    }
-
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return a.call(p, maxTicks) % b.call(p, maxTicks);
+        double a = left.call(p, config);
+        double b = right.call(p, config);
+        switch (op) {
+            case "+": return a + b;
+            case "-": return a - b;
+            case "*": return a * b;
+            case "/": return a / b;
+            case "%": return a % b;
+        }
+        throw new UnsupportedOperationException("Not implemented (" + op + ")");
     }
 }
 
@@ -252,101 +134,44 @@ class RadianValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.toRadians(val.call(p, maxTicks));
+        return Math.toRadians(val.call(p, config));
     }
 }
 
-class ParticleXValue extends ParticleValueFunc
+class ParticleValue extends ParticleValueFunc
 {
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.x;
-    }
-}
+    String name;
 
-class ParticleYValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
+    public ParticleValue(String name)
     {
-        return p.y;
+        this.name = name;
     }
-}
 
-class ParticleIdValue extends ParticleValueFunc
-{
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return p.id;
-    }
-}
-
-class ParticleThetaValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.theta;
-    }
-}
-
-class ParticleSpeedValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.speed;
-    }
-}
-
-class ParticleHValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.H;
-    }
-}
-
-class ParticleSValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.S;
-    }
-}
-
-class ParticleBValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.B;
-    }
-}
-
-class ParticleTicksValue extends ParticleValueFunc
-{
-    @Override
-    public double call(Particle p, int maxTicks)
-    {
-        return p.ticks;
+        switch (name) {
+            case "id": return p.id;
+            case "ticks": return p.ticks;
+            case "size": return p.size;
+            case "x": return p.x;
+            case "y": return p.y;
+            case "theta": return p.theta;
+            case "speed": return p.speed;
+            case "hue": return p.hue;
+            case "saturation": return p.saturation;
+            case "brightness": return p.brightness;
+        }
+        throw new UnsupportedOperationException("Property does not exist (" + name + ")");
     }
 }
 
 class RandomValue extends ParticleValueFunc
 {
-    public RandomValue()
-    {
-    }
-
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
         return Math.random();
     }
@@ -363,9 +188,9 @@ class MinValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.min(a.call(p, maxTicks), b.call(p, maxTicks));
+        return Math.min(a.call(p, config), b.call(p, config));
     }
 }
 
@@ -380,9 +205,9 @@ class MaxValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.max(a.call(p, maxTicks), b.call(p, maxTicks));
+        return Math.max(a.call(p, config), b.call(p, config));
     }
 }
 
@@ -396,9 +221,9 @@ class AbsValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.abs(a.call(p, maxTicks));
+        return Math.abs(a.call(p, config));
     }
 }
 
@@ -412,9 +237,9 @@ class RoundValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.round(a.call(p, maxTicks));
+        return Math.round(a.call(p, config));
     }
 }
 
@@ -428,9 +253,9 @@ class FloorValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.floor(a.call(p, maxTicks));
+        return Math.floor(a.call(p, config));
     }
 }
 
@@ -444,9 +269,57 @@ class CeilValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        return Math.ceil(a.call(p, maxTicks));
+        return Math.ceil(a.call(p, config));
+    }
+}
+
+class CosValue extends ParticleValueFunc
+{
+    ParticleValueFunc a;
+
+    public CosValue(ParticleValueFunc a)
+    {
+        this.a = a;
+    }
+
+    @Override
+    public double call(Particle p, ParticleEmitterConfig config)
+    {
+        return Math.cos(a.call(p, config));
+    }
+}
+
+class SinValue extends ParticleValueFunc
+{
+    ParticleValueFunc a;
+
+    public SinValue(ParticleValueFunc a)
+    {
+        this.a = a;
+    }
+
+    @Override
+    public double call(Particle p, ParticleEmitterConfig config)
+    {
+        return Math.sin(a.call(p, config));
+    }
+}
+
+class TanValue extends ParticleValueFunc
+{
+    ParticleValueFunc a;
+
+    public TanValue(ParticleValueFunc a)
+    {
+        this.a = a;
+    }
+
+    @Override
+    public double call(Particle p, ParticleEmitterConfig config)
+    {
+        return Math.tan(a.call(p, config));
     }
 }
 
@@ -463,11 +336,11 @@ class EasedValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
-        double b = startValue.call(p, maxTicks);
-        double c = endValue.call(p, maxTicks) - b;
-        return easer.call(p.ticks, b, c, maxTicks);
+        double b = startValue.call(p, config);
+        double c = endValue.call(p, config) - b;
+        return easer.call(p.ticks, b, c, config.durationTicks);
     }
 }
 
@@ -481,7 +354,7 @@ class ConstantValue extends ParticleValueFunc
     }
 
     @Override
-    public double call(Particle p, int maxTicks)
+    public double call(Particle p, ParticleEmitterConfig config)
     {
         return this.n;
     }

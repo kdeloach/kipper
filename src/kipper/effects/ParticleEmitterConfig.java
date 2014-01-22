@@ -14,9 +14,9 @@ public class ParticleEmitterConfig
     public ParticleValueFunc theta;
     public ParticleValueFunc speed;
     public ParticleValueFunc size;
-    public ParticleValueFunc H;
-    public ParticleValueFunc S;
-    public ParticleValueFunc B;
+    public ParticleValueFunc hue;
+    public ParticleValueFunc saturation;
+    public ParticleValueFunc brightness;
 
     public ParticleEmitterConfig()
     {
@@ -24,5 +24,35 @@ public class ParticleEmitterConfig
         durationTicks = 180;
         spawnRate = 1;
         continuous = false;
+    }
+
+    public int getSize(Particle p)
+    {
+        return (int)size.call(p, this);
+    }
+
+    public double getTheta(Particle p)
+    {
+        return theta.call(p, this);
+    }
+
+    public double getSpeed(Particle p)
+    {
+        return speed.call(p, this);
+    }
+
+    public float getHue(Particle p)
+    {
+        return (float)hue.call(p, this);
+    }
+
+    public float getSaturation(Particle p)
+    {
+        return (float)saturation.call(p, this);
+    }
+
+    public float getBrightness(Particle p)
+    {
+        return (float)brightness.call(p, this);
     }
 }
