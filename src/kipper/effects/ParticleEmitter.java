@@ -46,7 +46,9 @@ public class ParticleEmitter implements Entity
         p.ticks = 0;
         p.speed = getParticleSpeed(p);
         p.theta = getParticleTheta(p);
-        p.color = getParticleColor(p);
+        p.H = getParticleH(p);
+        p.S = getParticleS(p);
+        p.B = getParticleB(p);
         p.size = getParticleSize(p);
         pz.add(p);
     }
@@ -64,7 +66,9 @@ public class ParticleEmitter implements Entity
             if (isParticleAlive(p)) {
                 p.speed = getParticleSpeed(p);
                 p.theta = getParticleTheta(p);
-                p.color = getParticleColor(p);
+                p.H = getParticleH(p);
+                p.S = getParticleS(p);
+                p.B = getParticleB(p);
                 p.size = getParticleSize(p);
                 p.x += Math.cos(p.theta) * p.speed;
                 p.y += Math.sin(p.theta) * p.speed;
@@ -82,7 +86,7 @@ public class ParticleEmitter implements Entity
     public void draw(Graphics g)
     {
         for (Particle p : pz) {
-            g.setColor(p.color);
+            g.setColor(Color.getHSBColor(p.H, p.S, p.B));
             g.fillRect((int)(x + p.x - p.size / 2),
                        (int)(y + p.y - p.size / 2), p.size, p.size);
         }
@@ -136,11 +140,18 @@ public class ParticleEmitter implements Entity
         return config.speed.call(p, config.durationTicks);
     }
 
-    private Color getParticleColor(Particle p)
+    private float getParticleH(Particle p)
     {
-        float hue = (float)config.hue.call(p, config.durationTicks);
-        float saturation = (float)config.saturation.call(p, config.durationTicks);
-        float brightness = (float)config.brightness.call(p, config.durationTicks);
-        return Color.getHSBColor(hue, saturation, brightness);
+        return (float)config.H.call(p, config.durationTicks);
+    }
+
+    private float getParticleS(Particle p)
+    {
+        return (float)config.S.call(p, config.durationTicks);
+    }
+
+    private float getParticleB(Particle p)
+    {
+        return (float)config.B.call(p, config.durationTicks);
     }
 }

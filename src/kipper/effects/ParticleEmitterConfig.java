@@ -29,10 +29,10 @@ public class ParticleEmitterConfig
 
     public ParticleValueFunc theta;
     public ParticleValueFunc speed;
-    public ParticleValueFunc hue;
-    public ParticleValueFunc saturation;
-    public ParticleValueFunc brightness;
     public ParticleValueFunc size;
+    public ParticleValueFunc H;
+    public ParticleValueFunc S;
+    public ParticleValueFunc B;
 
     public ParticleEmitterConfig()
     {
@@ -41,9 +41,13 @@ public class ParticleEmitterConfig
         spawnRate = 1;
         continuous = false;
 
-        hue = new ParticleLang("0xFF+linear(0, 180)/180").getValue();
-        saturation = new ParticleLang("1").getValue();
-        brightness = new ParticleLang("linear(1, 0)").getValue();
+        H = new ParticleLang("0").getValue();
+        S = new ParticleLang("1").getValue();
+        //B = new ParticleLang("linear(1, 0)").getValue();
+        B = new CondValue(
+            new RangeCond(new ParticleTicksValue(), 0, 1),
+            new RandomValue(),
+            new ParticleBValue());
 
         //size = new EasedValue(new Linear(), new ConstantValue(10), new ConstantValue(0));
         //size = new ParticleLang("linear(10, 1)").getValue()
@@ -68,10 +72,10 @@ public class ParticleEmitterConfig
         //speed = new EasedValue(new Linear(), new RandomValue(0, 1), new ConstantValue(0));
         //speed = new EasedValue(new EaseInQuad(), new RandomValue(0, 1), new ConstantValue(0));
         speed = new ConstantValue(1);
-        // speed = new CondValue(
-            // new RangeCond(new ParticleTicksValue(), 0, 1),
-            // new MultValue(new RandomValue(), new ConstantValue(3)),
-            // new ParticleSpeedValue());
+        speed = new CondValue(
+             new RangeCond(new ParticleTicksValue(), 0, 1),
+             new MultValue(new RandomValue(), new ConstantValue(1.5)),
+             new ParticleSpeedValue());
     }
 }
 
@@ -103,6 +107,9 @@ class ParticleLang
                 case "theta": return new ParticleThetaValue();
                 case "speed": return new ParticleSpeedValue();
                 case "ticks": return new ParticleTicksValue();
+                case "h": return new ParticleHValue();
+                case "s": return new ParticleSValue();
+                case "b": return new ParticleBValue();
             }
             throw new UnsupportedOperationException("Identifier not supported (" + node.tokenValue() + ")");
         } else if (node instanceof PlusToken) {
@@ -299,7 +306,6 @@ class ModValue extends ParticleValueFunc
     }
 }
 
-// Convert another value to radian
 class RadianValue extends ParticleValueFunc
 {
     ParticleValueFunc val;
@@ -358,6 +364,33 @@ class ParticleSpeedValue extends ParticleValueFunc
     public double call(Particle p, int maxTicks)
     {
         return p.speed;
+    }
+}
+
+class ParticleHValue extends ParticleValueFunc
+{
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return p.H;
+    }
+}
+
+class ParticleSValue extends ParticleValueFunc
+{
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return p.S;
+    }
+}
+
+class ParticleBValue extends ParticleValueFunc
+{
+    @Override
+    public double call(Particle p, int maxTicks)
+    {
+        return p.B;
     }
 }
 
