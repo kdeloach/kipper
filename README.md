@@ -40,6 +40,10 @@ To create particle effects for projectile collisions, entity trails, explosions,
 
 *Note: Particle tool has a dependency on Jython 2.5.3.*
 
+## Controls
+
+* F5 - Parse Jython script and update draw panel
+
 Open the particle tool:
 
     > ant ptool
