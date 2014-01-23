@@ -2,11 +2,11 @@
 
 Kipper is a 2D space shooter video game written in Java.
 
-## Preview
+### Preview
 
 ![](https://github.com/kdeloach/kipper/raw/master/images/status 20140114.png)
 
-## Controls
+### Controls
 
 * Mouse1 - Fire weapon
 * 1-4 - Swtich weapons
@@ -20,9 +20,9 @@ Run the game with the following command:
     or
     > java -cp bin/release/kipper.jar kipper.Main
 
-## Tools
+# Game Editing Tools
 
-### Mask tool
+## Mask tool
 
 To create Polygon masks used for collision detection.
 
@@ -34,13 +34,13 @@ Open the mask tool:
 
 ![](https://github.com/kdeloach/kipper/raw/master/images/masktool 20140116.png)
 
-### Particle tool
+## Particle tool
 
 To create particle effects for projectile collisions, entity trails, explosions, and more. This tool allows you to prototype and experiment with particle emitter systems using the embedded scripting language Jython.
 
 *Note: Particle tool has a dependency on Jython 2.5.3.*
 
-## Controls
+### Controls
 
 * F5 - Parse Jython script and update draw panel
 
