@@ -28,9 +28,14 @@ public class ParticleEmitter implements Entity
         this.graveyard = new LinkedList<Particle>();
     }
 
-    private boolean canSpawnParticle()
+    public boolean canSpawnParticle()
     {
         return config.spawnRate > 0 && pz.size() < config.maxParticles;
+    }
+
+    private boolean chanceToSpawn()
+    {
+        return config.spawnRate == 1 || Math.random() < config.spawnRate;
     }
 
     private void spawnParticle()
@@ -57,7 +62,7 @@ public class ParticleEmitter implements Entity
     @Override
     public void update()
     {
-        while (canSpawnParticle() && Math.random() < config.spawnRate) {
+        while (canSpawnParticle() && chanceToSpawn()) {
             spawnParticle();
         }
 

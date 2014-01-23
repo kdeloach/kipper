@@ -43,6 +43,7 @@ public class ParticleLang
             try {
                 switch (funcName.toLowerCase()) {
                     case "random": return new RandomValue();
+                    case "radians": return new RadianValue(walk(args.pop()));
                     case "min": return new MinValue(walk(args.pop()), walk(args.pop()));
                     case "max": return new MaxValue(walk(args.pop()), walk(args.pop()));
                     case "abs": return new AbsValue(walk(args.pop()));
