@@ -20,7 +20,7 @@ public class ParticleTool implements ChangeListener, ActionListener
     ParticleEmitterConfig config;
     JSlider maxParticlesSlider, durationTicksSlider, spawnRateSlider, continuousSlider;
     JLabel lblMaxParticles, lblDuration, lblSpawnRate, lblContinuous;
-    JTextField txtTheta, txtHue, txtSaturation, txtBrightness, txtSize, txtSpeed;
+    JTextArea txtTheta, txtHue, txtSaturation, txtBrightness, txtSize, txtSpeed;
 
     public static void main(String[] argv)
     {
@@ -37,10 +37,15 @@ public class ParticleTool implements ChangeListener, ActionListener
         drawpanel = new ParticleDrawPanel(config);
 
         controls = new JPanel();
-        controls.setLayout(new GridLayout(5, 2));
+        controls.setLayout(new GridLayout(11, 2, 5, 5));
 
         addBasicControls();
         addTextControls();
+
+        JButton btnUpdate = new JButton("Update");
+        btnUpdate.addActionListener(this);
+        controls.add(btnUpdate);
+
         updateLabels();
         updateConfig();
 
@@ -50,6 +55,15 @@ public class ParticleTool implements ChangeListener, ActionListener
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        Action updateConfigAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("F5 Pressed");
+                updateConfig();
+            }
+        };
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "updateConfig");
+        frame.getRootPane().getActionMap().put("updateConfig", updateConfigAction);
 
         new Thread((Runnable)drawpanel).start();
     }
@@ -117,33 +131,27 @@ public class ParticleTool implements ChangeListener, ActionListener
 
     private void addTextControls()
     {
-        txtTheta = new JTextField("random()");
-        txtTheta.addActionListener(this);
+        txtTheta = new JTextArea("if (ticks < 1) 2*pi*random()\nelse theta");
         controls.add(new JLabel("Theta"));
         controls.add(txtTheta);
 
-        txtSpeed = new JTextField("1");
-        txtSpeed.addActionListener(this);
+        txtSpeed = new JTextArea("1");
         controls.add(new JLabel("Speed"));
         controls.add(txtSpeed);
 
-        txtSize = new JTextField("linear(10, 1)");
-        txtSize.addActionListener(this);
+        txtSize = new JTextArea("linear(10, 2)");
         controls.add(new JLabel("Size"));
         controls.add(txtSize);
 
-        txtHue = new JTextField("60/360");
-        txtHue.addActionListener(this);
+        txtHue = new JTextArea("60/360");
         controls.add(new JLabel("Hue"));
         controls.add(txtHue);
 
-        txtSaturation = new JTextField("1");
-        txtSaturation.addActionListener(this);
+        txtSaturation = new JTextArea("1");
         controls.add(new JLabel("Saturation"));
         controls.add(txtSaturation);
 
-        txtBrightness = new JTextField("1");
-        txtBrightness.addActionListener(this);
+        txtBrightness = new JTextArea("1");
         controls.add(new JLabel("Brightness"));
         controls.add(txtBrightness);
     }
@@ -162,12 +170,16 @@ public class ParticleTool implements ChangeListener, ActionListener
         config.durationTicks = durationTicksSlider.getValue();
         config.spawnRate = (double)(spawnRateSlider.getValue() / 100.0);
         config.continuous = continuousSlider.getValue() == 1 ? true : false;
-        config.theta = new ParticleLang(txtTheta.getText()).getValue();
-        config.speed = new ParticleLang(txtSpeed.getText()).getValue();
-        config.size = new ParticleLang(txtSize.getText()).getValue();
-        config.hue = new ParticleLang(txtHue.getText()).getValue();
-        config.saturation = new ParticleLang(txtSaturation.getText()).getValue();
-        config.brightness = new ParticleLang(txtBrightness.getText()).getValue();
+        try {
+            config.theta = new ParticleLang(txtTheta.getText()).getValue();
+            config.speed = new ParticleLang(txtSpeed.getText()).getValue();
+            config.size = new ParticleLang(txtSize.getText()).getValue();
+            config.hue = new ParticleLang(txtHue.getText()).getValue();
+            config.saturation = new ParticleLang(txtSaturation.getText()).getValue();
+            config.brightness = new ParticleLang(txtBrightness.getText()).getValue();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
 
@@ -182,7 +194,6 @@ class ParticleDrawPanel extends JComponent implements Runnable
     {
         super();
         setIgnoreRepaint(true);
-
         this.config = config;
         this.emitter = new ParticleEmitter(pX, pY, config);
     }
@@ -208,9 +219,11 @@ class ParticleDrawPanel extends JComponent implements Runnable
 
             int w = getWidth();
             int h = getHeight();
-            Image img = createImage(w, h);
-            draw(img.getGraphics());
-            getGraphics().drawImage(img, 0, 0, w, h, this);
+            if (w > 0 && h > 0) {
+                Image img = createImage(w, h);
+                draw(img.getGraphics());
+                getGraphics().drawImage(img, 0, 0, w, h, this);
+            }
         }
     }
 
@@ -239,6 +252,11 @@ class ParticleDrawPanel extends JComponent implements Runnable
         emitter.draw(g);
     }
 
+    public void reset()
+    {
+        emitter.hit(1);
+    }
+
     @Override public Dimension getMaximumSize() { return getPreferredSize(); }
-    @Override public Dimension getPreferredSize() { return new Dimension(400, 400); }
+    @Override public Dimension getPreferredSize() { return new Dimension(800, 600); }
 }

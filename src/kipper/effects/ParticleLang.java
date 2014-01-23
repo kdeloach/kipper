@@ -33,11 +33,13 @@ public class ParticleLang
         } else if (node instanceof BinaryMathToken) {
             BinaryMathToken token = (BinaryMathToken)node;
             return new BinaryMathValue(token.tokenValue(), walk(token.left), walk(token.right));
+        } else if (node instanceof CondToken) {
+            CondToken token = (CondToken)node;
+            return new CondValue(walkCond(token.cond), walk(token.trueBody), walk(token.otherBody));
         } else if (node instanceof CallFuncToken) {
             CallFuncToken token = (CallFuncToken)node;
             String funcName = token.ident.tokenValue();
             LinkedList<Token> args = token.args.args;
-            int numArgs = args.size();
             try {
                 switch (funcName.toLowerCase()) {
                     case "random": return new RandomValue();
@@ -60,7 +62,21 @@ public class ParticleLang
                 throw new UnsupportedOperationException("Not enough arguments provided (" + funcName + ")");
             }
         }
-        throw new UnsupportedOperationException("Not implemented (" + node.tokenValue() + ")");
+        throw new NotImplementedException(node.tokenValue());
+    }
+
+    private ParticleCondFunc walkCond(Token node)
+    {
+        if (node instanceof BinaryCompareToken) {
+            BinaryCompareToken token = (BinaryCompareToken)node;
+            return new BinaryCompareCond(node.tokenValue(), walk(token.left), walk(token.right));
+        } else if (node instanceof LogicalOpToken) {
+            LogicalOpToken token = (LogicalOpToken)node;
+            return new LogicalOpCond(node.tokenValue(), walkCond(token.left), walkCond(token.right));
+        } else if (node instanceof TrueFalseToken) {
+            return new BooleanConstantCond(node.tokenValue());
+        }
+        throw new NotImplementedException(node.tokenValue());
     }
 }
 
@@ -72,6 +88,73 @@ abstract class ParticleValueFunc
 abstract class ParticleCondFunc
 {
     abstract boolean isTrue(Particle p, ParticleEmitterConfig config);
+}
+
+class BinaryCompareCond extends ParticleCondFunc
+{
+    String op;
+    ParticleValueFunc left, right;
+
+    public BinaryCompareCond(String op, ParticleValueFunc left, ParticleValueFunc right)
+    {
+        this.op = op;
+        this.left = left;
+        this.right = right;
+    }
+
+    public boolean isTrue(Particle p, ParticleEmitterConfig config)
+    {
+        double a = left.call(p, config);
+        double b = right.call(p, config);
+        switch (op) {
+            case "==": return a == b;
+            case "!=": return a != b;
+            case "<=": return a <= b;
+            case ">=": return a >= b;
+            case "<": return a < b;
+            case ">": return a > b;
+        }
+        throw new NotImplementedException(op);
+    }
+}
+
+class LogicalOpCond extends ParticleCondFunc
+{
+    String op;
+    ParticleCondFunc left, right;
+
+    public LogicalOpCond(String op, ParticleCondFunc left, ParticleCondFunc right)
+    {
+        this.op = op;
+        this.left = left;
+        this.right = right;
+    }
+
+    public boolean isTrue(Particle p, ParticleEmitterConfig config)
+    {
+        boolean a = left.isTrue(p, config);
+        boolean b = right.isTrue(p, config);
+        switch (op) {
+            case "and": return a && b;
+            case "or": return a || b;
+        }
+        throw new NotImplementedException(op);
+    }
+}
+
+class BooleanConstantCond extends ParticleCondFunc
+{
+    String name;
+
+    public BooleanConstantCond(String name)
+    {
+        this.name = name;
+    }
+
+    public boolean isTrue(Particle p, ParticleEmitterConfig config)
+    {
+        return name == "true";
+    }
 }
 
 class CondValue extends ParticleValueFunc
@@ -120,7 +203,7 @@ class BinaryMathValue extends ParticleValueFunc
             case "/": return a / b;
             case "%": return a % b;
         }
-        throw new UnsupportedOperationException("Not implemented (" + op + ")");
+        throw new NotImplementedException(op);
     }
 }
 

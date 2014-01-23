@@ -12,7 +12,8 @@ import kipper.*;
 public class ParticleEmitter implements Entity
 {
     private double x, y;
-    private int particleID= 0, ticks = 0;
+    private int particleID = 0, ticks = 0;
+    private boolean alive = true;
 
     private LinkedList<Particle> pz;
     private LinkedList<Particle> graveyard;
@@ -98,13 +99,13 @@ public class ParticleEmitter implements Entity
     @Override public int getHeight() { return 0; }
     @Override public int getLife() { return 0; }
     @Override public int getTeam() { return 0; }
-    @Override public void hit(double damage) { }
+    @Override public void hit(double damage) { alive = false; }
     @Override public void collide(Entity e) { }
 
     @Override
     public boolean isAlive()
     {
-        return config.continuous || ticks <= config.durationTicks;
+        return alive && (config.continuous || ticks <= config.durationTicks);
     }
 
     @Override
