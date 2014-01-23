@@ -2,25 +2,30 @@ package kipper.tools;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
-import particledsl.*;
 
-public class ParticleTool implements ChangeListener, ActionListener
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyInteger;
+import org.python.core.PyClass;
+import org.python.util.PythonInterpreter;
+
+class SampleConfigImpl extends ParticleEmitterConfig
+{
+}
+
+public class ParticleTool
 {
     JFrame frame;
     Container pane;
-    JPanel controls;
-    JTextArea txt;
     ParticleDrawPanel drawpanel;
-    ParticleEmitterConfig config;
-    JSlider maxParticlesSlider, durationTicksSlider, spawnRateSlider, continuousSlider;
-    JLabel lblMaxParticles, lblDuration, lblSpawnRate, lblContinuous;
-    JTextArea txtTheta, txtHue, txtSaturation, txtBrightness, txtSize, txtSpeed;
+    JTextArea txtPy;
 
     public static void main(String[] argv)
     {
@@ -31,26 +36,58 @@ public class ParticleTool implements ChangeListener, ActionListener
     {
         frame = new JFrame("particle tool");
         pane = frame.getContentPane();
-        pane.setLayout(new BorderLayout(10, 10));
-        txt = new JTextArea("");
-        config = new ParticleEmitterConfig();
-        drawpanel = new ParticleDrawPanel(config);
+        pane.setLayout(new GridLayout(1, 1));
+        drawpanel = new ParticleDrawPanel();
 
-        controls = new JPanel();
-        controls.setLayout(new GridLayout(11, 2, 5, 5));
+        // TODO: Load this from file or class
+        StringBuilder defaultImpl = new StringBuilder();
+        defaultImpl.append("from kipper.effects import ParticleEmitterConfig\n");
+        defaultImpl.append("from kipper.effects.transitions import Linear\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("import math\n");
+        defaultImpl.append("import random\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("L = Linear()\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("class SampleConfigImpl(ParticleEmitterConfig):\n");
+        defaultImpl.append("    def __init__(self):\n");
+        defaultImpl.append("        pass\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("    def getTheta(self, p):\n");
+        defaultImpl.append("        if p.ticks < 1:\n");
+        defaultImpl.append("            return random.random()*2*math.pi\n");
+        defaultImpl.append("        return p.theta\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("    def getSize(self, p):\n");
+        defaultImpl.append("        return int(L.call(p.ticks, 15, -15, self.getDurationTicks()))\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("    def getSpeed(self, p):\n");
+        defaultImpl.append("        if p.ticks < 1:\n");
+        defaultImpl.append("            return random.random()*2\n");
+        defaultImpl.append("        return p.speed\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("    def isRectShape(self, p):\n");
+        defaultImpl.append("        return False\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("    def getDurationTicks(self):\n");
+        defaultImpl.append("        return 45\n");
+        defaultImpl.append("\n");
+        defaultImpl.append("    def getMaxParticles(self):\n");
+        defaultImpl.append("        return 48\n");
 
-        addBasicControls();
-        addTextControls();
+        txtPy = new JTextArea();
+        txtPy.setColumns(75);
+        txtPy.setLineWrap(true);
+        txtPy.setDocument(new TabDocument());
+        txtPy.setFont(new Font("Courier New", Font.PLAIN, 14));
+        txtPy.setText(defaultImpl.toString());
+        JScrollPane scroll = new JScrollPane(txtPy);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JButton btnUpdate = new JButton("Update");
-        btnUpdate.addActionListener(this);
-        controls.add(btnUpdate);
-
-        updateLabels();
-        updateConfig();
+        drawpanel.updateConfig(txtPy.getText());
 
         pane.add(drawpanel, BorderLayout.CENTER);
-        pane.add(controls, BorderLayout.LINE_END);
+        pane.add(scroll, BorderLayout.LINE_END);
 
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,143 +96,79 @@ public class ParticleTool implements ChangeListener, ActionListener
         Action updateConfigAction = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("F5 Pressed");
-                updateConfig();
+                drawpanel.updateConfig(txtPy.getText());
             }
         };
-        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "updateConfig");
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke("F5"),
+            "updateConfig");
         frame.getRootPane().getActionMap().put("updateConfig", updateConfigAction);
 
         new Thread((Runnable)drawpanel).start();
     }
+}
 
-    public void stateChanged(ChangeEvent e)
+// Source: http://stackoverflow.com/questions/363784/setting-the-tab-policy-in-swings-jtextpane
+class TabDocument extends DefaultStyledDocument
+{
+    @Override
+    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException
     {
-        updateConfig();
-        updateLabels();
-    }
-
-    public void actionPerformed(ActionEvent e)
-    {
-        updateConfig();
-    }
-
-    private void addBasicControls()
-    {
-        lblMaxParticles = new JLabel();
-        maxParticlesSlider = new JSlider(JSlider.HORIZONTAL, 0, 300, 20);
-        maxParticlesSlider.setPaintTicks(true);
-        maxParticlesSlider.setPaintLabels(true);
-        maxParticlesSlider.setSnapToTicks(true);
-        maxParticlesSlider.setMinorTickSpacing(10);
-        maxParticlesSlider.setMajorTickSpacing(50);
-        maxParticlesSlider.addChangeListener(this);
-        controls.add(lblMaxParticles);
-        controls.add(maxParticlesSlider);
-
-        lblDuration = new JLabel();
-        durationTicksSlider = new JSlider(JSlider.HORIZONTAL, 0, 400, 180);
-        durationTicksSlider.setPaintTicks(true);
-        durationTicksSlider.setPaintLabels(true);
-        durationTicksSlider.setSnapToTicks(true);
-        durationTicksSlider.setMinorTickSpacing(10);
-        durationTicksSlider.setMajorTickSpacing(100);
-        durationTicksSlider.addChangeListener(this);
-        controls.add(lblDuration);
-        controls.add(durationTicksSlider);
-
-        lblSpawnRate = new JLabel();
-        spawnRateSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 100);
-        spawnRateSlider.setPaintTicks(true);
-        spawnRateSlider.setPaintLabels(true);
-        spawnRateSlider.setSnapToTicks(true);
-        spawnRateSlider.setMinorTickSpacing(5);
-        spawnRateSlider.setMajorTickSpacing(20);
-        spawnRateSlider.addChangeListener(this);
-        controls.add(lblSpawnRate);
-        controls.add(spawnRateSlider);
-
-        lblContinuous = new JLabel();
-        continuousSlider = new JSlider(JSlider.HORIZONTAL, 0, 1, 0);
-        continuousSlider.setPaintTicks(true);
-        continuousSlider.setPaintLabels(true);
-        continuousSlider.setSnapToTicks(true);
-        continuousSlider.setMajorTickSpacing(1);
-        Hashtable<Integer, JLabel> continuousLabels = new Hashtable<Integer, JLabel>();
-        continuousLabels.put(0, new JLabel("No"));
-        continuousLabels.put(1, new JLabel("Yes"));
-        continuousSlider.setLabelTable(continuousLabels);
-        continuousSlider.addChangeListener(this);
-        controls.add(lblContinuous);
-        controls.add(continuousSlider);
-    }
-
-    private void addTextControls()
-    {
-        txtTheta = new JTextArea("if (ticks < 1) 2*pi*random()\nelse theta");
-        controls.add(new JLabel("Theta"));
-        controls.add(txtTheta);
-
-        txtSpeed = new JTextArea("1");
-        controls.add(new JLabel("Speed"));
-        controls.add(txtSpeed);
-
-        txtSize = new JTextArea("linear(10, 2)");
-        controls.add(new JLabel("Size"));
-        controls.add(txtSize);
-
-        txtHue = new JTextArea("60/360");
-        controls.add(new JLabel("Hue"));
-        controls.add(txtHue);
-
-        txtSaturation = new JTextArea("1");
-        controls.add(new JLabel("Saturation"));
-        controls.add(txtSaturation);
-
-        txtBrightness = new JTextArea("1");
-        controls.add(new JLabel("Brightness"));
-        controls.add(txtBrightness);
-    }
-
-    private void updateLabels()
-    {
-        lblMaxParticles.setText("Max Particles (" + config.maxParticles + ")");
-        lblDuration.setText("Duration (" + config.durationTicks + ")");
-        lblSpawnRate.setText("Spawn Rate (" + config.spawnRate + ")");
-        lblContinuous.setText("Continuous? (" + (config.continuous ? "Yes" : "No") + ")");
-    }
-
-    public void updateConfig()
-    {
-        config.maxParticles = maxParticlesSlider.getValue();
-        config.durationTicks = durationTicksSlider.getValue();
-        config.spawnRate = (double)(spawnRateSlider.getValue() / 100.0);
-        config.continuous = continuousSlider.getValue() == 1 ? true : false;
-        try {
-            config.theta = new ParticleLang(txtTheta.getText()).getValue();
-            config.speed = new ParticleLang(txtSpeed.getText()).getValue();
-            config.size = new ParticleLang(txtSize.getText()).getValue();
-            config.hue = new ParticleLang(txtHue.getText()).getValue();
-            config.saturation = new ParticleLang(txtSaturation.getText()).getValue();
-            config.brightness = new ParticleLang(txtBrightness.getText()).getValue();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        str = str.replaceAll("\t", "    ");
+        super.insertString(offs, str, a);
     }
 }
 
-
-class ParticleDrawPanel extends JComponent implements Runnable
+class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListener
 {
     private int pX = 0, pY = 0;
     private ParticleEmitter emitter;
     private ParticleEmitterConfig config;
+    private boolean followMouse = false;
 
-    public ParticleDrawPanel(ParticleEmitterConfig config)
+    PythonInterpreter interpreter = new PythonInterpreter();
+
+    public ParticleDrawPanel()
     {
         super();
         setIgnoreRepaint(true);
-        this.config = config;
-        this.emitter = new ParticleEmitter(pX, pY, config);
+        addMouseMotionListener(this);
+        this.config = new SampleConfigImpl();
+        this.emitter = new ParticleEmitter(0, 0, config);
+    }
+
+    public void updateConfig(String input)
+    {
+        try {
+            interpreter.exec(input);
+            PyObject pyClass = interpreter.get("SampleConfigImpl", PyObject.class);
+            if (pyClass == null) {
+                System.out.println("Could not parse SampleConfigImpl class");
+                return;
+            }
+            PyObject pyObj = pyClass.__call__();
+            ParticleEmitterConfig config = (ParticleEmitterConfig)pyObj.__tojava__(ParticleEmitterConfig.class);
+            if (config != null) {
+                this.config = config;
+                this.emitter.setConfig(config);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e)
+    {
+        if (followMouse) {
+            pX = e.getX();
+            pY = e.getY();
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e)
+    {
     }
 
     // Author: Bob Nystrom
@@ -229,10 +202,20 @@ class ParticleDrawPanel extends JComponent implements Runnable
 
     public void update()
     {
-        if (emitter.isAlive()) {
-            emitter.update();
-        } else {
-            emitter = new ParticleEmitter(pX, pY, config);
+        try {
+            if (!followMouse) {
+                pX = getWidth() / 2;
+                pY = getHeight() / 2;
+            }
+            if (emitter.isAlive()) {
+                emitter.setLocation(pX, pY);
+                emitter.update();
+            } else {
+                emitter = new ParticleEmitter(0, 0, config);
+                emitter.setLocation(pX, pY);
+            }
+        } catch (Exception e) {
+            System.out.println("Exception in update method: " + e);
         }
     }
 
@@ -242,19 +225,14 @@ class ParticleDrawPanel extends JComponent implements Runnable
             return;
         }
 
-        pX = getWidth() / 2;
-        pY = getHeight() / 2;
-
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        emitter.setLocation(pX, pY);
-        emitter.draw(g);
-    }
-
-    public void reset()
-    {
-        emitter.hit(1);
+        try {
+            emitter.draw(g);
+        } catch (Exception e) {
+            System.out.println("Exception in draw method: " + e);
+        }
     }
 
     @Override public Dimension getMaximumSize() { return getPreferredSize(); }

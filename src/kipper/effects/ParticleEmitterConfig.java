@@ -1,58 +1,66 @@
 package kipper.effects;
 
-public class ParticleEmitterConfig
+abstract public class ParticleEmitterConfig
 {
-    public int maxParticles;
-    public int durationTicks;
-    public double spawnRate;
-    public boolean continuous;
-
-    // TODO: Min theta, max theta, offset theta
-    // TODO: Particle shape?
-    // TODO: maxParticles and spawn rate should be particle funcs
-
-    public ParticleValueFunc theta;
-    public ParticleValueFunc speed;
-    public ParticleValueFunc size;
-    public ParticleValueFunc hue;
-    public ParticleValueFunc saturation;
-    public ParticleValueFunc brightness;
-
-    public ParticleEmitterConfig()
+    // TODO: Add properties to render translateX, translateY but do not modify original x y
+    public int getMaxParticles()
     {
-        maxParticles = 12;
-        durationTicks = 180;
-        spawnRate = 1;
-        continuous = false;
+        return 12;
+    }
+
+    public int getDurationTicks()
+    {
+        return 180;
+    }
+
+    // TODO: Pass in ParticleEmitter.ticks as argument
+    public double getSpawnRate()
+    {
+        return 1;
+    }
+
+    public boolean isContinuous()
+    {
+        return false;
+    }
+
+    public boolean isRectShape(Particle p)
+    {
+        return false;
     }
 
     public int getSize(Particle p)
     {
-        return (int)size.call(p, this);
+        return 1;
     }
 
     public double getTheta(Particle p)
     {
-        return theta.call(p, this);
+        return 0;
     }
 
     public double getSpeed(Particle p)
     {
-        return speed.call(p, this);
+        return 1;
     }
 
     public float getHue(Particle p)
     {
-        return (float)hue.call(p, this);
+        return 60f / 360f;
     }
 
     public float getSaturation(Particle p)
     {
-        return (float)saturation.call(p, this);
+        return 1;
     }
 
     public float getBrightness(Particle p)
     {
-        return (float)brightness.call(p, this);
+        return 1;
+    }
+
+    public boolean isAlive(Particle p)
+    {
+        return p.ticks <= getDurationTicks();
     }
 }

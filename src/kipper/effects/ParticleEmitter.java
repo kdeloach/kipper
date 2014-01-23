@@ -13,7 +13,6 @@ public class ParticleEmitter implements Entity
 {
     private double x, y;
     private int particleID = 0, ticks = 0;
-    private boolean alive = true;
 
     private LinkedList<Particle> pz;
     private LinkedList<Particle> graveyard;
@@ -28,14 +27,19 @@ public class ParticleEmitter implements Entity
         this.graveyard = new LinkedList<Particle>();
     }
 
+    public void setConfig(ParticleEmitterConfig config)
+    {
+        this.config = config;
+    }
+
     public boolean canSpawnParticle()
     {
-        return config.spawnRate > 0 && pz.size() < config.maxParticles;
+        return config.getSpawnRate() > 0 && pz.size() < config.getMaxParticles();
     }
 
     private boolean chanceToSpawn()
     {
-        return config.spawnRate == 1 || Math.random() < config.spawnRate;
+        return config.getSpawnRate() == 1 || Math.random() < config.getSpawnRate();
     }
 
     private void spawnParticle()
@@ -47,8 +51,8 @@ public class ParticleEmitter implements Entity
             p = new Particle();
         }
         p.id = particleID++;
-        p.x = 0;
-        p.y = 0;
+        p.x = this.x;
+        p.y = this.y;
         p.ticks = 0;
         p.speed = config.getSpeed(p);
         p.theta = config.getTheta(p);
@@ -69,7 +73,7 @@ public class ParticleEmitter implements Entity
         Iterator<Particle> iter = pz.iterator();
         while (iter.hasNext()) {
             Particle p = iter.next();
-            if (isParticleAlive(p)) {
+            if (config.isAlive(p)) {
                 p.speed = config.getSpeed(p);
                 p.theta = config.getTheta(p);
                 p.size = config.getSize(p);
@@ -93,8 +97,14 @@ public class ParticleEmitter implements Entity
     {
         for (Particle p : pz) {
             g.setColor(Color.getHSBColor(p.hue, p.saturation, p.brightness));
-            g.fillRect((int)(x + p.x - p.size / 2),
-                       (int)(y + p.y - p.size / 2), p.size, p.size);
+            if (config.isRectShape(p)) {
+                g.fillRect((int)(p.x - p.size / 2),
+                           (int)(p.y - p.size / 2), p.size, p.size);
+            } else {
+                g.fillOval((int)(p.x - p.size / 2),
+                           (int)(p.y - p.size / 2), p.size, p.size);
+
+            }
         }
     }
 
@@ -104,19 +114,19 @@ public class ParticleEmitter implements Entity
     @Override public int getHeight() { return 0; }
     @Override public int getLife() { return 0; }
     @Override public int getTeam() { return 0; }
-    @Override public void hit(double damage) { alive = false; }
+    @Override public void hit(double damage) { }
     @Override public void collide(Entity e) { }
 
     @Override
     public boolean isAlive()
     {
-        return alive && (config.continuous || ticks <= config.durationTicks);
+        return config.isContinuous() || ticks <= config.getDurationTicks();
     }
 
     @Override
     public void die()
     {
-        ticks = config.durationTicks + 1;
+        ticks = config.getDurationTicks() + 1;
     }
 
     @Override
@@ -124,10 +134,5 @@ public class ParticleEmitter implements Entity
     {
         this.x = x;
         this.y = y;
-    }
-
-    private boolean isParticleAlive(Particle p)
-    {
-        return p.ticks <= config.durationTicks;
     }
 }

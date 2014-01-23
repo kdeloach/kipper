@@ -1,8 +1,10 @@
-Every adjustable attribute should have a min and max value and an easing function
-
 HIGH
+- Particle emitter:
+    - Add error output text pane
+    - Generate ParticleEmitterConfig impl code
+    - Ability to load existing ParticleEmitterConfig impl's
+    - Follow Mouse option
 - Fix double buffer strategy on OuterSpacePanel
-- Create particle emitter
 - Create weapon graphics and fix weapon relative offsets
 - Lightning and spacemine should respect bullet size & bullet speed upgrades
 - Sound effects

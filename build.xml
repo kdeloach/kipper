@@ -1,43 +1,62 @@
 <project default="run">
 
-    <property name="particledsl.path"  location="C:\Users\kevin\Desktop\labs\java\particledsl\src\particledsl" />
+    <property name="jython.path" location="./thirdparty/jython-standalone-2.5.3.jar" />
+
+    <!-- Aliases -->
+    <target name="release" depends="jar" />
+    <target name="mtool" depends="masktool" />
+    <target name="ptool" depends="particletool" />
 
     <target name="run" depends="build, exec">
     </target>
 
     <target name="clean">
         <delete dir="bin" quiet="true" />
-        <mkdir dir="bin" />
     </target>
 
     <target name="build">
-        <javac destdir="bin"
-               debug="true"
-               includeAntRuntime="false">
-            <src location="src"/>
-            <src location="${particledsl.path}"/>
+        <mkdir dir="bin/debug" />
+        <javac srcdir="src"
+                destdir="bin/debug"
+                debug="true"
+                includeAntRuntime="false">
+            <classpath>
+                <pathelement location="${jython.path}" />
+            </classpath>
             <!--compilerarg value="-Xlint" /-->
         </javac>
-        <copy todir="bin/assets">
+        <copy todir="bin/debug/assets">
             <fileset dir="assets" />
         </copy>
     </target>
 
     <target name="exec">
-        <java classpath="bin" classname="kipper.Main" fork="true" />
+        <java classname="kipper.Main" fork="true">
+            <classpath>
+                <pathelement location="bin/debug" />
+                <pathelement location="${jython.path}" />
+            </classpath>
+        </java>
     </target>
 
     <target name="jar" depends="build">
-        <jar destfile="bin/kipper.jar" basedir="bin" manifest="src/kipper/manifest" />
+        <mkdir dir="bin/release" />
+        <jar destfile="bin/release/kipper.jar"
+                manifest="src/kipper/manifest">
+            <fileset dir="bin/debug" />
+        </jar>
     </target>
 
-    <target name="mtool" depends="masktool" />
     <target name="masktool" depends="build">
-        <java classpath="bin" classname="kipper.tools.MaskTool" fork="true" />
+        <java classpath="bin/debug" classname="kipper.tools.MaskTool" fork="true" />
     </target>
 
-    <target name="ptool" depends="particletool" />
     <target name="particletool" depends="build">
-        <java classpath="bin" classname="kipper.tools.ParticleTool" fork="true" />
+        <java classname="kipper.tools.ParticleTool" fork="true">
+            <classpath>
+                <pathelement location="bin/debug" />
+                <pathelement location="${jython.path}" />
+            </classpath>
+        </java>
     </target>
 </project>
