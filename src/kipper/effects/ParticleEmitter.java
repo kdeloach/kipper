@@ -4,9 +4,7 @@ import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.Arrays;
 import kipper.*;
 
 public class ParticleEmitter implements Entity
@@ -14,27 +12,54 @@ public class ParticleEmitter implements Entity
     private double x, y;
     private int particleID = 0, ticks = 0;
 
-    private LinkedList<Particle> pz;
-    private LinkedList<Particle> graveyard;
-    private ParticleEmitterConfig config;
+    // Number of particles currently alive
+    private int numAlive = 0;
+    // Copy of particles.length so we know how many particles to init
+    // if config.getMaxParticles() ever increases
+    private int maxNumAlive = 0;
+    // Indexes < numAlive are considered alive, >= numAlive are considered dead
+    private Particle[] particles;
+    private ParticleEmitterConfig config, nextConfig;
 
     public ParticleEmitter(double x, double y, ParticleEmitterConfig config)
     {
         this.x = x;
         this.y = y;
         this.config = config;
-        this.pz = new LinkedList<Particle>();
-        this.graveyard = new LinkedList<Particle>();
+        this.particles = new Particle[config.getMaxParticles()];
+        initParticles();
+    }
+
+    private void initParticles()
+    {
+        for (int i = maxNumAlive; i < particles.length; i++) {
+            particles[i] = new Particle();
+        }
+        numAlive = Math.min(numAlive, particles.length);
+        maxNumAlive = particles.length;
     }
 
     public void setConfig(ParticleEmitterConfig config)
     {
-        this.config = config;
+        nextConfig = config;
+    }
+
+    private void updateConfig()
+    {
+        if (nextConfig == null) {
+            return;
+        }
+        if (nextConfig.getMaxParticles() != config.getMaxParticles()) {
+            particles = Arrays.copyOf(particles, nextConfig.getMaxParticles());
+            initParticles();
+        }
+        config = nextConfig;
+        nextConfig = null;
     }
 
     public boolean canSpawnParticle()
     {
-        return config.getSpawnRate() > 0 && pz.size() < config.getMaxParticles();
+        return config.getSpawnRate() > 0 && numAlive < config.getMaxParticles();
     }
 
     private boolean chanceToSpawn()
@@ -44,13 +69,9 @@ public class ParticleEmitter implements Entity
 
     private void spawnParticle()
     {
-        Particle p;
-        try {
-            p = graveyard.pop();
-        } catch (NoSuchElementException ex) {
-            p = new Particle();
-        }
+        Particle p = particles[numAlive++];
         p.id = particleID++;
+        // TODO: Call config.startX(p), config.startY(p)
         p.x = this.x;
         p.y = this.y;
         p.ticks = 0;
@@ -60,7 +81,6 @@ public class ParticleEmitter implements Entity
         p.hue = config.getHue(p);
         p.saturation = config.getSaturation(p);
         p.brightness = config.getBrightness(p);
-        pz.add(p);
     }
 
     @Override
@@ -70,9 +90,8 @@ public class ParticleEmitter implements Entity
             spawnParticle();
         }
 
-        Iterator<Particle> iter = pz.iterator();
-        while (iter.hasNext()) {
-            Particle p = iter.next();
+        for (int i = 0; i < numAlive; i++) {
+            Particle p = particles[i];
             if (config.isAlive(p)) {
                 p.speed = config.getSpeed(p);
                 p.theta = config.getTheta(p);
@@ -84,18 +103,23 @@ public class ParticleEmitter implements Entity
                 p.y += Math.sin(p.theta) * p.speed;
                 p.ticks++;
             } else {
-                iter.remove();
-                graveyard.push(p);
+                Particle tmp = particles[numAlive - 1];
+                particles[numAlive - 1] = p;
+                particles[i] = tmp;
+                numAlive--;
+                i--;
             }
         }
 
+        updateConfig();
         ticks++;
     }
 
     @Override
     public void draw(Graphics g)
     {
-        for (Particle p : pz) {
+        for (int i = 0; i < numAlive; i++) {
+            Particle p = particles[i];
             g.setColor(Color.getHSBColor(p.hue, p.saturation, p.brightness));
             if (config.isRectShape(p)) {
                 g.fillRect((int)(p.x - p.size / 2),

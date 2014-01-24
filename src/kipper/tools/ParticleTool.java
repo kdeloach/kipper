@@ -216,6 +216,7 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
             }
         } catch (Exception e) {
             System.out.println("Exception in update method: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -232,6 +233,7 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
             emitter.draw(g);
         } catch (Exception e) {
             System.out.println("Exception in draw method: " + e);
+            e.printStackTrace();
         }
     }
 
