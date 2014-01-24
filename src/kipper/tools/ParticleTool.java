@@ -1,11 +1,13 @@
 package kipper.tools;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
+import java.io.*;
+import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.event.*;
+import javax.swing.filechooser.*;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
@@ -26,6 +28,16 @@ public class ParticleTool
     Container pane;
     ParticleDrawPanel drawpanel;
     JTextArea txtPy;
+    JCheckBox cbxFollowMouse;
+
+    Action followMouseAction;
+    Action saveAction;
+    Action saveAsAction;
+    Action openAction;
+    Action updateConfigAction;
+
+    final JFileChooser fc = new JFileChooser();
+    File file;
 
     public static void main(String[] argv)
     {
@@ -34,77 +46,174 @@ public class ParticleTool
 
     public ParticleTool()
     {
-        frame = new JFrame("particle tool");
-        pane = frame.getContentPane();
-        pane.setLayout(new GridLayout(1, 1));
-        drawpanel = new ParticleDrawPanel();
-
-        // TODO: Load this from file or class
-        StringBuilder defaultImpl = new StringBuilder();
-        defaultImpl.append("from kipper.effects import ParticleEmitterConfig\n");
-        defaultImpl.append("from kipper.effects.transitions import Linear\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("import math\n");
-        defaultImpl.append("import random\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("L = Linear()\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("class SampleConfigImpl(ParticleEmitterConfig):\n");
-        defaultImpl.append("    def __init__(self):\n");
-        defaultImpl.append("        pass\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("    def getTheta(self, p):\n");
-        defaultImpl.append("        if p.ticks < 1:\n");
-        defaultImpl.append("            return random.random()*2*math.pi\n");
-        defaultImpl.append("        return p.theta\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("    def getSize(self, p):\n");
-        defaultImpl.append("        return int(L.call(p.ticks, 15, -15, self.getDurationTicks()))\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("    def getSpeed(self, p):\n");
-        defaultImpl.append("        if p.ticks < 1:\n");
-        defaultImpl.append("            return random.random()*2\n");
-        defaultImpl.append("        return p.speed\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("    def isRectShape(self, p):\n");
-        defaultImpl.append("        return False\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("    def getDurationTicks(self):\n");
-        defaultImpl.append("        return 45\n");
-        defaultImpl.append("\n");
-        defaultImpl.append("    def getMaxParticles(self):\n");
-        defaultImpl.append("        return 48\n");
+        fc.setCurrentDirectory(new File("."));
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Python file", "py");
+        fc.setFileFilter(filter);
 
         txtPy = new JTextArea();
         txtPy.setColumns(75);
         txtPy.setLineWrap(true);
         txtPy.setDocument(new TabDocument());
         txtPy.setFont(new Font("Courier New", Font.PLAIN, 14));
-        txtPy.setText(defaultImpl.toString());
-        JScrollPane scroll = new JScrollPane(txtPy);
-        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane txtPyScroll = new JScrollPane(txtPy);
+        txtPyScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        drawpanel.updateConfig(txtPy.getText());
+        file = new File("./src/kipper/effects/SampleConfigImpl.py");
+        openFile();
 
-        pane.add(drawpanel, BorderLayout.CENTER);
-        pane.add(scroll, BorderLayout.LINE_END);
+        drawpanel = new ParticleDrawPanel();
+        updateDrawPanel();
+
+        followMouseAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                drawpanel.setFollowMouse(cbxFollowMouse.isSelected());
+            }
+        };
+        saveAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (file == null) {
+                    int returnVal = fc.showSaveDialog(frame);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        file = fc.getSelectedFile();
+                    } else {
+                        return;
+                    }
+                }
+                saveFile();
+                updateDrawPanel();
+                updateWindowTitle();
+            }
+        };
+        saveAsAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                int returnVal = fc.showSaveDialog(frame);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    file = fc.getSelectedFile();
+                    saveFile();
+                    updateDrawPanel();
+                    updateWindowTitle();
+                }
+            }
+        };
+        openAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                int returnVal = fc.showOpenDialog(frame);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    file = fc.getSelectedFile();
+                    openFile();
+                    updateDrawPanel();
+                    updateWindowTitle();
+                }
+            }
+        };
+        updateConfigAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                updateDrawPanel();
+            }
+        };
+
+        JPanel toolbar = new JPanel();
+        toolbar.setLayout(new FlowLayout(FlowLayout.LEADING));
+
+        JButton btnOpen = new JButton();
+        btnOpen.setAction(openAction);
+        btnOpen.setMnemonic(KeyEvent.VK_O);
+        btnOpen.setText("Open");
+        toolbar.add(btnOpen);
+
+        JButton btnSave = new JButton();
+        btnSave.setAction(saveAction);
+        btnSave.setMnemonic(KeyEvent.VK_S);
+        btnSave.setText("Save");
+        toolbar.add(btnSave);
+
+        JButton btnUpdate = new JButton();
+        btnUpdate.setAction(updateConfigAction);
+        btnUpdate.setMnemonic(KeyEvent.VK_R);
+        btnUpdate.setText("Refresh");
+        toolbar.add(btnUpdate);
+
+        cbxFollowMouse = new JCheckBox();
+        cbxFollowMouse.setAction(followMouseAction);
+        cbxFollowMouse.setMnemonic(KeyEvent.VK_F);
+        cbxFollowMouse.setText("Follow mouse");
+        toolbar.add(cbxFollowMouse);
+
+        JPanel editors = new JPanel();
+        editors.setLayout(new GridLayout(1, 2));
+        editors.add(drawpanel);
+        editors.add(txtPyScroll);
+
+        frame = new JFrame();
+        updateWindowTitle();
+        pane = frame.getContentPane();
+        pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
+        pane.add(toolbar);
+        pane.add(editors);
 
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
-        Action updateConfigAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("F5 Pressed");
-                drawpanel.updateConfig(txtPy.getText());
-            }
-        };
-        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke("F5"),
-            "updateConfig");
-        frame.getRootPane().getActionMap().put("updateConfig", updateConfigAction);
+        InputMap inputMap = frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = frame.getRootPane().getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke("F5"), "updateConfig");
+        inputMap.put(KeyStroke.getKeyStroke("ctrl R"), "updateConfig");
+        inputMap.put(KeyStroke.getKeyStroke("ctrl S"), "save");
+        inputMap.put(KeyStroke.getKeyStroke("ctrl alt S"), "saveAs");
+        inputMap.put(KeyStroke.getKeyStroke("ctrl O"), "open");
+        actionMap.put("updateConfig", updateConfigAction);
+        actionMap.put("save", saveAction);
+        actionMap.put("saveAs", saveAsAction);
+        actionMap.put("open", openAction);
 
         new Thread((Runnable)drawpanel).start();
+    }
+
+    public void updateWindowTitle()
+    {
+        String title = "particle tool";
+        if (file != null) {
+            title += " - " + file.getAbsolutePath();
+        }
+        frame.setTitle(title);
+    }
+
+    public void saveFile()
+    {
+        try {
+            Writer w = new BufferedWriter(new FileWriter(file));
+            w.write(txtPy.getText());
+            w.close();
+        } catch (IOException ex) {
+            System.out.println("Unable to save file");
+            ex.printStackTrace();
+        }
+    }
+
+    public void openFile()
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            br.close();
+            txtPy.setText(sb.toString());
+        } catch (IOException ex) {
+            System.out.println("Unable to open file");
+            ex.printStackTrace();
+        }
+    }
+
+    public void updateDrawPanel()
+    {
+        drawpanel.updateConfig(txtPy.getText());
     }
 }
 
@@ -152,8 +261,8 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
                 this.config = config;
                 this.emitter.setConfig(config);
             }
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -214,9 +323,9 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
                 emitter = new ParticleEmitter(0, 0, config);
                 emitter.setLocation(pX, pY);
             }
-        } catch (Exception e) {
-            System.out.println("Exception in update method: " + e);
-            e.printStackTrace();
+        } catch (Exception ex) {
+            System.out.println("Exception in update method: " + ex);
+            ex.printStackTrace();
         }
     }
 
@@ -231,12 +340,20 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
 
         try {
             emitter.draw(g);
-        } catch (Exception e) {
-            System.out.println("Exception in draw method: " + e);
-            e.printStackTrace();
+        } catch (Exception ex) {
+            System.out.println("Exception in draw method: " + ex);
+            ex.printStackTrace();
         }
+
+        g.setColor(Color.WHITE);
+        g.drawString("Ticks: " + emitter.getTicks(), 5, 15);
+        g.drawString("# Particles: " + emitter.getNumAlive(), 5, 30);
+        g.drawString("Max # Particles: " + emitter.getMaxNumAlive(), 5, 45);
+        g.drawString("Population: " + emitter.getPopulation(), 5, 60);
     }
 
-    @Override public Dimension getMaximumSize() { return getPreferredSize(); }
-    @Override public Dimension getPreferredSize() { return new Dimension(800, 600); }
+    public void setFollowMouse(boolean enabled)
+    {
+        followMouse = enabled;
+    }
 }

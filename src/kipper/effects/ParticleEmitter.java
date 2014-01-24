@@ -12,11 +12,8 @@ public class ParticleEmitter implements Entity
     private double x, y;
     private int particleID = 0, ticks = 0;
 
-    // Number of particles currently alive
-    private int numAlive = 0;
-    // Copy of particles.length so we know how many particles to init
-    // if config.getMaxParticles() ever increases
-    private int maxNumAlive = 0;
+    private int numAlive = 0, maxNumAlive = 0;
+    private int population = 0;
     // Indexes < numAlive are considered alive, >= numAlive are considered dead
     private Particle[] particles;
     private ParticleEmitterConfig config, nextConfig;
@@ -32,11 +29,12 @@ public class ParticleEmitter implements Entity
 
     private void initParticles()
     {
-        for (int i = maxNumAlive; i < particles.length; i++) {
+        for (int i = population; i < particles.length; i++) {
             particles[i] = new Particle();
         }
+        maxNumAlive = 0;
         numAlive = Math.min(numAlive, particles.length);
-        maxNumAlive = particles.length;
+        population = particles.length;
     }
 
     public void setConfig(ParticleEmitterConfig config)
@@ -110,6 +108,7 @@ public class ParticleEmitter implements Entity
                 i--;
             }
         }
+        maxNumAlive = Math.max(maxNumAlive, numAlive);
 
         updateConfig();
         ticks++;
@@ -159,4 +158,9 @@ public class ParticleEmitter implements Entity
         this.x = x;
         this.y = y;
     }
+
+    public int getTicks() { return ticks; }
+    public int getNumAlive() { return numAlive; }
+    public int getMaxNumAlive() { return maxNumAlive; }
+    public int getPopulation() { return population; }
 }
