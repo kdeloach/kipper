@@ -26,9 +26,10 @@ public class LaserBeam extends Bullet implements MaskedEntity
     @Override
     public void die()
     {
-        new Explosion(stop.x + getWidth() / 2,
-                      stop.y + getHeight() / 2,
-                      weapon.ship().panel());
+        double px = stop.x + getWidth() / 2;
+        double py = stop.y + getHeight() / 2;
+        ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
+        weapon.ship().panel().addEmitter(pe);
     }
 
     @Override

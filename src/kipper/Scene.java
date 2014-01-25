@@ -44,5 +44,5 @@ public abstract class Scene implements MouseListener, MouseMotionListener, KeyLi
 
     ///
 
-    public void paint(Graphics g){}
+    public void draw(Graphics g){}
 }

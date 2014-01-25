@@ -1,18 +1,21 @@
 from kipper.effects import ParticleEmitterConfig
 from kipper.effects.transitions import Linear
+from kipper.effects.transitions import EaseInQuad
+from kipper.effects.transitions import EaseOutCubic
+from kipper.effects.transitions import EaseOutQuad
 
 import math
 from random import random
 
-L = Linear()
+L = EaseOutCubic()
 
 class SampleConfigImpl(ParticleEmitterConfig):
 
     def getMaxParticles(self):
-        return 48
+        return 10
 
     def getDurationTicks(self):
-        return 45
+        return 50
 
     def getSpawnRate(self):
         return 1
@@ -28,12 +31,12 @@ class SampleConfigImpl(ParticleEmitterConfig):
 
     def getTheta(self, p):
         if p.ticks < 1:
-            return random() * 2 * math.pi
+            return random()*2*math.pi
         return p.theta
 
     def getSpeed(self, p):
         if p.ticks < 1:
-            return random() * 2
+            return random()*2
         return p.speed
 
     def getHue(self, p):
@@ -44,3 +47,4 @@ class SampleConfigImpl(ParticleEmitterConfig):
 
     def getBrightness(self, p):
         return 1
+

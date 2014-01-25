@@ -21,6 +21,7 @@ HIGH
 - Add upgrade to force projectile collision
 
 MED
+- OSP: ArrayList->LinkedList, replace for loops with iterators
 - Particle trails on ship
 - Build new weapon upgrade graph screen
 - Level tool

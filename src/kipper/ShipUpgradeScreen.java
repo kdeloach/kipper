@@ -58,7 +58,7 @@ public class ShipUpgradeScreen extends Scene {
         osp.removeMouseListener(this);
     }
 
-    public void paint(Graphics g)
+    public void draw(Graphics g)
     {
         // draw upgrade slots
         for (int i = 0; i  < player.getWeapon().amountSlots(); i++) {

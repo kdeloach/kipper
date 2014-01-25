@@ -34,9 +34,10 @@ public class Bullet implements Entity, Projectile
     @Override
     public void die()
     {
-        new Explosion(getX() + getWidth() / 2,
-                      getY() + getHeight() / 2,
-                      weapon.ship().panel());
+        double px = getX() + getWidth() / 2;
+        double py = getY() + getHeight() / 2;
+        ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
+        weapon.ship().panel().addEmitter(pe);
     }
 
     public void move()

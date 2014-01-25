@@ -127,6 +127,12 @@ public class ParticleTool
         btnSave.setText("Save");
         toolbar.add(btnSave);
 
+        JButton btnSaveAs = new JButton();
+        btnSaveAs.setAction(saveAsAction);
+        btnSaveAs.setMnemonic(KeyEvent.VK_A);
+        btnSaveAs.setText("Save As");
+        toolbar.add(btnSaveAs);
+
         JButton btnUpdate = new JButton();
         btnUpdate.setAction(updateConfigAction);
         btnUpdate.setMnemonic(KeyEvent.VK_R);
@@ -258,10 +264,12 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
             PyObject pyObj = pyClass.__call__();
             ParticleEmitterConfig config = (ParticleEmitterConfig)pyObj.__tojava__(ParticleEmitterConfig.class);
             if (config != null) {
+                System.out.println("Set emitter config");
                 this.config = config;
-                this.emitter.setConfig(config);
+                this.emitter.setConfig(this.config);
             }
         } catch (Exception ex) {
+            System.out.println("Error interpreting jython");
             ex.printStackTrace();
         }
     }
@@ -324,8 +332,10 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
                 emitter.setLocation(pX, pY);
             }
         } catch (Exception ex) {
-            System.out.println("Exception in update method: " + ex);
-            ex.printStackTrace();
+            this.config = new SampleConfigImpl();
+            this.emitter.setConfig(this.config);
+            System.out.println("Exception in update method");
+            //ex.printStackTrace();
         }
     }
 
@@ -341,8 +351,10 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
         try {
             emitter.draw(g);
         } catch (Exception ex) {
-            System.out.println("Exception in draw method: " + ex);
-            ex.printStackTrace();
+            this.config = new SampleConfigImpl();
+            this.emitter.setConfig(this.config);
+            System.out.println("Exception in draw method");
+            //ex.printStackTrace();
         }
 
         g.setColor(Color.WHITE);

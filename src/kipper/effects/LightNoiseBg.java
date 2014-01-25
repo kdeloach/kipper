@@ -32,7 +32,7 @@ public class LightNoiseBg
     {
     }
 
-    public void paint(Graphics g)
+    public void draw(Graphics g)
     {
         g.drawImage(img, 0, 0, osp);
     }

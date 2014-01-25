@@ -21,5 +21,7 @@ public class Main
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setVisible(true);
+
+        new Thread(gamePanel).start();
     }
 }

@@ -15,7 +15,9 @@ public class BottomPanel extends JPanel
 
     public BottomPanel()
     {
+        super();
         setSize(getMinumumSize());
+        setIgnoreRepaint(true);
     }
 
     public void update(Ship player)
@@ -50,33 +52,33 @@ public class BottomPanel extends JPanel
             drawCooldown(g, 135 + (20 + 3) * 2, 11, player.getWeapon(2));
             drawCooldown(g, 135 + (20 + 3) * 3, 11, player.getWeapon(3));
             drawCooldown(g, 135 + (20 + 3) * 4, 11, player.getWeapon(4));
-        }
 
-        Ship target = player.getTarget();
-        if (target != null && target.isAlive()) {
-            // offset
-            int xoff = getWidth() - 250;
+            Ship target = player.getTarget();
+            if (target != null && target.isAlive()) {
+                // offset
+                int xoff = getWidth() - 250;
 
-            // text
-            g.setColor(Color.GRAY);
-            g.drawString(target.getName(), 3 + xoff, 9);
-            g.drawString("life", 3 + xoff, 21);
-            g.drawString("exp", 3 + xoff, 29);
+                // text
+                g.setColor(Color.GRAY);
+                g.drawString(target.getName(), 3 + xoff, 9);
+                g.drawString("life", 3 + xoff, 21);
+                g.drawString("exp", 3 + xoff, 29);
 
-            // bars
-            drawBar(g, 40 + xoff, 13, target.percentHealth(), Color.GRAY);
-            drawBar(g, 40 + xoff, 23, 1, Color.LIGHT_GRAY);
+                // bars
+                drawBar(g, 40 + xoff, 13, target.percentHealth(), Color.GRAY);
+                drawBar(g, 40 + xoff, 23, 1, Color.LIGHT_GRAY);
 
-            g.setColor(Color.DARK_GRAY);
-            g.drawLine(124 + xoff, 12, 124 + xoff, getHeight() - 4);
+                g.setColor(Color.DARK_GRAY);
+                g.drawLine(124 + xoff, 12, 124 + xoff, getHeight() - 4);
 
-            // cooldowns
-            g.setColor(Color.GRAY);
-            drawCooldown(g, 135 + xoff, 11, target.getWeapon(0));
-            drawCooldown(g, 135 + xoff + (20 + 3) * 1, 11, target.getWeapon(1));
-            drawCooldown(g, 135 + xoff + (20 + 3) * 2, 11, target.getWeapon(2));
-            drawCooldown(g, 135 + xoff + (20 + 3) * 3, 11, target.getWeapon(3));
-            drawCooldown(g, 135 + xoff + (20 + 3) * 4, 11, target.getWeapon(4));
+                // cooldowns
+                g.setColor(Color.GRAY);
+                drawCooldown(g, 135 + xoff, 11, target.getWeapon(0));
+                drawCooldown(g, 135 + xoff + (20 + 3) * 1, 11, target.getWeapon(1));
+                drawCooldown(g, 135 + xoff + (20 + 3) * 2, 11, target.getWeapon(2));
+                drawCooldown(g, 135 + xoff + (20 + 3) * 3, 11, target.getWeapon(3));
+                drawCooldown(g, 135 + xoff + (20 + 3) * 4, 11, target.getWeapon(4));
+            }
         }
     }
 

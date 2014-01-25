@@ -5,15 +5,16 @@ import java.awt.geom.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import kipper.ships.*;
 import kipper.effects.*;
 import kipper.weapons.*;
 
-public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
+public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 400;
@@ -31,27 +32,27 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
 
     private ArrayList<Ship> players;
     private ArrayList<Projectile> bulletList;
-    private ArrayList<Explosion> explosionList;
+    private LinkedList<ParticleEmitter> emitters;
 
     private Queue<Ship> deleteShips;
     private Queue<Projectile> deleteProjectiles;
-    private Queue<Explosion> deleteExplosions;
 
     private boolean paused = false;
 
     public OuterSpacePanel(BottomPanel statusBar)
     {
-        this.statusBar = statusBar;
-
+        super();
         setSize(getMinumumSize());
+        setIgnoreRepaint(true);
+
+        this.statusBar = statusBar;
 
         players = new ArrayList<Ship>();
         bulletList = new ArrayList<Projectile>();
-        explosionList = new ArrayList<Explosion>();
+        emitters = new LinkedList<ParticleEmitter>();
 
         deleteShips = new LinkedList<Ship>();
         deleteProjectiles = new LinkedList<Projectile>();
-        deleteExplosions = new LinkedList<Explosion>();
 
         noiseBg = new LightNoiseBg(this);
         starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 1, 3, 0x33, 0xFF);
@@ -60,8 +61,6 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         player1 = new Darkwing(100, 100, this);
         addShip(player1);
         changeScene(new DemoLevel(this));
-
-        new Thread(this).start();
     }
 
     // Author: Bob Nystrom
@@ -88,7 +87,13 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
                 lag -= FPS;
             }
 
-            repaint();
+            int w = getWidth();
+            int h = getHeight();
+            if (w > 0 && h > 0) {
+                Image img = createImage(w, h);
+                draw(img.getGraphics());
+                getGraphics().drawImage(img, 0, 0, w, h, this);
+            }
         }
     }
 
@@ -121,12 +126,13 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
                 removeProjectile(p);
             }
         }
-        for (int i = 0; i < explosionList.size(); i++) {
-            Explosion p = explosionList.get(i);
+        Iterator<ParticleEmitter> iter = emitters.iterator();
+        while (iter.hasNext()) {
+            ParticleEmitter p = iter.next();
             if (p.isAlive()) {
                 p.update();
             } else {
-                removeExplosion(p);
+                iter.remove();
             }
         }
     }
@@ -186,14 +192,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
             bulletList.remove(head);
             head = deleteProjectiles.poll();
         }
-        head = deleteExplosions.poll();
-        while (head != null) {
-            explosionList.remove(head);
-            head = deleteExplosions.poll();
-        }
     }
 
-    public void paint(Graphics g)
+    public void draw(Graphics g)
     {
         // SLOW
         //Graphics2D g2 = (Graphics2D)g;
@@ -204,19 +205,21 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         g.fillRect(0, 0, getWidth(), getHeight());
 
         statusBar.repaint();
-        noiseBg.paint(g);
-        starsBg.paint(g);
-        starsFg.paint(g);
+        noiseBg.draw(g);
+        starsBg.draw(g);
+        starsFg.draw(g);
         for (int i = 0; i < players.size(); i++) {
             players.get(i).draw(g);
         }
         for (int i = 0; i < bulletList.size(); i++) {
             bulletList.get(i).draw(g);
         }
-        for (int i = 0; i < explosionList.size(); i++) {
-            explosionList.get(i).draw(g);
+        Iterator<ParticleEmitter> iter = emitters.iterator();
+        while (iter.hasNext()) {
+            ParticleEmitter p = iter.next();
+            p.draw(g);
         }
-        scene.paint(g);
+        scene.draw(g);
     }
 
     void changeScene(Scene s)
@@ -270,14 +273,9 @@ public class OuterSpacePanel extends JPanel implements KeyListener, Runnable
         }
     }
 
-    public void addExplosion(Explosion e)
+    public void addEmitter(ParticleEmitter p)
     {
-        explosionList.add(e);
-    }
-
-    public void removeExplosion(Explosion e)
-    {
-        deleteExplosions.add(e);
+        emitters.add(p);
     }
 
     public void addShip(Ship e)

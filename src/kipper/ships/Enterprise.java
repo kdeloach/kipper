@@ -34,15 +34,10 @@ public class Enterprise extends Ship
     public void die()
     {
         super.die();
-        new ShipExplosion1(getX() + getWidth() / 2, getY() + getHeight() / 2, osp)
-        {
-            @Override public Color getColor() { return Color.YELLOW; }
-            @Override public int getAmount() { return 50; }
-        };
-        new ShipExplosion1(getX() + getWidth() / 2, getY() + getHeight() / 2, osp)
-        {
-            @Override public Color getColor() { return Color.RED; }
-        };
+        double px = getX() + getWidth() / 2;
+        double py = getY() + getHeight() / 2;
+        ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
+        osp.addEmitter(pe);
         panel.respawnPlayer();
     }
 

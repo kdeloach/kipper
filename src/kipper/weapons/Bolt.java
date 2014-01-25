@@ -97,10 +97,8 @@ public class Bolt implements MaskedEntity, Projectile
     @Override
     public void die()
     {
-        new Explosion(getX(), getY(), weapon.ship().panel())
-        {
-            @Override public Color getColor() { return Color.WHITE; }
-        };
+        ParticleEmitter pe = new ParticleEmitter(getX(), getY(), new SampleConfigImpl());
+        weapon.ship().panel().addEmitter(pe);
     }
 
     @Override

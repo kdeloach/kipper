@@ -40,6 +40,7 @@ public class ParticleEmitter implements Entity
     public void setConfig(ParticleEmitterConfig config)
     {
         nextConfig = config;
+        updateConfig();
     }
 
     private void updateConfig()

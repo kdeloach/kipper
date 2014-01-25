@@ -72,7 +72,7 @@ public class MarqueeStars
         }
     }
 
-    public void paint(Graphics g)
+    public void draw(Graphics g)
     {
         for (int i = 0; i < stars.length; i++) {
             Star p = stars[i];

@@ -45,7 +45,10 @@ public class TriangleMan extends Ship
     public void die()
     {
         super.die();
-        new ShipExplosion2(getX() + getWidth() / 2, getY() + getHeight() / 2, osp);
+        double px = getX() + getWidth() / 2;
+        double py = getY() + getHeight() / 2;
+        ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
+        osp.addEmitter(pe);
     }
 
     @Override
