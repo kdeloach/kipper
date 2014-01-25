@@ -1,6 +1,4 @@
 HIGH
-- Create weapon graphics and fix weapon relative offsets
-- Lightning and spacemine should respect bullet size & bullet speed upgrades
 - Sound effects
 - Add "passthrough" upgrade
 - Add "split" upgrade
@@ -17,6 +15,7 @@ MED
 - Do a better job with mouse scaling methods
 
 LOW
+- Create weapon graphics and fix weapon relative offsets
 - Add error output pane to Particle tool
 - Add graveyard logic back to particle emitter; Performance impact?
 - Add translateX, translateY to emitter

@@ -109,10 +109,10 @@ public class Bolt implements MaskedEntity, Projectile
     {
         int a = (int)easer.call(life, 0, 0xFF, lifespan);
         g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
-        if (thickness == 1) {
+        if (getThickness() == 1) {
             g.drawLine((int)startX(), (int)startY(), (int)stopX(), (int)stopY());
         } else {
-            Util.drawThickLine(g, startX(), startY(), stopX(), stopY(), thickness);
+            Util.drawThickLine(g, startX(), startY(), stopX(), stopY(), getThickness());
         }
     }
 
@@ -137,6 +137,8 @@ public class Bolt implements MaskedEntity, Projectile
     protected int getDefaultBranches() { return 2; }
     protected int getAmtChildrenBranches(){ return 5; }
     protected int getDefaultThickness(){ return 4; }
+
+    public int getThickness() { return (int)(thickness * weapon.getSizeBonus()); }
 
     @Override public double getX() { return startX(); }
     @Override public double getY() { return startY(); }
