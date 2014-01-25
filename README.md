@@ -51,3 +51,4 @@ Open the particle tool:
     > java -cp bin/release/kipper.jar;jython.jar kipper.tools.ParticleTool
 
 ![](https://github.com/kdeloach/kipper/raw/master/images/particletool 20140123.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/particletool 20140124.png)
