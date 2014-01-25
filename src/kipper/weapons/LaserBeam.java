@@ -24,7 +24,7 @@ public class LaserBeam extends Bullet implements MaskedEntity
     }
 
     @Override
-    public void die()
+    public void deathExplosion()
     {
         double px = stop.x + getWidth() / 2;
         double py = stop.y + getHeight() / 2;

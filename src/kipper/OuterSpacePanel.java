@@ -28,14 +28,11 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     public Ship player1;
 
     // current scene
-    Scene scene;
+    Scene scene, nextScene;
 
-    private ArrayList<Ship> players;
-    private ArrayList<Projectile> bulletList;
+    private LinkedList<Ship> players;
+    private LinkedList<Projectile> projectiles;
     private LinkedList<ParticleEmitter> emitters;
-
-    private Queue<Ship> deleteShips;
-    private Queue<Projectile> deleteProjectiles;
 
     private boolean paused = false;
 
@@ -46,12 +43,9 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
         this.statusBar = statusBar;
 
-        players = new ArrayList<Ship>();
-        bulletList = new ArrayList<Projectile>();
+        players = new LinkedList<Ship>();
+        projectiles = new LinkedList<Projectile>();
         emitters = new LinkedList<ParticleEmitter>();
-
-        deleteShips = new LinkedList<Ship>();
-        deleteProjectiles = new LinkedList<Projectile>();
 
         noiseBg = new LightNoiseBg(this);
         starsBg = new MarqueeStars(500, Math.toRadians(180), 0, 1, 3, 0x33, 0xFF);
@@ -100,42 +94,65 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         }
     }
 
+    private boolean _updating = false;
+
     public void update()
     {
+        if (_updating) {
+            throw new UnsupportedOperationException("Tried to update while already updating");
+        }
+        if (_drawing) {
+            throw new UnsupportedOperationException("Tried to update while drawing");
+        }
+        _updating = true;
+
+        if (nextScene != null) {
+            if (scene != null) {
+                scene.destroyScene();
+            }
+            scene = nextScene;
+            scene.createScene();
+            nextScene = null;
+        }
+
         statusBar.update(player1);
         noiseBg.update();
         starsBg.update();
         starsFg.update();
         updateEntities();
         performCollisions();
-        cleanup();
+        _updating = false;
     }
 
     private void updateEntities()
     {
-        for (int i = 0; i < players.size(); i++) {
-            Ship p = players.get(i);
-            if (p.isAlive()) {
-                p.update();
+        Iterator<Ship> shipsIter = players.iterator();
+        while (shipsIter.hasNext()) {
+            Ship s = shipsIter.next();
+            if (s.isAlive()) {
+                s.update();
             } else {
-                removeShip(p);
+                shipsIter.remove();
             }
         }
-        for (int i = 0; i < bulletList.size(); i++) {
-            Projectile p = bulletList.get(i);
+
+        Iterator<Projectile> projectilesIter = projectiles.iterator();
+        while (projectilesIter.hasNext()) {
+            Projectile p = projectilesIter.next();
             if (p.isAlive()) {
                 p.update();
             } else {
-                removeProjectile(p);
+                projectilesIter.remove();
             }
         }
-        Iterator<ParticleEmitter> iter = emitters.iterator();
-        while (iter.hasNext()) {
-            ParticleEmitter p = iter.next();
-            if (p.isAlive()) {
-                p.update();
+
+        Iterator<ParticleEmitter> emittersIter = emitters.iterator();
+        while (emittersIter.hasNext()) {
+            ParticleEmitter pe = emittersIter.next();
+            if (pe.isAlive()) {
+                pe.update();
             } else {
-                iter.remove();
+                emittersIter.remove();
             }
         }
     }
@@ -145,8 +162,8 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         // Collide ships with projectiles
         for (int i = 0; i < players.size(); i++) {
             Ship player = players.get(i);
-            for (int k = 0; k < bulletList.size(); k++) {
-                Projectile bullet = bulletList.get(k);
+            for (int k = 0; k < projectiles.size(); k++) {
+                Projectile bullet = projectiles.get(k);
                 if (Util.intersects(player, bullet)) {
                     boolean canCollide = player != bullet.getOwner().ship() || bullet.collidesWithOwner();
                     if (canCollide) {
@@ -168,10 +185,10 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             }
         }
         // Collide projectiles
-        for (int i = bulletList.size() - 1; i >= 0; i--) {
-            Projectile p1 = bulletList.get(i);
+        for (int i = projectiles.size() - 1; i >= 0; i--) {
+            Projectile p1 = projectiles.get(i);
             for (int k = 0; k < i && p1.isAlive(); k++) {
-                Projectile p2 = bulletList.get(k);
+                Projectile p2 = projectiles.get(k);
                 boolean canCollide = p1.getTeam() != p2.getTeam() && (p1.collidesWithProjectiles() || p2.collidesWithProjectiles());
                 if (canCollide) {
                     if (Util.intersects(p1, p2)) {
@@ -183,20 +200,6 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         }
     }
 
-    protected void cleanup()
-    {
-        Object head = deleteShips.poll();
-        while (head != null) {
-            players.remove(head);
-            head = deleteShips.poll();
-        }
-        head = deleteProjectiles.poll();
-        while (head != null) {
-            bulletList.remove(head);
-            head = deleteProjectiles.poll();
-        }
-    }
-
     @Override
     public void paintComponent(Graphics g)
     {
@@ -205,8 +208,17 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
+    private boolean _drawing = false;
+
     public void draw(Graphics g)
     {
+        if (_updating) {
+            throw new UnsupportedOperationException("Tried to draw while updating");
+        }
+        if (_drawing) {
+            throw new UnsupportedOperationException("Tried to draw while already drawing");
+        }
+        _drawing = true;
         // SLOW
         //Graphics2D g2 = (Graphics2D)g;
         //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -215,27 +227,35 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         noiseBg.draw(g);
         starsBg.draw(g);
         starsFg.draw(g);
-        for (int i = 0; i < players.size(); i++) {
-            players.get(i).draw(g);
+
+        Iterator<Ship> shipsIter = players.iterator();
+        while (shipsIter.hasNext()) {
+            Ship s = shipsIter.next();
+            s.draw(g);
         }
-        for (int i = 0; i < bulletList.size(); i++) {
-            bulletList.get(i).draw(g);
-        }
-        Iterator<ParticleEmitter> iter = emitters.iterator();
-        while (iter.hasNext()) {
-            ParticleEmitter p = iter.next();
+
+        Iterator<Projectile> projectilesIter = projectiles.iterator();
+        while (projectilesIter.hasNext()) {
+            Projectile p = projectilesIter.next();
             p.draw(g);
         }
-        scene.draw(g);
+
+        Iterator<ParticleEmitter> emittersIter = emitters.iterator();
+        while (emittersIter.hasNext()) {
+            ParticleEmitter pe = emittersIter.next();
+            pe.draw(g);
+        }
+
+        if (scene != null) {
+            scene.draw(g);
+        }
+
+        _drawing = false;
     }
 
-    void changeScene(Scene s)
+    private void changeScene(Scene s)
     {
-        if (scene != null) {
-            scene.destroyScene();
-        }
-        scene = s;
-        scene.createScene();
+        nextScene = s;
     }
 
     /////////////////////////
@@ -263,52 +283,47 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
     ////////////////////////
 
-    public void addProjectile(Projectile b)
+    public void addProjectile(Projectile p)
     {
-        bulletList.add(b);
-    }
-
-    public void removeProjectile(Projectile p)
-    {
-        deleteProjectiles.add(p);
+        projectiles.add(p);
     }
 
     public void removeAllProjectiles()
     {
-        for (int i = 0; i < bulletList.size(); i++) {
-            removeProjectile(bulletList.get(i));
+        Iterator<Projectile> iter = projectiles.iterator();
+        while (iter.hasNext()) {
+            Projectile p = iter.next();
+            p.die();
         }
     }
 
-    public void addEmitter(ParticleEmitter p)
+    public void addEmitter(ParticleEmitter pe)
     {
-        emitters.add(p);
+        emitters.add(pe);
     }
 
-    public void addShip(Ship e)
+    public void addShip(Ship s)
     {
-        players.add(e);
-    }
-
-    public void removeShip(Ship s)
-    {
-        deleteShips.add(s);
+        players.add(s);
     }
 
     public void removeManyShips(List<Ship> ships)
     {
-        for (int i = 0; i < ships.size(); i++) {
-            deleteShips.add(ships.get(i));
+        Iterator<Ship> iter = ships.iterator();
+        while (iter.hasNext()) {
+            Ship s = iter.next();
+            s.die();
         }
     }
 
     public List<Ship> getNPCs()
     {
-        ArrayList<Ship> result = new ArrayList<Ship>();
-        for (int i = 0; i < players.size(); i++) {
-            Ship player = players.get(i);
-            if (player instanceof Enterprise == false) {
-                result.add(player);
+        LinkedList<Ship> result = new LinkedList<Ship>();
+        Iterator<Ship> iter = players.iterator();
+        while (iter.hasNext()) {
+            Ship s = iter.next();
+            if (s instanceof Enterprise == false) {
+                result.add(s);
             }
         }
         return result;

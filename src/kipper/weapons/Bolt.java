@@ -100,6 +100,7 @@ public class Bolt implements MaskedEntity, Projectile
     @Override
     public void die()
     {
+        life = 0;
         ParticleEmitter pe = new ParticleEmitter(getX(), getY(), new SampleConfigImpl());
         weapon.ship().panel().addEmitter(pe);
     }

@@ -34,6 +34,12 @@ public class Bullet implements Entity, Projectile
     @Override
     public void die()
     {
+        life = 0;
+        deathExplosion();
+    }
+
+    public void deathExplosion()
+    {
         double px = getX() + getWidth() / 2;
         double py = getY() + getHeight() / 2;
         ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());

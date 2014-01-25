@@ -243,6 +243,7 @@ public abstract class Ship implements
     @Override
     public void die()
     {
+        dmg += getMaxHp();
     }
 
     /////////////

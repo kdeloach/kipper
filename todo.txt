@@ -1,4 +1,5 @@
 HIGH
+- Add FPS indicator
 - Sound effects
 - Add "passthrough" upgrade
 - Add "split" upgrade
