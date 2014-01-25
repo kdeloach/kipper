@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
+import kipper.effects.transitions.*;
 
 // Bolts are basically 2 points, whereas the first point is x,y
 //   and the second point is x+length*cos(theta),y+length*sin(theta)
@@ -36,6 +37,8 @@ public class Bolt implements MaskedEntity, Projectile
     private Weapon weapon;
 
     private boolean alive = true;
+
+    private EasingFunc easer = new EaseInQuad();
 
     public Bolt(double x, double y, double t, double dmg, Weapon w)
     {
@@ -104,8 +107,7 @@ public class Bolt implements MaskedEntity, Projectile
     @Override
     public void draw(Graphics g)
     {
-        //int a = (int)Easing.easeInQuad(life, 0, 0xFF, lifespan);
-        int a = 0xFF;
+        int a = (int)easer.call(life, 0, 0xFF, lifespan);
         g.setColor(new Color(0xFF, 0xFF, 0xFF, a));
         if (thickness == 1) {
             g.drawLine((int)startX(), (int)startY(), (int)stopX(), (int)stopY());
@@ -143,7 +145,7 @@ public class Bolt implements MaskedEntity, Projectile
     @Override public int getLife() { return life; }
     @Override public int getTeam() { return weapon.ship().getTeam(); }
     @Override public boolean isAlive() { return life > 0; }
-    @Override public double getDamage() { return damage; }
+    @Override public double getDamage() { return damage * life / lifespan; }
     @Override public boolean collidesWithOwner() { return false; }
     @Override public boolean collidesWithProjectiles() { return false; }
     @Override public Weapon getOwner() { return weapon; }
