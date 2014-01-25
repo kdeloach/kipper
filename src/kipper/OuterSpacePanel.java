@@ -42,7 +42,6 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     public OuterSpacePanel(BottomPanel statusBar)
     {
         super();
-        setSize(getMinumumSize());
         setIgnoreRepaint(true);
 
         this.statusBar = statusBar;
@@ -90,7 +89,7 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             int w = getWidth();
             int h = getHeight();
             if (w > 0 && h > 0) {
-                Image img = createImage(w, h);
+                Image img = createImage(WIDTH, HEIGHT);
                 draw(img.getGraphics());
                 getGraphics().drawImage(img, 0, 0, w, h, this);
             }
@@ -309,8 +308,9 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
     ///
 
-    public Dimension getMinumumSize() { return getPreferredSize(); }
-    public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT); }
+    @Override public Dimension getMinimumSize() { return getPreferredSize(); }
+    @Override public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT); }
+
     public Ship getPlayer() { return player1; }
 
     public void respawnPlayer()

@@ -248,8 +248,8 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
         super();
         setIgnoreRepaint(true);
         addMouseMotionListener(this);
-        this.config = new SampleConfigImpl();
-        this.emitter = new ParticleEmitter(0, 0, config);
+        config = new SampleConfigImpl();
+        emitter = new ParticleEmitter(0, 0, config);
     }
 
     public void updateConfig(String input)
@@ -264,12 +264,10 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
             PyObject pyObj = pyClass.__call__();
             ParticleEmitterConfig config = (ParticleEmitterConfig)pyObj.__tojava__(ParticleEmitterConfig.class);
             if (config != null) {
-                System.out.println("Set emitter config");
                 this.config = config;
-                this.emitter.setConfig(this.config);
+                emitter = new ParticleEmitter(0, 0, config);
             }
         } catch (Exception ex) {
-            System.out.println("Error interpreting jython");
             ex.printStackTrace();
         }
     }
@@ -326,16 +324,13 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
             }
             if (emitter.isAlive()) {
                 emitter.setLocation(pX, pY);
-                emitter.update();
             } else {
                 emitter = new ParticleEmitter(0, 0, config);
                 emitter.setLocation(pX, pY);
             }
+            emitter.update();
         } catch (Exception ex) {
-            this.config = new SampleConfigImpl();
-            this.emitter.setConfig(this.config);
-            System.out.println("Exception in update method");
-            //ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
 
@@ -351,10 +346,7 @@ class ParticleDrawPanel extends JComponent implements Runnable, MouseMotionListe
         try {
             emitter.draw(g);
         } catch (Exception ex) {
-            this.config = new SampleConfigImpl();
-            this.emitter.setConfig(this.config);
-            System.out.println("Exception in draw method");
-            //ex.printStackTrace();
+            ex.printStackTrace();
         }
 
         g.setColor(Color.WHITE);

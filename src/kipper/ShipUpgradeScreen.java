@@ -6,8 +6,8 @@ import kipper.ships.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
 
-public class ShipUpgradeScreen extends Scene {
-
+public class ShipUpgradeScreen extends Scene
+{
     Ship player;
     OuterSpacePanel osp;
 
@@ -37,7 +37,7 @@ public class ShipUpgradeScreen extends Scene {
 
         int w = 140, h = 50, p = 5;
         for (int i = 0, y = 150, x = 0; i < availableUpgradeRects.length; i++, x++) {
-            if (player.getWidth() + 50 + (w + p) * x + w >= osp.getWidth()) {
+            if (player.getWidth() + 50 + (w + p) * x + w >= OuterSpacePanel.WIDTH) {
                 x = 0;
                 y += h + p;
             }
@@ -86,21 +86,34 @@ public class ShipUpgradeScreen extends Scene {
 
     public void mousePressed(MouseEvent e)
     {
+        int x = scaleX(e.getX());
+        int y = scaleY(e.getY());
+        Point p = new Point(x, y);
         // if a slot is selected
         for (int i = 0; i < emptySlotRects.length; i++) {
-            if (emptySlotRects[i].contains(e.getPoint())) {
+            if (emptySlotRects[i].contains(p)) {
                 player.getWeapon().removeUpgrade(i);
                 return;
             }
         }
         // if an upgrade is selected
         for (int i = 0; i < availableUpgradeRects.length; i++) {
-            if (availableUpgradeRects[i].contains(e.getPoint())) {
+            if (availableUpgradeRects[i].contains(p)) {
                 Weapon w = player.getWeapon();
                 w.addUpgrade(Ability.createInstance(i));
                 return;
             }
         }
+    }
+
+    public int scaleX(int x)
+    {
+        return (int)(x * (OuterSpacePanel.WIDTH / (double)osp.getWidth()));
+    }
+
+    public int scaleY(int y)
+    {
+        return (int)(y * (OuterSpacePanel.HEIGHT / (double)osp.getHeight()));
     }
 
     @Override public String name() { return "upgrade"; }

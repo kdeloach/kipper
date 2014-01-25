@@ -1,16 +1,4 @@
-Fix OSP buffering and remove deleteQueues
-Add translateX, translateY to emitter
-Replace graveyard queue with pointer to last alive particle
-
 HIGH
-- Particle emitter:
-    - Jython compile particle configs as part of ant build
-    - Load/Save option
-    - Add error output text pane
-    - Generate ParticleEmitterConfig impl code
-    - Ability to load existing ParticleEmitterConfig impl's
-    - Follow Mouse option
-- Fix double buffer strategy on OuterSpacePanel
 - Create weapon graphics and fix weapon relative offsets
 - Lightning and spacemine should respect bullet size & bullet speed upgrades
 - Sound effects
@@ -21,12 +9,17 @@ HIGH
 - Add upgrade to force projectile collision
 
 MED
+- Investigate making the game window resizable
 - OSP: ArrayList->LinkedList, replace for loops with iterators
 - Particle trails on ship
 - Build new weapon upgrade graph screen
 - Level tool
+- Do a better job with mouse scaling methods
 
 LOW
+- Add error output pane to Particle tool
+- Add graveyard logic back to particle emitter; Performance impact?
+- Add translateX, translateY to emitter
 - Weapon balancing
 - Move bolt splinter() into move() to create an animated lightning effect
 - Change foreground stars theta opposite of ship heading; How will this effect look?

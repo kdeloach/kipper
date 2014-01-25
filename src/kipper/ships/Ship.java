@@ -272,18 +272,20 @@ public abstract class Ship implements
     @Override public void mouseClicked(MouseEvent evt) {}
 
     @Override
-    public void mousePressed(MouseEvent evt)
+    public void mousePressed(MouseEvent e)
     {
-        setMousePressedLocation(evt.getX(), evt.getY());
-        if (evt.getButton() == MouseEvent.BUTTON1) {
+        int x = scaleX(e.getX());
+        int y = scaleY(e.getY());
+        setMousePressedLocation(x, y);
+        if (e.getButton() == MouseEvent.BUTTON1) {
             getWeapon().startFiring();
         }
     }
 
     @Override
-    public void mouseReleased(MouseEvent evt)
+    public void mouseReleased(MouseEvent e)
     {
-        if (evt.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
             getWeapon().stopFiring();
         }
     }
@@ -299,9 +301,21 @@ public abstract class Ship implements
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        setMouseLocation(e.getX(), e.getY());
-        getWeapon().setMouseLocation(e.getX(), e.getY());
-        setDestination(e.getX(), e.getY());
+        int x = scaleX(e.getX());
+        int y = scaleY(e.getY());
+        setMouseLocation(x, y);
+        getWeapon().setMouseLocation(x, y);
+        setDestination(x, y);
+    }
+
+    public int scaleX(int x)
+    {
+        return (int)(x * (OuterSpacePanel.WIDTH / (double)osp.getWidth()));
+    }
+
+    public int scaleY(int y)
+    {
+        return (int)(y * (OuterSpacePanel.HEIGHT / (double)osp.getHeight()));
     }
 
     /////////////

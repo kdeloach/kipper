@@ -16,7 +16,7 @@ public class ParticleEmitter implements Entity
     private int population = 0;
     // Indexes < numAlive are considered alive, >= numAlive are considered dead
     private Particle[] particles;
-    private ParticleEmitterConfig config, nextConfig;
+    private ParticleEmitterConfig config;
 
     public ParticleEmitter(double x, double y, ParticleEmitterConfig config)
     {
@@ -35,25 +35,6 @@ public class ParticleEmitter implements Entity
         maxNumAlive = 0;
         numAlive = Math.min(numAlive, particles.length);
         population = particles.length;
-    }
-
-    public void setConfig(ParticleEmitterConfig config)
-    {
-        nextConfig = config;
-        updateConfig();
-    }
-
-    private void updateConfig()
-    {
-        if (nextConfig == null) {
-            return;
-        }
-        if (nextConfig.getMaxParticles() != config.getMaxParticles()) {
-            particles = Arrays.copyOf(particles, nextConfig.getMaxParticles());
-            initParticles();
-        }
-        config = nextConfig;
-        nextConfig = null;
     }
 
     public boolean canSpawnParticle()
@@ -111,7 +92,6 @@ public class ParticleEmitter implements Entity
         }
         maxNumAlive = Math.max(maxNumAlive, numAlive);
 
-        updateConfig();
         ticks++;
     }
 

@@ -19,7 +19,7 @@ public class Main
         frame.pack();
         frame.setLocation(300, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
 
         new Thread(gamePanel).start();
