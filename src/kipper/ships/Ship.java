@@ -274,9 +274,8 @@ public abstract class Ship implements
     @Override
     public void mousePressed(MouseEvent e)
     {
-        int x = scaleX(e.getX());
-        int y = scaleY(e.getY());
-        setMousePressedLocation(x, y);
+        Point p = scalePoint(e.getPoint());
+        setMousePressedLocation(p.x, p.y);
         if (e.getButton() == MouseEvent.BUTTON1) {
             getWeapon().startFiring();
         }
@@ -301,21 +300,19 @@ public abstract class Ship implements
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        int x = scaleX(e.getX());
-        int y = scaleY(e.getY());
-        setMouseLocation(x, y);
-        getWeapon().setMouseLocation(x, y);
-        setDestination(x, y);
+        Point p = scalePoint(e.getPoint());
+        setMouseLocation(p.x, p.y);
+        getWeapon().setMouseLocation(p.x, p.y);
+        setDestination(p.x, p.y);
     }
 
-    public int scaleX(int x)
+    public Point scalePoint(Point p)
     {
-        return (int)(x * (OuterSpacePanel.WIDTH / (double)osp.getWidth()));
-    }
-
-    public int scaleY(int y)
-    {
-        return (int)(y * (OuterSpacePanel.HEIGHT / (double)osp.getHeight()));
+        double ratio = Util.getAspectRatio(osp);
+        Point offset = Util.boxOffset(osp, ratio);
+        return new Point(
+            (int)((p.x - offset.x) * 1 / ratio),
+            (int)((p.y - offset.y) * 1 / ratio));
     }
 
     /////////////

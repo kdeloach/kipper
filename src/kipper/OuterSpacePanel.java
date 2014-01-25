@@ -91,7 +91,11 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             if (w > 0 && h > 0) {
                 Image img = createImage(WIDTH, HEIGHT);
                 draw(img.getGraphics());
-                getGraphics().drawImage(img, 0, 0, w, h, this);
+                double ratio = Util.getAspectRatio(this);
+                Point offset = Util.boxOffset(this, ratio);
+                w = (int)(WIDTH * ratio);
+                h = (int)(HEIGHT * ratio);
+                getGraphics().drawImage(img, offset.x, offset.y, w, h, this);
             }
         }
     }
@@ -193,15 +197,19 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         }
     }
 
+    @Override
+    public void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+    }
+
     public void draw(Graphics g)
     {
         // SLOW
         //Graphics2D g2 = (Graphics2D)g;
         //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // bg
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
 
         statusBar.repaint();
         noiseBg.draw(g);

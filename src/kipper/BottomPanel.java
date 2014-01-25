@@ -16,7 +16,6 @@ public class BottomPanel extends JPanel
     public BottomPanel()
     {
         super();
-        setSize(getMinumumSize());
         setIgnoreRepaint(true);
     }
 
@@ -100,6 +99,6 @@ public class BottomPanel extends JPanel
         }
     }
 
-    public Dimension getMinumumSize() { return getPreferredSize(); }
-    public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, 33); }
+    @Override public Dimension getMinimumSize() { return getPreferredSize(); }
+    @Override public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, 33); }
 }

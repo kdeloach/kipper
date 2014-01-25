@@ -1,7 +1,8 @@
 package kipper;
 
-import javax.swing.JFrame;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class Main
 {
@@ -13,15 +14,32 @@ public class Main
         BottomPanel statusBar = new BottomPanel();
         OuterSpacePanel gamePanel = new OuterSpacePanel(statusBar);
         frame.addKeyListener(gamePanel);
+        frame.addComponentListener(new RepaintAfterResize(gamePanel));
         frame.getContentPane().add(gamePanel);
         frame.getContentPane().add(statusBar, BorderLayout.NORTH);
 
         frame.pack();
-        frame.setLocation(300, 200);
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(true);
         frame.setVisible(true);
 
         new Thread(gamePanel).start();
+    }
+}
+
+class RepaintAfterResize extends ComponentAdapter
+{
+    JComponent component;
+
+    public RepaintAfterResize(JComponent component)
+    {
+        this.component = component;
+    }
+
+    @Override
+	public void componentResized(ComponentEvent e)
+    {
+        component.repaint();
     }
 }

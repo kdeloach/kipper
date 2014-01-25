@@ -86,9 +86,7 @@ public class ShipUpgradeScreen extends Scene
 
     public void mousePressed(MouseEvent e)
     {
-        int x = scaleX(e.getX());
-        int y = scaleY(e.getY());
-        Point p = new Point(x, y);
+        Point p = scalePoint(e.getPoint());;
         // if a slot is selected
         for (int i = 0; i < emptySlotRects.length; i++) {
             if (emptySlotRects[i].contains(p)) {
@@ -106,14 +104,13 @@ public class ShipUpgradeScreen extends Scene
         }
     }
 
-    public int scaleX(int x)
+    public Point scalePoint(Point p)
     {
-        return (int)(x * (OuterSpacePanel.WIDTH / (double)osp.getWidth()));
-    }
-
-    public int scaleY(int y)
-    {
-        return (int)(y * (OuterSpacePanel.HEIGHT / (double)osp.getHeight()));
+        double ratio = Util.getAspectRatio(osp);
+        Point offset = Util.boxOffset(osp, ratio);
+        return new Point(
+            (int)((p.x - offset.x) * 1 / ratio),
+            (int)((p.y - offset.y) * 1 / ratio));
     }
 
     @Override public String name() { return "upgrade"; }

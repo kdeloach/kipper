@@ -125,4 +125,16 @@ public class Util
         Rectangle2D.Double r2 = new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight());
         return r1.intersects(r2);
     }
+
+    public static double getAspectRatio(OuterSpacePanel osp)
+    {
+        return Math.min((double)osp.getWidth() / osp.WIDTH, (double)osp.getHeight() / osp.HEIGHT);
+    }
+
+    public static Point boxOffset(OuterSpacePanel osp, double ratio)
+    {
+        return new Point(
+            (int)((osp.getWidth() - (double)osp.WIDTH * ratio) / 2.0),
+            (int)((osp.getHeight() - (double)osp.HEIGHT * ratio) / 2.0));
+    }
 }

@@ -9,9 +9,9 @@ HIGH
 - Add upgrade to force projectile collision
 
 MED
-- Investigate making the game window resizable
+- OSP should be the main delegator of mouse & keyboard events to game entities
+- BottomPanel should be part of the game not a separate JComponent
 - OSP: ArrayList->LinkedList, replace for loops with iterators
-- Particle trails on ship
 - Build new weapon upgrade graph screen
 - Level tool
 - Do a better job with mouse scaling methods
