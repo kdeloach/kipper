@@ -27,11 +27,14 @@ public class DemoLevel extends Scene
         Ship bot4 = new Squid(x, y, osp);
         Ship bot5 = new Kirby(x, y, osp);
 
-        bot1.setDestination(580,     30+70*0);
-        bot2.setDestination(580+100, 30+70*1);
-        bot3.setDestination(580,     30+70*2);
-        bot4.setDestination(580+100, 30+70*3);
-        bot5.setDestination(580,     30+70*4);
+        int x2 = osp.WIDTH - 175;
+        int y2 = (osp.HEIGHT - 5 * 60) / 2 + 10;
+
+        bot1.setDestination(x2,    y2+60*0);
+        bot2.setDestination(x2+75, y2+60*1);
+        bot3.setDestination(x2,    y2+60*2);
+        bot4.setDestination(x2+75, y2+60*3);
+        bot5.setDestination(x2,    y2+60*4);
 
         osp.addShip(bot1);
         osp.addShip(bot2);

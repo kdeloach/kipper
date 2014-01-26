@@ -16,10 +16,10 @@ import kipper.weapons.*;
 
 public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 400;
+    public static final int WIDTH = 600;
+    public static final int HEIGHT = 300;
     // Frame per second (1000 MS / 60 frames)
-    public static long FPS = 1000 / 60;
+    public static long FPS = 1000 / 80;
 
     LightNoiseBg noiseBg;
     MarqueeStars starsBg, starsFg;
@@ -363,7 +363,11 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     ///
 
     @Override public Dimension getMinimumSize() { return getPreferredSize(); }
-    @Override public Dimension getPreferredSize() { return new Dimension(OuterSpacePanel.WIDTH, OuterSpacePanel.HEIGHT); }
+    @Override public Dimension getPreferredSize()
+    {
+        int zoom = 2;
+        return new Dimension(OuterSpacePanel.WIDTH * zoom, OuterSpacePanel.HEIGHT * zoom);
+    }
 
     public Ship getPlayer() { return player1; }
 

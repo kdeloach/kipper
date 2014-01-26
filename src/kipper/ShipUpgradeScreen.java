@@ -48,8 +48,8 @@ public class ShipUpgradeScreen extends Scene
 
     public void createScene()
     {
-        player.setDestination(player.getWidth() / 2 + 35,
-                              player.getHeight() / 2 + 30);
+        player.setDestination(player.getWidth() * 3 / 4,
+                              player.getHeight() * 3 / 4);
         osp.addMouseListener(this);
     }
 
