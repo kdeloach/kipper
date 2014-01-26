@@ -14,6 +14,7 @@ public abstract class Ability
     public static final String HEADING = "HEADING";
     public static final String SIZE = "SIZE";
     public static final String SPEED = "SPEED";
+    public static final String COLLIDE = "COLLIDE";
 
     public void weaponFired(Weapon w) {}
 
@@ -41,6 +42,7 @@ public abstract class Ability
             case Const.ROTATE: return new RotateAbility();
             case Const.SIZE: return new ProjectileSizeUpgrade();
             case Const.SPEED: return new ProjectileSpeedUpgrade();
+            case Const.COLLIDE: return new CollideAbility();
         }
         throw new UnsupportedOperationException("Unable to create ability instance: " + index);
     }

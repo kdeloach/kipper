@@ -8,6 +8,7 @@ HIGH
 - Create plasma weapon (different cooldown mechanism)
 
 MED
+- Add collidesWithTeam() to bullet; SpaceMine should be destroyable while it is charging?
 - Create enemy emitter
 - OSP should be the main delegator of mouse & keyboard events to game entities
 - BottomPanel should be part of the game not a separate JComponent

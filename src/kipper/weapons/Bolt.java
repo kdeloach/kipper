@@ -150,7 +150,7 @@ public class Bolt implements MaskedEntity, Projectile
     @Override public boolean isAlive() { return life > 0; }
     @Override public double getDamage() { return damage * life / lifespan; }
     @Override public boolean collidesWithOwner() { return false; }
-    @Override public boolean collidesWithProjectiles() { return false; }
+    @Override public boolean collidesWithProjectiles() { return weapon.collidesWithProjectiles(); }
     @Override public Weapon getOwner() { return weapon; }
 
     @Override

@@ -12,12 +12,6 @@ public class MineLauncher extends Weapon
     public MineLauncher(double x, double y, int rx, int ry, Ship c)
     {
         super(x, y, rx, ry, c);
-        addUpgrade(new SpreadAbility());
-        addUpgrade(new SpreadAbility());
-        addUpgrade(new SpreadAbility());
-        addUpgrade(new ProjectileSpeedUpgrade());
-        addUpgrade(new ProjectileSpeedUpgrade());
-        addUpgrade(new ProjectileSpeedUpgrade());
         icon = Util.instance.loadImage("/assets/mines_icon.gif");
     }
 

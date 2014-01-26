@@ -58,6 +58,7 @@ public abstract class Weapon implements Upgradable
     public int getSpread() { return (int)getValue(Ability.SPREAD, spread); }
     public double heading() { return getValue(Ability.HEADING, ship.heading()); }
     public double getSizeBonus() { return getValue(Ability.SIZE, 1); }
+    public boolean collidesWithProjectiles() { return getValue(Ability.COLLIDE, 0) == 1; }
 
     public void update()
     {

@@ -55,7 +55,6 @@ public class LaserBeam extends Bullet implements MaskedEntity
     @Override public int getWidth() { return (int)(3 * weapon.getSizeBonus()); }
     @Override public int getHeight() { return getWidth(); }
     @Override public boolean collidesWithOwner() { return false; }
-    @Override public boolean collidesWithProjectiles() { return false; }
     @Override public Weapon getOwner() { return weapon; }
 
     @Override

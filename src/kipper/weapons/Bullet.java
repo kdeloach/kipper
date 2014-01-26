@@ -91,7 +91,7 @@ public class Bullet implements Entity, Projectile
     @Override public int getTeam() { return weapon.ship().getTeam(); }
     @Override public double getDamage() { return damage; }
     @Override public boolean collidesWithOwner() { return false; }
-    @Override public boolean collidesWithProjectiles() { return false; }
+    @Override public boolean collidesWithProjectiles() { return weapon.collidesWithProjectiles(); }
     @Override public Weapon getOwner() { return weapon; }
 
     @Override
