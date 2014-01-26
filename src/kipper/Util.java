@@ -96,6 +96,9 @@ public class Util
         if (a.equals(b) || !a.isAlive() || !b.isAlive()) {
             return false;
         }
+        if (a.getTeam() == b.getTeam()) {
+            return false;
+        }
         Polygon aMask = a.getPolygonMask();
         aMask.translate((int)a.getX(), (int)a.getY());
         if (b instanceof PolygonMaskedEntity) {
@@ -119,6 +122,9 @@ public class Util
     public static boolean intersects(Projectile a, Projectile b)
     {
         if (a.equals(b) || !a.isAlive() || !b.isAlive()) {
+            return false;
+        }
+        if (a.getTeam() == b.getTeam()) {
             return false;
         }
         Rectangle2D.Double r1 = new Rectangle2D.Double(a.getX(), a.getY(), a.getWidth(), a.getHeight());

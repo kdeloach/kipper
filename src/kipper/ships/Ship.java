@@ -78,8 +78,8 @@ public abstract class Ship implements
 
     public void move()
     {
-        double mx = x + (destination.x - x - getWidth() / 2) / getSpeed();
-        double my = y + (destination.y - y - getHeight() / 2) / getSpeed();
+        double mx = x + (destination.x - x) / getSpeed();
+        double my = y + (destination.y - y) / getSpeed();
 
         setLocation(mx, my);
 
@@ -244,6 +244,15 @@ public abstract class Ship implements
     public void die()
     {
         dmg += getMaxHp();
+        deathExplosion();
+    }
+
+    public void deathExplosion()
+    {
+        double px = getX() + getWidth() / 2;
+        double py = getY() + getHeight() / 2;
+        ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
+        osp.addEmitter(pe);
     }
 
     /////////////
@@ -304,7 +313,7 @@ public abstract class Ship implements
         Point p = scalePoint(e.getPoint());
         setMouseLocation(p.x, p.y);
         getWeapon().setMouseLocation(p.x, p.y);
-        setDestination(p.x, p.y);
+        setDestination(p.x - getWidth() / 2, p.y-getHeight() / 2);
     }
 
     public Point scalePoint(Point p)

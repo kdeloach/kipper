@@ -1,13 +1,14 @@
 HIGH
-- Add FPS indicator
+- Add upgrade to force projectile collision
+- Create SpawnStrategy for emitters (random, everyNTicks)
 - Sound effects
 - Add "passthrough" upgrade
 - Add "split" upgrade
 - Add homing upgrade
 - Create plasma weapon (different cooldown mechanism)
-- Add upgrade to force projectile collision
 
 MED
+- Create enemy emitter
 - OSP should be the main delegator of mouse & keyboard events to game entities
 - BottomPanel should be part of the game not a separate JComponent
 - OSP: ArrayList->LinkedList, replace for loops with iterators
@@ -16,6 +17,7 @@ MED
 - Do a better job with mouse scaling methods
 
 LOW
+- Update mask tool to assign weapon attach point
 - Create weapon graphics and fix weapon relative offsets
 - Add error output pane to Particle tool
 - Add graveyard logic back to particle emitter; Performance impact?
@@ -24,7 +26,6 @@ LOW
 - Move bolt splinter() into move() to create an animated lightning effect
 - Change foreground stars theta opposite of ship heading; How will this effect look?
 - LaserBeam should support N number of points; Right now only the start and end points are used for collision so it's possible that small projectiles can pass through the middle. Consider adding at least one additional point in the middle.
-- Update mask tool to assign weapon attach point
 - Update mask tool to work with entities that have no image (TriangleMan)
 - Should bullet size be a negative aspect of the damage upgrade?
 - Add parallelization to OSP and particle emitter update/collide methods

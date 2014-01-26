@@ -25,7 +25,7 @@ public class Enterprise extends Ship
         equipWeapon(new LaserGun(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
         equipWeapon(new MineLauncher(getX(), getY(), getWidth() + 15, getHeight() / 2 + 4, this));
         equipWeapon(new LightningGun(getX(), getY(), getWidth(), getHeight() / 2 + 6, this));
-        selectWeapon(1);
+        selectWeapon(0);
 
         img = Util.instance.loadImage("/assets/enterprise.gif");
     }
@@ -34,10 +34,6 @@ public class Enterprise extends Ship
     public void die()
     {
         super.die();
-        double px = getX() + getWidth() / 2;
-        double py = getY() + getHeight() / 2;
-        ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
-        osp.addEmitter(pe);
         panel.respawnPlayer();
     }
 
