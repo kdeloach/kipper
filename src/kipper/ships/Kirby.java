@@ -22,8 +22,7 @@ public class Kirby extends Ship
         super(x, y, 2, c);
         img = Util.instance.loadImage("/assets/kirby.png");
         Weapon w1 = new Shooter(getX(), getY(), 0, getHeight() / 2, this);
-        w1.addUpgrade(new RotateAbility());
-        w1.addUpgrade(new CooldownUpgrade());
+        w1.addUpgrade(new RotateUpgrade());
         equipWeapon(w1);
         selectWeapon(0);
     }

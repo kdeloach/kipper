@@ -4,14 +4,14 @@ import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class AbilityIconDrawer
+public class UpgradeIconDrawer
 {
     Color color;
     String title;
 
     Font font = new Font("Arial", Font.PLAIN, 18);
 
-    public AbilityIconDrawer(String title, Color color)
+    public UpgradeIconDrawer(String title, Color color)
     {
         this.title = title;
         this.color = color;

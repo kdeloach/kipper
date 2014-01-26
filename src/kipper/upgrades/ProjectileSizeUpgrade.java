@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class ProjectileSizeUpgrade extends Ability
+public class ProjectileSizeUpgrade extends Upgrade
 {
     double amount = 1.10;
 
@@ -16,7 +16,7 @@ public class ProjectileSizeUpgrade extends Ability
 
     public double getValue(Upgradable sender, String name, double value)
     {
-        if (name == Ability.SIZE) {
+        if (name == Upgrade.SIZE) {
             return value * amount;
         }
         return value;

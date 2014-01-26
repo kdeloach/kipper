@@ -19,7 +19,7 @@ public abstract class Weapon implements Upgradable
     private boolean fire = false;
     private Point rel;
     private Point mouse;
-    private ArrayList<Ability> upgrades;
+    private ArrayList<Upgrade> upgrades;
     private Ship ship;
 
     public Weapon(double x, double y, int rx, int ry, Ship s)
@@ -31,7 +31,7 @@ public abstract class Weapon implements Upgradable
 
         setLocation(x, y);
 
-        upgrades = new ArrayList<Ability>();
+        upgrades = new ArrayList<Upgrade>();
         mouse = new Point();
         cooldown = getDefaultCooldown();
         damage = getDefaultDamage();
@@ -53,12 +53,12 @@ public abstract class Weapon implements Upgradable
     public double percentCooled() { return (double)percCooled / (double)getCooldown(); }
     public int amountSlots() { return 12; }
 
-    public int getCooldown() { return (int)getValue(Ability.COOLDOWN, cooldown); }
-    public double getDamage() { return getValue(Ability.DAMAGE, damage); }
-    public int getSpread() { return (int)getValue(Ability.SPREAD, spread); }
-    public double heading() { return getValue(Ability.HEADING, ship.heading()); }
-    public double getSizeBonus() { return getValue(Ability.SIZE, 1); }
-    public boolean collidesWithProjectiles() { return getValue(Ability.COLLIDE, 0) == 1; }
+    public int getCooldown() { return (int)getValue(Upgrade.COOLDOWN, cooldown); }
+    public double getDamage() { return getValue(Upgrade.DAMAGE, damage); }
+    public int getSpread() { return (int)getValue(Upgrade.SPREAD, spread); }
+    public double heading() { return getValue(Upgrade.HEADING, ship.heading()); }
+    public double getSizeBonus() { return getValue(Upgrade.SIZE, 1); }
+    public boolean collidesWithProjectiles() { return getValue(Upgrade.COLLIDE, 0) == 1; }
 
     public void update()
     {
@@ -68,7 +68,7 @@ public abstract class Weapon implements Upgradable
         }
 
         if (fire) {
-            for (Ability a : upgrades) {
+            for (Upgrade a : upgrades) {
                 a.weaponFired(this);
             }
 
@@ -104,7 +104,7 @@ public abstract class Weapon implements Upgradable
     }
 
     @Override
-    public Ability upgradeAt(int index)
+    public Upgrade upgradeAt(int index)
     {
         if (index >= 0 && index < upgrades.size()) {
             return upgrades.get(index);
@@ -113,7 +113,7 @@ public abstract class Weapon implements Upgradable
     }
 
     @Override
-    public void addUpgrade(Ability a)
+    public void addUpgrade(Upgrade a)
     {
         if (upgrades.size() < amountSlots()) {
             upgrades.add(a);
@@ -124,7 +124,7 @@ public abstract class Weapon implements Upgradable
     public void removeUpgrade(int index)
     {
         if (index >= 0 && index < upgrades.size()) {
-            Ability a = upgrades.get(index);
+            Upgrade a = upgrades.get(index);
             if (a != null) {
                 upgrades.remove(index);
             }
@@ -133,7 +133,7 @@ public abstract class Weapon implements Upgradable
 
     protected double getValue(String attr, double n)
     {
-        for (Ability a : upgrades) {
+        for (Upgrade a : upgrades) {
             n = a.getValue(this, attr, n);
         }
         return n;

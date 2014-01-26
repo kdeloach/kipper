@@ -22,7 +22,7 @@ public class ShipUpgradeScreen extends Scene
     // Needed because we may have to render information about these abilities before an instance
     // has been created and attached to the player and dealing with static objects in Java is a nightmare.
     // Upgrade instance at index N corresponds to rectangle N in availableUpgradeRects array.
-    private Ability[] upgradeInstances = new Ability[Const.UPGRADES_QT];
+    private Upgrade[] upgradeInstances = new Upgrade[Const.UPGRADES_QT];
 
     public ShipUpgradeScreen(OuterSpacePanel osp)
     {
@@ -41,7 +41,7 @@ public class ShipUpgradeScreen extends Scene
                 x = 0;
                 y += h + p;
             }
-            upgradeInstances[i] = Ability.createInstance(i);
+            upgradeInstances[i] = Upgrade.createInstance(i);
             availableUpgradeRects[i] = new Rectangle(player.getWidth() + 50 + (w + p) * x, y, w, h);
         }
     }
@@ -70,16 +70,16 @@ public class ShipUpgradeScreen extends Scene
             String title = "Slot " + (i + 1);
             int titleWidth = g.getFontMetrics(f).stringWidth(title);
             g.drawString(title, slot.x + slot.width / 2 - titleWidth / 2, slot.y + slot.height / 2);
-            Ability a = player.getWeapon().upgradeAt(i);
+            Upgrade a = player.getWeapon().upgradeAt(i);
             if (a != null) {
-                AbilityIconDrawer drawer = a.getIconDrawer();
+                UpgradeIconDrawer drawer = a.getIconDrawer();
                 drawer.drawIcon(g, slot.x, slot.y, slot.width, slot.height);
             }
         }
         // draw available upgrades
         for (int i = 0; i < availableUpgradeRects.length; i++) {
             Rectangle r = availableUpgradeRects[i];
-            AbilityIconDrawer drawer = upgradeInstances[i].getIconDrawer();
+            UpgradeIconDrawer drawer = upgradeInstances[i].getIconDrawer();
             drawer.drawIcon(g, r.x, r.y, r.width, r.height);
         }
     }
@@ -98,7 +98,7 @@ public class ShipUpgradeScreen extends Scene
         for (int i = 0; i < availableUpgradeRects.length; i++) {
             if (availableUpgradeRects[i].contains(p)) {
                 Weapon w = player.getWeapon();
-                w.addUpgrade(Ability.createInstance(i));
+                w.addUpgrade(Upgrade.createInstance(i));
                 return;
             }
         }

@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class CooldownUpgrade extends Ability
+public class CooldownUpgrade extends Upgrade
 {
     double percent = 0.75;
 
@@ -16,7 +16,7 @@ public class CooldownUpgrade extends Ability
 
     public double getValue(Upgradable sender, String name, double value)
     {
-        if (name == Ability.COOLDOWN) {
+        if (name == Upgrade.COOLDOWN) {
             return value * percent;
         }
         return value;

@@ -6,19 +6,19 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class SpreadAbility extends Ability
+public class SpreadUpgrade extends Upgrade
 {
     double amount = 2.0;
 
-    public SpreadAbility()
+    public SpreadUpgrade()
     {
     }
 
     public double getValue(Upgradable sender, String name, double value)
     {
-        if (name == Ability.SPREAD) {
+        if (name == Upgrade.SPREAD) {
             return value + amount;
-        } else if (name == Ability.COOLDOWN) {
+        } else if (name == Upgrade.COOLDOWN) {
             return value + 10;
         }
         return value;

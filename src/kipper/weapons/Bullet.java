@@ -81,7 +81,7 @@ public class Bullet implements Entity, Projectile
 
     public Color getColor() { return Color.YELLOW; }
     public double getTheta() { return theta; }
-    public double getSpeed() { return weapon.getValue(Ability.SPEED, Const.BULLET_SPEED); }
+    public double getSpeed() { return weapon.getValue(Upgrade.SPEED, Const.BULLET_SPEED); }
 
     @Override public double getX() { return x; }
     @Override public double getY() { return y; }

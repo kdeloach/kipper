@@ -6,15 +6,15 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class CollideAbility extends Ability
+public class CollideUpgrade extends Upgrade
 {
-    public CollideAbility()
+    public CollideUpgrade()
     {
     }
 
     public double getValue(Upgradable sender, String name, double value)
     {
-        if (name == Ability.COLLIDE) {
+        if (name == Upgrade.COLLIDE) {
             return 1;
         }
         return value;

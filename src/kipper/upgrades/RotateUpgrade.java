@@ -9,16 +9,16 @@ import kipper.weapons.*;
 
 // By default, projectile direction is same as orientation of the firing ship (0 or PI)
 // but with this upgrade projectiles can travel in any direction.
-public class RotateAbility extends Ability
+public class RotateUpgrade extends Upgrade
 {
-    public RotateAbility()
+    public RotateUpgrade()
     {
     }
 
     public double getValue(Upgradable sender, String name, double value)
     {
         Weapon w = (Weapon)sender;
-        if (name == Ability.HEADING) {
+        if (name == Upgrade.HEADING) {
             return heading(w.ship());
         }
         return value;

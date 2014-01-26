@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class ProjectileSpeedUpgrade extends Ability
+public class ProjectileSpeedUpgrade extends Upgrade
 {
     double percent = 1.10;
 
@@ -16,7 +16,7 @@ public class ProjectileSpeedUpgrade extends Ability
 
     public double getValue(Upgradable sender, String name, double value)
     {
-        if (name == Ability.SPEED) {
+        if (name == Upgrade.SPEED) {
             return value * percent;
         }
         return value;

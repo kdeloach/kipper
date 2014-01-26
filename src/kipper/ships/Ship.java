@@ -55,7 +55,7 @@ public abstract class Ship implements
     public void update()
     {
         if (underControl() && isShiftDown) {
-            setDestination(getX() + getWidth() / 2, getY() + getWidth() / 2);
+            setDestination(getX(), getY());
         }
         if (disabledTicks > 0) {
             disabledTicks--;
@@ -364,7 +364,7 @@ public abstract class Ship implements
 
     /////////////
 
-    @Override public Ability upgradeAt(int index) { throw new UnsupportedOperationException("Not implemented"); }
-    @Override public void addUpgrade(Ability a) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public Upgrade upgradeAt(int index) { throw new UnsupportedOperationException("Not implemented"); }
+    @Override public void addUpgrade(Upgrade a) { throw new UnsupportedOperationException("Not implemented"); }
     @Override public void removeUpgrade(int index) { throw new UnsupportedOperationException("Not implemented"); }
 }

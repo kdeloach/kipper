@@ -8,12 +8,12 @@ import kipper.ships.*;
 import kipper.weapons.*;
 
 // Send a ship flying back
-public class RecoilAbility extends Ability
+public class RecoilUpgrade extends Upgrade
 {
     // distance to send ship backwards
     int distance = 100;
 
-    public RecoilAbility()
+    public RecoilUpgrade()
     {
     }
 

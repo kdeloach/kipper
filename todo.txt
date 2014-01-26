@@ -1,23 +1,19 @@
 HIGH
-- Add upgrade to force projectile collision
+- BottomPanel should be part of the game not a separate JComponent
 - Create SpawnStrategy for emitters (random, everyNTicks)
 - Sound effects
-- Add "passthrough" upgrade
-- Add "split" upgrade
-- Add homing upgrade
-- Create plasma weapon (different cooldown mechanism)
 
 MED
 - Add collidesWithTeam() to bullet; SpaceMine should be destroyable while it is charging?
 - Create enemy emitter
-- OSP should be the main delegator of mouse & keyboard events to game entities
-- BottomPanel should be part of the game not a separate JComponent
-- OSP: ArrayList->LinkedList, replace for loops with iterators
 - Build new weapon upgrade graph screen
+- Add "set target" upgrade; Allow player to right click to set target, weapons will fire towards this point instead of the mouse when Rotate ability is equiped.
+- Create plasma weapon (different cooldown mechanism)
 - Level tool
-- Do a better job with mouse scaling methods
 
 LOW
+- Do a better job with mouse scaling methods
+- OSP should be the main delegator of mouse & keyboard events to game entities
 - Update mask tool to assign weapon attach point
 - Create weapon graphics and fix weapon relative offsets
 - Add error output pane to Particle tool
@@ -30,3 +26,6 @@ LOW
 - Update mask tool to work with entities that have no image (TriangleMan)
 - Should bullet size be a negative aspect of the damage upgrade?
 - Add parallelization to OSP and particle emitter update/collide methods
+- Add "split" upgrade
+- Add "passthrough" upgrade
+- Add homing upgrade

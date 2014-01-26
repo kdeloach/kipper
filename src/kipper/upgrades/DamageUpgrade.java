@@ -6,17 +6,17 @@ import java.awt.Graphics;
 import kipper.*;
 import kipper.weapons.*;
 
-public class DamageAbility extends Ability
+public class DamageUpgrade extends Upgrade
 {
     double percent = 1.25;
 
-    public DamageAbility()
+    public DamageUpgrade()
     {
     }
 
     public double getValue(Upgradable sender, String name, double value)
     {
-        if (name == Ability.DAMAGE) {
+        if (name == Upgrade.DAMAGE) {
             return value * percent;
         }
         return value;
