@@ -2,9 +2,9 @@
 
 Kipper is a 2D space shooter video game written in Java.
 
-### Preview
+### Latest Screenshot
 
-![](https://github.com/kdeloach/kipper/raw/master/images/status 20140125.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/status 20140126.png)
 
 ### Controls
 
