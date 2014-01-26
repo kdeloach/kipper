@@ -62,11 +62,11 @@ public class Squid extends Ship
     @Override
     public Polygon getPolygonMask()
     {
-        return new Polygon(new int[] {49, 36, 12, 0, 4, 18, 25, 36}, new int[] {33, 37, 36, 25, 13, 8, 3, 0}, 8);
+        return new Polygon(new int[] {49, 36, 11, 2, 0, 5, 38}, new int[] {31, 36, 34, 27, 17, 10, 0}, 7);
     }
 
     @Override public int getWidth() { return 49; }
-    @Override public int getHeight() { return 38; }
+    @Override public int getHeight() { return 36; }
     @Override public String getName() { return "SQUID";}
     @Override public int getOrientation() { return Const.FACE_LEFT; }
     @Override public int getSpeed() { return 20; }
