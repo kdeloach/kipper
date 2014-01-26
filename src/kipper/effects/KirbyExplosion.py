@@ -40,12 +40,10 @@ class SampleConfigImpl(ParticleEmitterConfig):
         return p.speed
 
     def getHue(self, p):
-        return 60.0 / 360.0
+        return 170.0 / 240.0
 
     def getSaturation(self, p):
-        return 1
+        return 110.0 / 240.0
 
     def getBrightness(self, p):
         return 1
-
-

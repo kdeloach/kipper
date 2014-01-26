@@ -253,7 +253,7 @@ public abstract class Ship implements
         deathExplosion();
     }
 
-    public void deathExplosion()
+    protected void deathExplosion()
     {
         double px = getX() + getWidth() / 2;
         double py = getY() + getHeight() / 2;

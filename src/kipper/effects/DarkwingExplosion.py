@@ -48,4 +48,3 @@ class SampleConfigImpl(ParticleEmitterConfig):
     def getBrightness(self, p):
         return 1
 
-
