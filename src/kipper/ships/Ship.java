@@ -14,6 +14,9 @@ public abstract class Ship implements
     ImageEntity, PolygonMaskedEntity, Controllable, Upgradable,
     MouseListener, MouseMotionListener, KeyListener
 {
+    private static final Color healthBarRed = new Color(136, 0, 21);
+    private static final Color healthBarGreen = new Color(34, 177, 76);
+
     public int team;
     public double x, y;
 
@@ -108,19 +111,6 @@ public abstract class Ship implements
         if (isDisabled()) {
             return;
         }
-        // don't let the player go off-screen
-        if (underControl()) {
-            if (mx < getWidth() / 2) {
-                mx = getWidth() / 2;
-            } else if (mx > OuterSpacePanel.WIDTH - getWidth() / 2) {
-                mx = OuterSpacePanel.WIDTH - getWidth() / 2;
-            }
-            if (my < getHeight() / 2) {
-                my = getHeight() / 2;
-            } else if (my > OuterSpacePanel.HEIGHT - getHeight() / 2) {
-                my = OuterSpacePanel.HEIGHT - getHeight() / 2;
-            }
-        }
         destination = new Point((int)mx, (int)my);
     }
 
@@ -191,14 +181,30 @@ public abstract class Ship implements
     {
         //g.setColor(Color.GREEN);
         //g.drawRect((int)getX(), (int)getY(), getWidth(), getHeight());
+
+        drawHealthBar(g);
+
         g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
         if (getWeapon() != null) {
             getWeapon().draw(g);
         }
     }
 
+    public void drawHealthBar(Graphics g)
+    {
+        if (getLife() == getMaxLife()) {
+            return;
+        }
+        int x = (int)getX();
+        int y = (int)getY() + getHeight() + 1;
+        int w = getWidth();
+        int h = 2;
+        g.setColor(percentLife() > 0.20 ? healthBarGreen : healthBarRed);
+        g.fillRect(x, y, (int)(w * percentLife()), h);
+    }
+
     abstract public int getOrientation();
-    abstract public int getMaxHp();
+    abstract public int getMaxLife();
     abstract public int getSpeed();
     abstract public Polygon getPolygonMask();
     abstract public String getName();
@@ -215,15 +221,15 @@ public abstract class Ship implements
 
     @Override public double getX() { return x; }
     @Override public double getY() { return y; }
-    @Override public boolean isAlive() { return dmg < getMaxHp(); }
-    @Override public int getLife() { return getMaxHp() - (int)dmg; }
+    @Override public boolean isAlive() { return dmg < getMaxLife(); }
+    @Override public int getLife() { return getMaxLife() - (int)dmg; }
     @Override public int getTeam() { return team; }
 
     public int getSlotsAmt() { return 6; }
     public Ship getTarget() { return target; }
     public Point getDesination() { return destination; }
     public Weapon getWeapon() { return wpn; }
-    public double percentHealth() { return (double)getLife() / ( double)getMaxHp(); }
+    public double percentLife() { return (double)getLife() / ( double)getMaxLife(); }
     public boolean isDisabled() { return disabledTicks > 0; }
     public Image getImage() { throw new UnsupportedOperationException("Not implemented"); }
 
@@ -243,7 +249,7 @@ public abstract class Ship implements
     @Override
     public void die()
     {
-        dmg += getMaxHp();
+        dmg += getMaxLife();
         deathExplosion();
     }
 

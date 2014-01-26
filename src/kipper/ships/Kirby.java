@@ -30,7 +30,7 @@ public class Kirby extends Ship
     @Override
     public void think()
     {
-        doSomethingSmart();
+        //doSomethingSmart();
     }
 
     private void doSomethingSmart()
@@ -62,6 +62,6 @@ public class Kirby extends Ship
     @Override public String getName() { return "KIRBY";}
     @Override public int getOrientation() { return Const.FACE_LEFT; }
     @Override public int getSpeed() { return 20; }
-    @Override public int getMaxHp() { return 100; }
+    @Override public int getMaxLife() { return 100; }
     @Override public Image getImage() { return img; }
 }

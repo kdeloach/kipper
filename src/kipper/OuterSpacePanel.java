@@ -21,7 +21,6 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     // Frame per second (1000 MS / 60 frames)
     public static long FPS = 1000 / 60;
 
-    BottomPanel statusBar;
     LightNoiseBg noiseBg;
     MarqueeStars starsBg, starsFg;
 
@@ -44,12 +43,10 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
     private Image bgCache;
 
-    public OuterSpacePanel(BottomPanel statusBar)
+    public OuterSpacePanel()
     {
         super();
         setIgnoreRepaint(true);
-
-        this.statusBar = statusBar;
 
         players = new LinkedList<Ship>();
         projectiles = new LinkedList<Projectile>();
@@ -127,7 +124,6 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             nextScene = null;
         }
 
-        statusBar.update(player1);
         noiseBg.update();
         starsBg.update();
         starsFg.update();
@@ -239,8 +235,6 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         // SLOW
         //Graphics2D g2 = (Graphics2D)g;
         //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        statusBar.repaint();
 
         if (bgCache == null) {
             bgCache = createImage(WIDTH, HEIGHT);

@@ -11,12 +11,10 @@ public class Main
         JFrame frame = new JFrame("kipper");
         frame.getContentPane().setLayout(new BorderLayout());
 
-        BottomPanel statusBar = new BottomPanel();
-        OuterSpacePanel gamePanel = new OuterSpacePanel(statusBar);
+        OuterSpacePanel gamePanel = new OuterSpacePanel();
         frame.addKeyListener(gamePanel);
         frame.addComponentListener(new RepaintAfterResize(gamePanel));
         frame.getContentPane().add(gamePanel);
-        frame.getContentPane().add(statusBar, BorderLayout.NORTH);
 
         frame.pack();
         frame.setLocationRelativeTo(null);

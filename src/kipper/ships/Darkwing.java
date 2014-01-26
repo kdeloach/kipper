@@ -51,7 +51,7 @@ public class Darkwing extends Enterprise
     @Override public int getWidth() { return 53; }
     @Override public int getHeight() { return 42; }
     @Override public String getName() { return "DARKWING";}
-    @Override public int getSpeed() { return 30; }
-    @Override public int getMaxHp() { return 5000; }
+    @Override public int getSpeed() { return 20; }
+    @Override public int getMaxLife() { return 5000; }
     @Override public Image getImage() { return img; }
 }

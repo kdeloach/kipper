@@ -49,6 +49,6 @@ public class Enterprise extends Ship
     @Override public String getName() { return "ENTERPRISE";}
     @Override public int getOrientation() { return Const.FACE_RIGHT; }
     @Override public int getSpeed() { return 30; }
-    @Override public int getMaxHp() { return 50; }
+    @Override public int getMaxLife() { return 50; }
     @Override public Image getImage() { return img; }
 }
