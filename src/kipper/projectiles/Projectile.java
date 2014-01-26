@@ -1,4 +1,4 @@
-package kipper.weapons;
+package kipper.projectiles;
 
 import kipper.Entity;
 import kipper.weapons.Weapon;

@@ -18,7 +18,7 @@ public class Enterprise extends Ship
 
     public Enterprise(int x, int y, OuterSpacePanel c)
     {
-        super(x, y, 1, c);
+        super(x, y, Const.TEAM_PLAYER, c);
         panel = c;
 
         equipWeapon(new Shooter(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));

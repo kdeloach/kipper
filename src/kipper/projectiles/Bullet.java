@@ -1,4 +1,4 @@
-package kipper.weapons;
+package kipper.projectiles;
 
 import java.awt.Color;
 import java.awt.Polygon;
@@ -9,6 +9,7 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
 import kipper.upgrades.*;
+import kipper.weapons.*;
 
 public class Bullet implements Entity, Projectile
 {
@@ -36,6 +37,7 @@ public class Bullet implements Entity, Projectile
     {
         life = 0;
         deathExplosion();
+        playSound();
     }
 
     public void deathExplosion()
@@ -44,6 +46,25 @@ public class Bullet implements Entity, Projectile
         double py = getY() + getHeight() / 2;
         ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
         weapon.ship().panel().addEmitter(pe);
+
+    }
+
+    public void playSound()
+    {
+        if (getSoundFile().length() > 0) {
+            Util.instance.playSound(getSoundFile());
+        }
+    }
+
+    public String getSoundFile()
+    {
+        switch (getOwner().ship().getTeam()) {
+            case Const.TEAM_PLAYER:
+                return "/assets/sounds/Hurt2.wav";
+            case Const.TEAM_NPC:
+                return "/assets/sounds/Hurt1.wav";
+        }
+        return "";
     }
 
     public void move()

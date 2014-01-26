@@ -3,6 +3,7 @@ package kipper.weapons;
 import java.awt.*;
 import kipper.*;
 import kipper.ships.*;
+import kipper.projectiles.*;
 
 public class Shooter extends Weapon
 {
@@ -17,7 +18,7 @@ public class Shooter extends Weapon
     @Override public int getWidth() { return 20; }
     @Override public int getHeight() { return 10; }
     @Override public Image getIcon() { return icon; }
-    @Override public int getDefaultDamage() { return 4; }
+    @Override public int getDefaultDamage() { return 8; }
     @Override public int getDefaultCooldown() { return 50; }
 
     @Override
@@ -29,5 +30,11 @@ public class Shooter extends Weapon
     public void fireProjectile(double heading)
     {
         new Bullet(getX(), getY(), heading, getDamage(), this);
+    }
+
+    @Override
+    public String getSoundFile()
+    {
+        return "/assets/sounds/Shooter.wav";
     }
 }

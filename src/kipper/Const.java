@@ -19,4 +19,7 @@ public class Const
     public static final int COLLIDE   = 7;
 
     public static final int UPGRADES_QT = 8;
+
+    public static final int TEAM_PLAYER = 1;
+    public static final int TEAM_NPC    = 2;
 }

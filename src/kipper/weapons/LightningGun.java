@@ -4,6 +4,7 @@ import java.awt.*;
 import kipper.*;
 import kipper.ships.*;
 import kipper.upgrades.*;
+import kipper.projectiles.*;
 
 public class LightningGun extends Weapon
 {
@@ -30,5 +31,11 @@ public class LightningGun extends Weapon
     public void fireProjectile(double heading)
     {
         new Bolt(getX(), getY(), heading, getDamage(), this);
+    }
+
+    @Override
+    public String getSoundFile()
+    {
+        return "/assets/sounds/LightningGun.wav";
     }
 }

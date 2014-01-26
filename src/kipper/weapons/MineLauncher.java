@@ -4,6 +4,7 @@ import java.awt.*;
 import kipper.*;
 import kipper.ships.*;
 import kipper.upgrades.*;
+import kipper.projectiles.*;
 
 public class MineLauncher extends Weapon
 {
@@ -30,5 +31,11 @@ public class MineLauncher extends Weapon
     public void fireProjectile(double heading)
     {
         new SpaceMine(getX(), getY(), heading, getDamage(), this);
+    }
+
+    @Override
+    public String getSoundFile()
+    {
+        return "/assets/sounds/MineLauncher.wav";
     }
 }

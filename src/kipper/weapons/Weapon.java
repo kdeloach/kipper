@@ -49,7 +49,9 @@ public abstract class Weapon implements Upgradable
 
     public void playSound()
     {
-        Util.instance.playSound(getSoundFile());
+        if (getSoundFile().length() > 0) {
+            Util.instance.playSound(getSoundFile());
+        }
     }
 
     public double getX() { return x; }
@@ -140,7 +142,7 @@ public abstract class Weapon implements Upgradable
         }
     }
 
-    protected double getValue(String attr, double n)
+    public double getValue(String attr, double n)
     {
         for (Upgrade a : upgrades) {
             n = a.getValue(this, attr, n);

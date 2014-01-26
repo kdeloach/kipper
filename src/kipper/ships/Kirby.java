@@ -15,15 +15,17 @@ import kipper.upgrades.*;
 public class Kirby extends Ship
 {
     Image img;
+    int ticksUntilFire = 0;
 
     public Kirby(int x, int y, OuterSpacePanel c)
     {
-        super(x, y, 2, c);
+        super(x, y, Const.TEAM_NPC, c);
         img = Util.instance.loadImage("/assets/images/kirby.png");
         Weapon w1 = new Shooter(getX(), getY(), 0, getHeight() / 2, this);
         w1.addUpgrade(new RotateUpgrade());
         equipWeapon(w1);
         selectWeapon(0);
+        ticksUntilFire = (int)(Math.random() * 500.0);
     }
 
     @Override
@@ -35,11 +37,16 @@ public class Kirby extends Ship
     private void doSomethingSmart()
     {
         Ship player = osp.getPlayer();
+        if (ticksUntilFire <= 0 && Math.random() < 0.01) {
+            getWeapon().stopFiring();
+            ticksUntilFire = (int)(Math.random() * 75.0);
+        }
         if (player == null) {
             getWeapon().stopFiring();
         } else {
             // shoot weapon
-            if (getWeapon() != null && !getWeapon().isFiring()) {
+            // Add randomization to stagger enemy fire; Won't be needed when enemy emitters are added
+            if (getWeapon() != null && !getWeapon().isFiring() && ticksUntilFire-- <= 0) {
                 getWeapon().startFiring();
             }
             // get ready to fire here
@@ -70,6 +77,6 @@ public class Kirby extends Ship
     @Override public String getName() { return "KIRBY";}
     @Override public int getOrientation() { return Const.FACE_LEFT; }
     @Override public int getSpeed() { return 20; }
-    @Override public int getMaxLife() { return 100; }
+    @Override public int getMaxLife() { return 50; }
     @Override public Image getImage() { return img; }
 }

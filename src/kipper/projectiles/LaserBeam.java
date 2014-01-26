@@ -1,4 +1,4 @@
-package kipper.weapons;
+package kipper.projectiles;
 
 import java.awt.Color;
 import java.awt.Polygon;
@@ -12,6 +12,7 @@ import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
 import kipper.effects.*;
+import kipper.weapons.*;
 
 public class LaserBeam extends Bullet implements MaskedEntity
 {

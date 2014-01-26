@@ -13,10 +13,10 @@ public class EntityWobble
 
     public EntityWobble()
     {
-        b = Math.random() * (Math.PI * 2);
+        b = Math.random() * Math.PI * 2;
         c = Math.PI * 2;
         d = 2000.0;
-        amount = 0.75;
+        amount = 0.3;
         easer = new Linear();
     }
 

@@ -4,6 +4,7 @@ import java.awt.*;
 import kipper.*;
 import kipper.ships.*;
 import kipper.upgrades.*;
+import kipper.projectiles.*;
 
 public class LaserGun extends Weapon
 {

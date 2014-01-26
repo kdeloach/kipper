@@ -9,6 +9,7 @@ import java.util.Iterator;
 import javax.sound.sampled.*;
 import kipper.ships.*;
 import kipper.weapons.*;
+import kipper.projectiles.*;
 
 public class Util
 {
@@ -22,9 +23,10 @@ public class Util
     public void playSound(String filename)
     {
         try {
+            InputStream file = getClass().getResourceAsStream(filename);
+            InputStream bufferedIn = new BufferedInputStream(file);
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
             Clip clip = AudioSystem.getClip();
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                getClass().getResourceAsStream(filename));
             clip.open(inputStream);
             clip.start();
         } catch (Exception ex) {}

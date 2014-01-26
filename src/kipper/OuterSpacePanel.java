@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import kipper.ships.*;
 import kipper.effects.*;
 import kipper.weapons.*;
+import kipper.projectiles.*;
 
 public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 {
@@ -267,6 +268,10 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             scene.draw(g);
         }
 
+        if (paused) {
+            drawPauseScreen(g);
+        }
+
         if (false) {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 150, 100);
@@ -282,6 +287,18 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
         numRepaints++;
         _drawing = false;
+    }
+
+    private void drawPauseScreen(Graphics g)
+    {
+        Font f = new Font("Arial", Font.BOLD, 18);
+        String text = "PAUSED";
+        int textWidth = g.getFontMetrics(f).stringWidth(text);
+        g.setFont(f);
+        g.setColor(Color.WHITE);
+        int x = WIDTH / 2 - textWidth / 2;
+        int y = HEIGHT / 2;
+        g.drawString(text, x, y);
     }
 
     private void changeScene(Scene s)
@@ -307,6 +324,7 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         }
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             paused = !paused;
+            Util.instance.playSound("/assets/sounds/Pause.wav");
         }
         getPlayer().keyPressed(e);
     }
@@ -375,7 +393,7 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     {
         player1 = new Darkwing(100, 100, this);
         addShip(player1);
-        changeScene(new DemoLevel(this));
+        player1.gainControl();
     }
 
     public boolean contains(double x, double y)

@@ -247,8 +247,10 @@ public abstract class Ship implements
     @Override
     public void die()
     {
+        releaseControl();
         dmg += getMaxLife();
         deathExplosion();
+        playSound();
     }
 
     protected void deathExplosion()
@@ -257,6 +259,24 @@ public abstract class Ship implements
         double py = getY() + getHeight() / 2;
         ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
         osp.addEmitter(pe);
+    }
+
+    public String getSoundFile()
+    {
+        switch (getTeam()) {
+            case Const.TEAM_PLAYER:
+                return "/assets/sounds/Explosion3.wav";
+            case Const.TEAM_NPC:
+                return "/assets/sounds/Explosion2.wav";
+        }
+        return "";
+    }
+
+    public void playSound()
+    {
+        if (getSoundFile().length() > 0) {
+            Util.instance.playSound(getSoundFile());
+        }
     }
 
     /////////////
@@ -338,7 +358,7 @@ public abstract class Ship implements
     {
         if (underControl) {
             isShiftDown = e.isShiftDown();
-            setDestination(mouse.x, mouse.y);
+            setDestination(mouse.x - getWidth() / 2, mouse.y - getHeight() / 2);
         }
     }
 

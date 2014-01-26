@@ -1,4 +1,4 @@
-package kipper.weapons;
+package kipper.projectiles;
 
 import java.awt.Rectangle;
 import java.awt.Graphics;
@@ -13,6 +13,7 @@ import java.awt.BasicStroke;
 import java.awt.geom.Rectangle2D;
 import kipper.*;
 import kipper.ships.*;
+import kipper.weapons.*;
 import kipper.effects.*;
 import kipper.effects.transitions.*;
 
@@ -101,8 +102,32 @@ public class Bolt implements MaskedEntity, Projectile
     public void die()
     {
         life = 0;
+        deathExplosion();
+        playSound();
+    }
+
+    public void deathExplosion()
+    {
         ParticleEmitter pe = new ParticleEmitter(getX(), getY(), new SampleConfigImpl());
         weapon.ship().panel().addEmitter(pe);
+    }
+
+    public void playSound()
+    {
+        if (getSoundFile().length() > 0) {
+            Util.instance.playSound(getSoundFile());
+        }
+    }
+
+    public String getSoundFile()
+    {
+        switch (getOwner().ship().getTeam()) {
+            case Const.TEAM_PLAYER:
+                return "/assets/sounds/Hurt2.wav";
+            case Const.TEAM_NPC:
+                return "/assets/sounds/Hurt1.wav";
+        }
+        return "";
     }
 
     @Override
