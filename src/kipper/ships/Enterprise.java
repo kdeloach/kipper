@@ -27,7 +27,7 @@ public class Enterprise extends Ship
         equipWeapon(new LightningGun(getX(), getY(), getWidth(), getHeight() / 2 + 6, this));
         selectWeapon(0);
 
-        img = Util.instance.loadImage("/assets/enterprise.gif");
+        img = Util.instance.loadImage("/assets/images/enterprise.gif");
     }
 
     @Override

@@ -20,7 +20,7 @@ public class Darkwing extends Enterprise
     public Darkwing(int x, int y, OuterSpacePanel c)
     {
         super(x, y, c);
-        img = Util.instance.loadImage("/assets/darkwing.png");
+        img = Util.instance.loadImage("/assets/images/darkwing.png");
         trails = new ParticleEmitter(0, 0, new ShipTrails());
     }
 

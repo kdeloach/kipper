@@ -19,7 +19,7 @@ public class Kirby extends Ship
     public Kirby(int x, int y, OuterSpacePanel c)
     {
         super(x, y, 2, c);
-        img = Util.instance.loadImage("/assets/kirby.png");
+        img = Util.instance.loadImage("/assets/images/kirby.png");
         Weapon w1 = new Shooter(getX(), getY(), 0, getHeight() / 2, this);
         w1.addUpgrade(new RotateUpgrade());
         equipWeapon(w1);

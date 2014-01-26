@@ -19,7 +19,7 @@ public class Squid extends Ship
     public Squid(int x, int y, OuterSpacePanel c)
     {
         super(x, y, 2, c);
-        img = Util.instance.loadImage("/assets/squid.png");
+        img = Util.instance.loadImage("/assets/images/squid.png");
         Weapon w1 = new Shooter(getX(), getY(), 0, getHeight() / 2, this);
         w1.addUpgrade(new RotateUpgrade());
         equipWeapon(w1);

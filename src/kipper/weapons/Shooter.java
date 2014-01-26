@@ -11,7 +11,7 @@ public class Shooter extends Weapon
     public Shooter(double x, double y, int rx, int ry, Ship c)
     {
         super(x, y, rx, ry, c);
-        icon = Util.instance.loadImage("/assets/shooter_icon.gif");
+        icon = Util.instance.loadImage("/assets/images/shooter_icon.gif");
     }
 
     @Override public int getWidth() { return 20; }

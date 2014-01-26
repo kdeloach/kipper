@@ -1,8 +1,8 @@
 package kipper.weapons;
 
+import java.awt.*;
 import java.awt.Rectangle;
 import java.awt.Point;
-import java.awt.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
 import kipper.*;
@@ -45,6 +45,13 @@ public abstract class Weapon implements Upgradable
     abstract public int getDefaultCooldown();
     abstract public int getDefaultDamage();
 
+    public String getSoundFile() { return ""; }
+
+    public void playSound()
+    {
+        Util.instance.playSound(getSoundFile());
+    }
+
     public double getX() { return x; }
     public double getY() { return y; }
     public boolean isFiring() { return fire; }
@@ -81,10 +88,12 @@ public abstract class Weapon implements Upgradable
 
             if (spread <= 1) {
                 fireProjectile(heading);
+                playSound();
             } else {
                 for (int i = 0; i < spread; i++) {
                     fireProjectile(Math.toRadians(180 * ship.getOrientation() - (60 / (spread - 1) * i - 30)) + heading);
                 }
+                playSound();
             }
 
             percCooled = getCooldown();

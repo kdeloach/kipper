@@ -12,7 +12,7 @@ public class LaserGun extends Weapon
     public LaserGun(double x, double y, int rx, int ry, Ship c)
     {
         super(x, y, rx, ry, c);
-        icon = Util.instance.loadImage("/assets/laser_icon.gif");
+        icon = Util.instance.loadImage("/assets/images/laser_icon.gif");
     }
 
     @Override public int getWidth() { return 10; }
@@ -30,5 +30,11 @@ public class LaserGun extends Weapon
     public void fireProjectile(double heading)
     {
         new LaserBeam(getX(), getY(), heading, getDamage(), this);
+    }
+
+    @Override
+    public String getSoundFile()
+    {
+        return "/assets/sounds/LaserGun.wav";
     }
 }

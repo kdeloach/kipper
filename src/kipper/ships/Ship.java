@@ -57,9 +57,6 @@ public abstract class Ship implements
     @Override
     public void update()
     {
-        if (underControl() && isShiftDown) {
-            setDestination(getX(), getY());
-        }
         if (disabledTicks > 0) {
             disabledTicks--;
         }
@@ -81,10 +78,11 @@ public abstract class Ship implements
 
     public void move()
     {
-        double mx = x + (destination.x - x) / getSpeed();
-        double my = y + (destination.y - y) / getSpeed();
-
-        setLocation(mx, my);
+        if (!isShiftDown) {
+            double mx = x + (destination.x - x) / getSpeed();
+            double my = y + (destination.y - y) / getSpeed();
+            setLocation(mx, my);
+        }
 
         wobble.move(this);
 

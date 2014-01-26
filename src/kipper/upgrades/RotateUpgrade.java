@@ -26,10 +26,8 @@ public class RotateUpgrade extends Upgrade
 
     private double heading(Ship ship)
     {
-        // TODO: Replace x1 and y1 with weapon endpoint (initial bullet position)
-        // Note: This is the hard-coded position of the Triangle Man weapon
-        double x1 = ship.getX();
-        double y1 = ship.getY() + ship.getHeight() / 2;
+        double x1 = ship.getWeapon().getX();
+        double y1 = ship.getWeapon().getY();
         double x2 = ship.mousePressed.x;
         double y2 = ship.mousePressed.y;
         return Math.atan2(y2 - y1, x2 - x1);

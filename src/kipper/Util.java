@@ -1,11 +1,12 @@
 package kipper;
 
+import java.io.*;
 import java.awt.*;
 import java.awt.Graphics;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.util.Iterator;
+import javax.sound.sampled.*;
 import kipper.ships.*;
 import kipper.weapons.*;
 
@@ -16,6 +17,17 @@ public class Util
     public Image loadImage(String filename)
     {
         return Toolkit.getDefaultToolkit().getImage(getClass().getResource(filename));
+    }
+
+    public void playSound(String filename)
+    {
+        try {
+            Clip clip = AudioSystem.getClip();
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                getClass().getResourceAsStream(filename));
+            clip.open(inputStream);
+            clip.start();
+        } catch (Exception ex) {}
     }
 
     // inclusive lo, inclusive hi

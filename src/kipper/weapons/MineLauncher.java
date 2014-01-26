@@ -12,7 +12,7 @@ public class MineLauncher extends Weapon
     public MineLauncher(double x, double y, int rx, int ry, Ship c)
     {
         super(x, y, rx, ry, c);
-        icon = Util.instance.loadImage("/assets/mines_icon.gif");
+        icon = Util.instance.loadImage("/assets/images/mines_icon.gif");
     }
 
     @Override public int getWidth() { return 0; }

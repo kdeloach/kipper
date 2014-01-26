@@ -12,7 +12,7 @@ public class LightningGun extends Weapon
     public LightningGun(double x, double y, int rx, int ry, Ship c)
     {
         super(x, y, rx, ry, c);
-        icon = Util.instance.loadImage("/assets/lightning_icon.gif");
+        icon = Util.instance.loadImage("/assets/images/lightning_icon.gif");
     }
 
     @Override public int getWidth() { return 2; }
