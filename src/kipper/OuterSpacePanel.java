@@ -36,6 +36,14 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
     private boolean paused = false;
 
+    // Debug: remove these
+    private boolean _drawing = false;
+    private boolean _updating = false;
+
+    private int numUpdates = 0, numRepaints = 0, duration = 0;
+
+    private Image bgCache;
+
     public OuterSpacePanel(BottomPanel statusBar)
     {
         super();
@@ -64,37 +72,41 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         long previous = System.currentTimeMillis();
         long lag = 0;
 
+        Image buffer = createImage(WIDTH, HEIGHT);
+
         while (true) {
-
-            while (paused) {
-                previous = System.currentTimeMillis();
-            }
-
             long current = System.currentTimeMillis();
             long elapsed = current - previous;
             previous = current;
             lag += elapsed;
+            duration += elapsed;
+
+            if (duration >= 3000) {
+                duration = 0;
+                numRepaints = 0;
+                numUpdates = 0;
+            }
 
             while (lag >= FPS) {
-                update();
+                if (!paused) {
+                    update();
+                    numUpdates++;
+                }
                 lag -= FPS;
             }
 
             int w = getWidth();
             int h = getHeight();
             if (w > 0 && h > 0) {
-                Image img = createImage(WIDTH, HEIGHT);
-                draw(img.getGraphics());
+                draw(buffer.getGraphics());
                 double ratio = Util.getAspectRatio(this);
                 Point offset = Util.boxOffset(this, ratio);
                 w = (int)(WIDTH * ratio);
                 h = (int)(HEIGHT * ratio);
-                getGraphics().drawImage(img, offset.x, offset.y, w, h, this);
+                getGraphics().drawImage(buffer, offset.x, offset.y, w, h, this);
             }
         }
     }
-
-    private boolean _updating = false;
 
     public void update()
     {
@@ -208,7 +220,11 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
-    private boolean _drawing = false;
+    @Override
+    public void paint(Graphics g)
+    {
+        super.paint(g);
+    }
 
     public void draw(Graphics g)
     {
@@ -219,13 +235,20 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             throw new UnsupportedOperationException("Tried to draw while already drawing");
         }
         _drawing = true;
+
         // SLOW
         //Graphics2D g2 = (Graphics2D)g;
         //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         statusBar.repaint();
-        noiseBg.draw(g);
-        starsBg.draw(g);
+
+        if (bgCache == null) {
+            bgCache = createImage(WIDTH, HEIGHT);
+            noiseBg.draw(bgCache.getGraphics());
+            starsBg.draw(bgCache.getGraphics());
+        }
+        g.drawImage(bgCache, 0, 0, WIDTH, HEIGHT, this);
+
         starsFg.draw(g);
 
         Iterator<Ship> shipsIter = players.iterator();
@@ -250,6 +273,20 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             scene.draw(g);
         }
 
+        if (false) {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, 150, 100);
+            g.setColor(Color.WHITE);
+            g.drawString("Updates: " + numUpdates, 5, 15);
+            g.drawString("Repaints: " + numRepaints, 5, 30);
+            g.drawString("Duration: " + duration, 5, 45);
+            if (duration > 0) {
+                g.drawString(String.format("Repaints per sec: %.2f", (double)numRepaints/duration*100), 5, 60);
+                g.drawString(String.format("Updates per sec: %.2f", (double)numUpdates/duration*1000), 5, 75);
+            }
+        }
+
+        numRepaints++;
         _drawing = false;
     }
 
