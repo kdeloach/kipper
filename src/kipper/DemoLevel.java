@@ -18,11 +18,14 @@ public class DemoLevel extends Scene
     {
         player.gainControl();
 
-        Ship bot1 = new Kirby(OuterSpacePanel.WIDTH+50, OuterSpacePanel.HEIGHT/2, osp);
-        Ship bot2 = new Kirby(OuterSpacePanel.WIDTH+50, OuterSpacePanel.HEIGHT/2, osp);
-        Ship bot3 = new Kirby(OuterSpacePanel.WIDTH+50, OuterSpacePanel.HEIGHT/2, osp);
-        Ship bot4 = new Kirby(OuterSpacePanel.WIDTH+50, OuterSpacePanel.HEIGHT/2, osp);
-        Ship bot5 = new Kirby(OuterSpacePanel.WIDTH+50, OuterSpacePanel.HEIGHT/2, osp);
+        int x = OuterSpacePanel.WIDTH+50;
+        int y = OuterSpacePanel.HEIGHT/2;
+
+        Ship bot1 = new Kirby(x, y, osp);
+        Ship bot2 = new Squid(x, y, osp);
+        Ship bot3 = new Kirby(x, y, osp);
+        Ship bot4 = new Squid(x, y, osp);
+        Ship bot5 = new Kirby(x, y, osp);
 
         bot1.setDestination(580,     30+70*0);
         bot2.setDestination(580+100, 30+70*1);

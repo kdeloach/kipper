@@ -1,5 +1,4 @@
 HIGH
-- BottomPanel should be part of the game not a separate JComponent
 - Create SpawnStrategy for emitters (random, everyNTicks)
 - Sound effects
 

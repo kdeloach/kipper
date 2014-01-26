@@ -57,7 +57,8 @@ public class MaskTool
         Ship[] shipsData = new Ship[] {
             new Darkwing(0, 0, null),
             new Enterprise(0, 0, null),
-            new Kirby(0, 0, null)
+            new Kirby(0, 0, null),
+            new Squid(0, 0, null)
         };
 
         cbxShips = new JComboBox<Ship>(shipsData);
