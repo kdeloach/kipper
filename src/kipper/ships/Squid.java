@@ -19,6 +19,11 @@ public class Squid extends Kirby
     public Squid(int x, int y, OuterSpacePanel c)
     {
         super(x, y, c);
+        Weapon w1 = new MineLauncher(0, 0, this);
+        w1.setLocation(-w1.getWidth(), getHeight() / 2);
+        w1.addUpgrade(new RotateUpgrade());
+        equipWeapon(w1);
+        selectWeapon(1);
         img = Util.instance.loadImage("/assets/images/squid.png");
     }
 

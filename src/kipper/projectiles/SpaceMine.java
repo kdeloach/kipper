@@ -17,9 +17,9 @@ public class SpaceMine extends Bullet
     private int ticks = 0;
     private boolean collide = false;
 
-    public SpaceMine(double x, double y, double t, double dmg, Weapon w)
+    public SpaceMine(double dmg, Weapon w)
     {
-        super(x, y, t, dmg, w);
+        super(dmg, w);
     }
 
     @Override

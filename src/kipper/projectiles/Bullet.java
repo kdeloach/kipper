@@ -17,14 +17,9 @@ public class Bullet implements Entity, Projectile
     private double x, y, theta, damage;
     protected Weapon weapon;
 
-    public Bullet(double x, double y, double theta, double dmg, Weapon w)
+    public Bullet(double dmg, Weapon w)
     {
-        this.x = x;
-        this.y = y;
-        this.theta = theta;
         this.weapon = w;
-
-        setLocation(x, y);
 
         life = 1;
         damage = dmg;
@@ -46,7 +41,6 @@ public class Bullet implements Entity, Projectile
         double py = getY() + getHeight() / 2;
         ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
         weapon.ship().panel().addEmitter(pe);
-
     }
 
     public void playSound()
@@ -78,6 +72,12 @@ public class Bullet implements Entity, Projectile
     {
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public void setHeading(double heading)
+    {
+        this.theta = heading;
     }
 
     @Override

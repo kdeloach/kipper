@@ -19,9 +19,9 @@ public class LaserBeam extends Bullet implements MaskedEntity
     private int length = 15;
     protected Point2D.Double stop;
 
-    public LaserBeam(double x, double y, double theta, double dmg, Weapon w)
+    public LaserBeam(double dmg, Weapon w)
     {
-        super(x, y, theta, dmg, w);
+        super(dmg, w);
     }
 
     @Override

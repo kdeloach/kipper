@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import kipper.*;
 import kipper.ships.*;
 import kipper.upgrades.*;
+import kipper.projectiles.*;
 
 public abstract class Weapon implements Upgradable
 {
@@ -17,17 +18,15 @@ public abstract class Weapon implements Upgradable
     public int percCooled = 0;
     private int cooldown;
     private boolean fire = false;
-    private Point rel;
     private Point mouse;
     private ArrayList<Upgrade> upgrades;
     private Ship ship;
 
-    public Weapon(double x, double y, int rx, int ry, Ship s)
+    public Weapon(double x, double y, Ship s)
     {
-        this.x = x + rx;
-        this.y = y + ry;
+        this.x = x;
+        this.y = y;
         this.ship = s;
-        this.rel = new Point(rx, ry);
 
         setLocation(x, y);
 
@@ -37,10 +36,21 @@ public abstract class Weapon implements Upgradable
         damage = getDefaultDamage();
     }
 
+    // XXX
+    protected boolean facesLeft()
+    {
+        return ship.getOrientation() == Const.FACE_LEFT;
+    }
+
+    public void draw(Graphics g)
+    {
+        g.setColor(Color.GREEN);
+        g.drawRect((int)getX() + (facesLeft() ? -getWidth() : 0), (int)getY(), getWidth(), getHeight());
+    }
+
     abstract public int getWidth();
     abstract public int getHeight();
-    abstract public void fireProjectile(double heading);
-    abstract public void draw(Graphics g);
+    abstract public Projectile createProjectile();
     abstract public Image getIcon();
     abstract public int getDefaultCooldown();
     abstract public int getDefaultDamage();
@@ -88,12 +98,22 @@ public abstract class Weapon implements Upgradable
             int spread = getSpread();
             double heading = heading();
 
+            // XXX: Customization point per weapon
+            double x = getX() + getWidth() * (facesLeft() ? -1 : 1);
+            double y = getY() + getHeight() / 2;
+
+            Projectile p;
+
             if (spread <= 1) {
-                fireProjectile(heading);
+                p = createProjectile();
+                p.setLocation(x, y - p.getHeight() / 2);
+                p.setHeading(heading);
                 playSound();
             } else {
                 for (int i = 0; i < spread; i++) {
-                    fireProjectile(Math.toRadians(180 * ship.getOrientation() - (60 / (spread - 1) * i - 30)) + heading);
+                    p = createProjectile();
+                    p.setLocation(x, y - p.getHeight() / 2);
+                    p.setHeading(Math.toRadians(180 * ship.getOrientation() - (60 / (spread - 1) * i - 30)) + heading);
                 }
                 playSound();
             }
@@ -104,8 +124,8 @@ public abstract class Weapon implements Upgradable
 
     public void setLocation(double x, double y)
     {
-        this.x = x + rel.x;
-        this.y = y + rel.y;
+        this.x = x;
+        this.y = y;
     }
 
     public void setMouseLocation(int x, int y)

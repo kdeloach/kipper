@@ -87,7 +87,8 @@ public abstract class Ship implements
         wobble.move(this);
 
         if (getWeapon() != null) {
-            getWeapon().setLocation(x, y);
+            Point mount = getWeaponMountPoint();
+            getWeapon().setLocation(x + mount.x, y + mount.y);
         }
     }
 
@@ -161,7 +162,7 @@ public abstract class Ship implements
         mousePressed.y = y;
     }
 
-    // Returns 0 or 1
+    // Returns 0 if facing right, PI if facing left
     public double heading()
     {
         return Math.toRadians(getOrientation() * 180);
@@ -201,11 +202,14 @@ public abstract class Ship implements
         g.fillRect(x, y, (int)(w * percentLife()), h);
     }
 
+    // Returns Const.FACE_LEFT or Const.FACE_RIGHT
     abstract public int getOrientation();
     abstract public int getMaxLife();
     abstract public int getSpeed();
     abstract public Polygon getPolygonMask();
     abstract public String getName();
+    // Point where we will attach weapon relative to ship X & Y
+    abstract public Point getWeaponMountPoint();
 
     /////////////
 

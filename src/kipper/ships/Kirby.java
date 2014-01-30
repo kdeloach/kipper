@@ -21,7 +21,8 @@ public class Kirby extends Ship
     {
         super(x, y, Const.TEAM_NPC, c);
         img = Util.instance.loadImage("/assets/images/kirby.png");
-        Weapon w1 = new Shooter(getX(), getY(), 0, getHeight() / 2, this);
+        Weapon w1 = new Shooter(0, 0, this);
+        w1.setLocation(-w1.getWidth(), -w1.getHeight() / 2);
         w1.addUpgrade(new RotateUpgrade());
         equipWeapon(w1);
         selectWeapon(0);
@@ -79,4 +80,10 @@ public class Kirby extends Ship
     @Override public int getSpeed() { return 20; }
     @Override public int getMaxLife() { return 50; }
     @Override public Image getImage() { return img; }
+
+    @Override
+    public Point getWeaponMountPoint()
+    {
+        return new Point(0, getHeight() / 2);
+    }
 }

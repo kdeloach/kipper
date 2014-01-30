@@ -32,7 +32,8 @@ public class Bolt implements MaskedEntity, Projectile
     private double theta, offset;
 
     // start and end of beam
-    private Point2D.Double start, stop;
+    private Point2D.Double start = new Point2D.Double();
+    private Point2D.Double stop = new Point2D.Double();
 
     // master panel
     private Weapon weapon;
@@ -41,11 +42,9 @@ public class Bolt implements MaskedEntity, Projectile
 
     private EasingFunc easer = new EaseInQuad();
 
-    public Bolt(double x, double y, double t, double dmg, Weapon w)
+    public Bolt(double dmg, Weapon w)
     {
-        x = x - w.ship().x;
-        y = y - w.ship().y;
-        new Bolt(x, y, t, getDefaultBranches(), getDefaultLength(), getDefaultLifespanTicks(), getDefaultThickness(), dmg, w);
+        new Bolt(0, 0, 0, getDefaultBranches(), getDefaultLength(), getDefaultLifespanTicks(), getDefaultThickness(), dmg, w);
     }
 
     public Bolt(double x, double y, double offset, int branches, int length, int lifespan, int thickness, double dmg, Weapon w)
@@ -62,7 +61,7 @@ public class Bolt implements MaskedEntity, Projectile
         start = new Point2D.Double();
         stop = new Point2D.Double();
 
-        this.theta =  Math.toRadians(Math.random() * 90 - 45);
+        this.theta = Math.toRadians(Math.random() * 90 - 45);
         this.theta += offset;
 
         setLocation(x, y);
@@ -183,6 +182,12 @@ public class Bolt implements MaskedEntity, Projectile
     {
         start.setLocation(x, y);
         stop.setLocation(x + length * Math.cos(theta), y + length * Math.sin(theta));
+    }
+
+    @Override
+    public void setHeading(double heading)
+    {
+        this.theta = heading;
     }
 
     @Override

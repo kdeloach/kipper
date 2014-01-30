@@ -10,27 +10,22 @@ public class LightningGun extends Weapon
 {
     Image icon;
 
-    public LightningGun(double x, double y, int rx, int ry, Ship c)
+    public LightningGun(double x, double y, Ship c)
     {
-        super(x, y, rx, ry, c);
+        super(x, y, c);
         icon = Util.instance.loadImage("/assets/images/lightning_icon.gif");
     }
 
-    @Override public int getWidth() { return 2; }
-    @Override public int getHeight() { return 2; }
+    @Override public int getWidth() { return 45; }
+    @Override public int getHeight() { return 15; }
     @Override public Image getIcon() { return icon; }
     @Override public int getDefaultDamage() { return 1; }
     @Override public int getDefaultCooldown() { return 200; }
 
     @Override
-    public void draw(Graphics g)
+    public Projectile createProjectile()
     {
-    }
-
-    @Override
-    public void fireProjectile(double heading)
-    {
-        new Bolt(getX(), getY(), heading, getDamage(), this);
+        return new Bolt(getDamage(), this);
     }
 
     @Override

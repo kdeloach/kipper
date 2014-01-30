@@ -10,9 +10,9 @@ public class LaserGun extends Weapon
 {
     Image icon;
 
-    public LaserGun(double x, double y, int rx, int ry, Ship c)
+    public LaserGun(double x, double y, Ship c)
     {
-        super(x, y, rx, ry, c);
+        super(x, y, c);
         icon = Util.instance.loadImage("/assets/images/laser_icon.gif");
     }
 
@@ -23,14 +23,9 @@ public class LaserGun extends Weapon
     @Override public int getDefaultCooldown() { return 50; }
 
     @Override
-    public void draw(Graphics g)
+    public Projectile createProjectile()
     {
-    }
-
-    @Override
-    public void fireProjectile(double heading)
-    {
-        new LaserBeam(getX(), getY(), heading, getDamage(), this);
+        return new LaserBeam(getDamage(), this);
     }
 
     @Override

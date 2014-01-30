@@ -21,10 +21,10 @@ public class Enterprise extends Ship
         super(x, y, Const.TEAM_PLAYER, c);
         panel = c;
 
-        equipWeapon(new Shooter(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
-        equipWeapon(new LaserGun(getX(), getY(), getWidth(), getHeight() / 2 + 4, this));
-        equipWeapon(new MineLauncher(getX(), getY(), getWidth() + 15, getHeight() / 2 + 4, this));
-        equipWeapon(new LightningGun(getX(), getY(), getWidth(), getHeight() / 2 + 6, this));
+        equipWeapon(new Shooter(getWidth(), getHeight() / 2, this));
+        equipWeapon(new LaserGun(getWidth(), getHeight() / 2, this));
+        equipWeapon(new MineLauncher(getWidth(), getHeight() / 2, this));
+        equipWeapon(new LightningGun(getWidth(), getHeight() / 2, this));
         selectWeapon(0);
 
         img = Util.instance.loadImage("/assets/images/enterprise.gif");
@@ -51,4 +51,10 @@ public class Enterprise extends Ship
     @Override public int getSpeed() { return 30; }
     @Override public int getMaxLife() { return 50; }
     @Override public Image getImage() { return img; }
+
+    @Override
+    public Point getWeaponMountPoint()
+    {
+        return new Point(getWidth(), getHeight() / 2);
+    }
 }
