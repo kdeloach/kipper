@@ -137,7 +137,7 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
     {
         double leastHp = Math.min(e.getLife(), getLife());
         e.hit(leastHp);
-        hit(leastHp);
+        hit(e.getLife());
     }
 
     public void freezeMovement(int durationMs)
@@ -225,15 +225,19 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
     @Override
     public void draw(Graphics g)
     {
-        //g.setColor(Color.GREEN);
-        //g.drawRect((int)getX(), (int)getY(), getWidth(), getHeight());
-
+        //drawBoundingBox(g);
         drawHealthBar(g);
-
         g.drawImage(getImage(), (int)getX(), (int)getY(), osp);
         if (getWeapon() != null) {
             getWeapon().draw(g);
         }
+        //Util.drawMask(g, this);
+    }
+
+    public void drawBoundingBox(Graphics g)
+    {
+        g.setColor(Color.GREEN);
+        g.drawRect((int)getX(), (int)getY(), getWidth(), getHeight());
     }
 
     public void drawHealthBar(Graphics g)

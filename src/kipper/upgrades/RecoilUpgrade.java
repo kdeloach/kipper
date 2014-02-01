@@ -26,8 +26,8 @@ public class RecoilUpgrade extends Upgrade
             return;
         }
 
-        s.setDestination(s.getX() - distance * Math.cos(w.heading()),
-                         s.getY() - distance * Math.sin(w.heading()));
+        s.setDestination(s.getX() - distance * Math.cos(w.getTheta()),
+                         s.getY() - distance * Math.sin(w.getTheta()));
 
         s.freezeMovement(100);
     }

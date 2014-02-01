@@ -105,7 +105,7 @@ public class Util
         }
     }
 
-    public static boolean intersects(PolygonMaskedEntity a, Entity b)
+    public static boolean intersects(Entity a, Entity b)
     {
         if (a.equals(b) || !a.isAlive() || !b.isAlive()) {
             return false;
@@ -113,6 +113,16 @@ public class Util
         if (a.getTeam() == b.getTeam()) {
             return false;
         }
+        if (a instanceof PolygonMaskedEntity) {
+            return polygonIntersect((PolygonMaskedEntity)a, b);
+        } else if (a instanceof MaskedEntity) {
+            return rectMaskIntersect((MaskedEntity)a, b);
+        }
+        return boundingBoxIntersect(a, b);
+    }
+
+    public static boolean polygonIntersect(PolygonMaskedEntity a, Entity b)
+    {
         Polygon aMask = a.getPolygonMask();
         aMask.translate((int)a.getX(), (int)a.getY());
         if (b instanceof PolygonMaskedEntity) {
@@ -133,17 +143,34 @@ public class Util
         return aMask.intersects(new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight()));
     }
 
-    public static boolean intersects(Projectile a, Projectile b)
+    public static boolean boundingBoxIntersect(Entity a, Entity b)
     {
-        if (a.equals(b) || !a.isAlive() || !b.isAlive()) {
-            return false;
-        }
-        if (a.getTeam() == b.getTeam()) {
-            return false;
-        }
         Rectangle2D.Double r1 = new Rectangle2D.Double(a.getX(), a.getY(), a.getWidth(), a.getHeight());
         Rectangle2D.Double r2 = new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight());
         return r1.intersects(r2);
+    }
+
+    public static boolean rectMaskIntersect(MaskedEntity a, Entity b)
+    {
+        Rectangle2D.Double[] ar = a.getRectMask();
+
+        Rectangle2D.Double[] br;
+        if (b instanceof MaskedEntity) {
+            br = ((MaskedEntity)b).getRectMask();
+        } else {
+            br = new Rectangle2D.Double[] {
+                new Rectangle2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight())
+            };
+        }
+
+        for (int i = 0; i < ar.length; i++) {
+            for (int k = 0; k < br.length; k++) {
+                if (ar[i].intersects(br[k])) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static double getAspectRatio(OuterSpacePanel osp)

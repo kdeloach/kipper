@@ -1,16 +1,18 @@
 HIGH
 - Create SpawnStrategy for emitters (random, everyNTicks)
-- Extend Bolt from bullet and fix weapon mount offset for LightningGun
+- Ship always accelerates towards mouse
 
 MED
 - Add collidesWithTeam() to bullet; SpaceMine should be destroyable while it is charging?
 - Create enemy emitter
-- Build new weapon upgrade graph screen
-- Add "set target" upgrade; Allow player to right click to set target, weapons will fire towards this point instead of the mouse when Rotate ability is equiped.
-- Create plasma weapon (different cooldown mechanism)
+- Build new weapon upgrade graph screen / weapon balancing
 - Level tool
 
 LOW
+- Add "set target" upgrade; Allow player to right click to set target, weapons will fire towards this point instead of the mouse when Rotate ability is equiped.
+- Create plasma weapon (different cooldown mechanism)
+- Always perform a bounding box test before using masks
+- Only use stopX() and stopY() for lightningbolt collision detection
 - Do a better job with mouse scaling methods
 - OSP should be the main delegator of mouse & keyboard events to game entities
 - Update mask tool to assign weapon attach point
@@ -29,3 +31,4 @@ LOW
 - Add "passthrough" upgrade
 - Add homing upgrade
 - Throttle sound clips (too many playing at once will throw an exception)
+- Mask methods should return LinkedList not array

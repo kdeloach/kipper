@@ -8,8 +8,6 @@ import kipper.weapons.*;
 
 public class SpreadUpgrade extends Upgrade
 {
-    double amount = 2.0;
-
     public SpreadUpgrade()
     {
     }
@@ -17,9 +15,9 @@ public class SpreadUpgrade extends Upgrade
     public double getValue(Upgradable sender, String name, double value)
     {
         if (name == Upgrade.SPREAD) {
-            return value + amount;
+            return value + 1;
         } else if (name == Upgrade.COOLDOWN) {
-            return value + 10;
+            //return value + 10;
         }
         return value;
     }

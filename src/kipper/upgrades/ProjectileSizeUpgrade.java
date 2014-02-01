@@ -8,8 +8,6 @@ import kipper.weapons.*;
 
 public class ProjectileSizeUpgrade extends Upgrade
 {
-    double amount = 1.10;
-
     public ProjectileSizeUpgrade()
     {
     }
@@ -17,7 +15,7 @@ public class ProjectileSizeUpgrade extends Upgrade
     public double getValue(Upgradable sender, String name, double value)
     {
         if (name == Upgrade.SIZE) {
-            return value * amount;
+            return value + 1;
         }
         return value;
     }

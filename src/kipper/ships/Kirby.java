@@ -32,7 +32,7 @@ public class Kirby extends Ship
     @Override
     public void think()
     {
-        doSomethingSmart();
+        //doSomethingSmart();
     }
 
     private void doSomethingSmart()

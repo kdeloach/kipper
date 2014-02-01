@@ -44,6 +44,11 @@ public abstract class Weapon implements Upgradable
 
     public void draw(Graphics g)
     {
+        //drawBounds(g);
+    }
+
+    public void drawBounds(Graphics g)
+    {
         g.setColor(Color.GREEN);
         g.drawRect((int)getX() + (facesLeft() ? -getWidth() : 0), (int)getY(), getWidth(), getHeight());
     }
@@ -75,9 +80,17 @@ public abstract class Weapon implements Upgradable
     public int getCooldown() { return (int)getValue(Upgrade.COOLDOWN, cooldown); }
     public double getDamage() { return getValue(Upgrade.DAMAGE, damage); }
     public int getSpread() { return (int)getValue(Upgrade.SPREAD, spread); }
-    public double heading() { return getValue(Upgrade.HEADING, ship.heading()); }
+    public double getTheta() { return getValue(Upgrade.HEADING, ship.heading()); }
     public double getSizeBonus() { return getValue(Upgrade.SIZE, 1); }
     public boolean collidesWithProjectiles() { return getValue(Upgrade.COLLIDE, 0) == 1; }
+
+    // Point where projectiles will fire from
+    public Point2D.Double projectileOrigin()
+    {
+        double x = getX() + getWidth() * (facesLeft() ? -1 : 1);
+        double y = getY() + getHeight() / 2;
+        return new Point2D.Double(x, y);
+    }
 
     public void update()
     {
@@ -95,30 +108,33 @@ public abstract class Weapon implements Upgradable
                 return;
             }
 
-            int spread = getSpread();
-            double heading = heading();
-
-            // XXX: Customization point per weapon
-            double x = getX() + getWidth() * (facesLeft() ? -1 : 1);
-            double y = getY() + getHeight() / 2;
-
-            Projectile p;
-
-            if (spread <= 1) {
-                p = createProjectile();
-                p.setLocation(x, y - p.getHeight() / 2);
-                p.setHeading(heading);
-                playSound();
-            } else {
-                for (int i = 0; i < spread; i++) {
-                    p = createProjectile();
-                    p.setLocation(x, y - p.getHeight() / 2);
-                    p.setHeading(Math.toRadians(180 * ship.getOrientation() - (60 / (spread - 1) * i - 30)) + heading);
-                }
-                playSound();
-            }
+            fireWeapon();
 
             percCooled = getCooldown();
+        }
+    }
+
+    protected void fireWeapon()
+    {
+        int spread = getSpread();
+        double theta = getTheta();
+
+        Point2D.Double origin = projectileOrigin();
+        Projectile p;
+
+        if (spread <= 1) {
+            p = createProjectile();
+            p.setLocation(origin.x, origin.y - p.getHeight() / 2);
+            playSound();
+            ship().panel().addProjectile(p);
+        } else {
+            for (int i = 0; i < spread; i++) {
+                p = createProjectile();
+                p.setLocation(origin.x, origin.y - p.getHeight() / 2);
+                p.setTheta(p.getTheta() + Math.toRadians(180 * ship.getOrientation() - (60 / (spread - 1) * i - 30)));
+                ship().panel().addProjectile(p);
+            }
+            playSound();
         }
     }
 

@@ -1,8 +1,7 @@
 package kipper.upgrades;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.geom.*;
 import kipper.*;
 import kipper.ships.*;
 import kipper.weapons.*;
@@ -26,8 +25,9 @@ public class RotateUpgrade extends Upgrade
 
     private double heading(Ship ship)
     {
-        double x1 = ship.getWeapon().getX();
-        double y1 = ship.getWeapon().getY();
+        Point2D.Double origin = ship.getWeapon().projectileOrigin();
+        double x1 = origin.x;
+        double y1 = origin.y;
         double x2 = ship.mousePressed.x;
         double y2 = ship.mousePressed.y;
         return Math.atan2(y2 - y1, x2 - x1);

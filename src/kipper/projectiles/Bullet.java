@@ -14,17 +14,18 @@ import kipper.weapons.*;
 public class Bullet implements Entity, Projectile
 {
     private int life;
-    private double x, y, theta, damage;
+    private double x;
+    private double y;
+    private double theta;
+    private double damage;
     protected Weapon weapon;
 
     public Bullet(double dmg, Weapon w)
     {
+        this.damage = dmg;
         this.weapon = w;
-
-        life = 1;
-        damage = dmg;
-
-        weapon.ship().panel().addProjectile(this);
+        this.life = getDefaultLife();
+        setTheta(w.getTheta());
     }
 
     @Override
@@ -32,7 +33,6 @@ public class Bullet implements Entity, Projectile
     {
         life = 0;
         deathExplosion();
-        playSound();
     }
 
     public void deathExplosion()
@@ -75,9 +75,15 @@ public class Bullet implements Entity, Projectile
     }
 
     @Override
-    public void setHeading(double heading)
+    public double getTheta()
     {
-        this.theta = heading;
+        return this.theta;
+    }
+
+    @Override
+    public void setTheta(double theta)
+    {
+        this.theta = theta;
     }
 
     @Override
@@ -90,7 +96,12 @@ public class Bullet implements Entity, Projectile
     public void collide(Entity e)
     {
         e.hit(getDamage());
-        hit(getLife());
+        if (e instanceof Projectile) {
+            hit(((Projectile)e).getDamage());
+        } else {
+            hit(getLife());
+        }
+        playSound();
     }
 
     @Override
@@ -101,8 +112,9 @@ public class Bullet implements Entity, Projectile
     }
 
     public Color getColor() { return Color.YELLOW; }
-    public double getTheta() { return theta; }
     public double getSpeed() { return weapon.getValue(Upgrade.SPEED, Const.BULLET_SPEED); }
+
+    public int getDefaultLife() { return 1; }
 
     @Override public double getX() { return x; }
     @Override public double getY() { return y; }

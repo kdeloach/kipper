@@ -14,6 +14,10 @@ public class LightningGun extends Weapon
     {
         super(x, y, c);
         icon = Util.instance.loadImage("/assets/images/lightning_icon.gif");
+        addUpgrade(new CooldownUpgrade());
+        addUpgrade(new CooldownUpgrade());
+        addUpgrade(new CooldownUpgrade());
+        addUpgrade(new CooldownUpgrade());
     }
 
     @Override public int getWidth() { return 45; }
@@ -22,10 +26,12 @@ public class LightningGun extends Weapon
     @Override public int getDefaultDamage() { return 1; }
     @Override public int getDefaultCooldown() { return 200; }
 
+    public int getBoltBranches() { return (int)(3 + getSizeBonus()); }
+
     @Override
     public Projectile createProjectile()
     {
-        return new Bolt(getDamage(), this);
+        return new LightningBolt(getDamage(), this);
     }
 
     @Override

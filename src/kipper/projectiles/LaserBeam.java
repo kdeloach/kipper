@@ -16,9 +16,6 @@ import kipper.weapons.*;
 
 public class LaserBeam extends Bullet implements MaskedEntity
 {
-    private int length = 15;
-    protected Point2D.Double stop;
-
     public LaserBeam(double dmg, Weapon w)
     {
         super(dmg, w);
@@ -27,8 +24,8 @@ public class LaserBeam extends Bullet implements MaskedEntity
     @Override
     public void deathExplosion()
     {
-        double px = stop.x + getWidth() / 2;
-        double py = stop.y + getHeight() / 2;
+        double px = stopX() + getWidth() / 2;
+        double py = stopY() + getHeight() / 2;
         ParticleEmitter pe = new ParticleEmitter(px, py, new SampleConfigImpl());
         weapon.ship().panel().addEmitter(pe);
     }
@@ -37,26 +34,21 @@ public class LaserBeam extends Bullet implements MaskedEntity
     public void setLocation(double x, double y)
     {
         super.setLocation(x, y);
-        if (stop == null) {
-            stop = new Point2D.Double();
-        }
-        stop.setLocation(
-            x + length * weapon.getSizeBonus() * Math.cos(getTheta()),
-            y + length * weapon.getSizeBonus() * Math.sin(getTheta()));
     }
 
     @Override
     public void draw(Graphics g)
     {
         g.setColor(Color.WHITE);
-        Util.drawThickLine(g, getX(), getY(), stop.x, stop.y, getWidth());
+        Util.drawThickLine(g, getX(), getY(), stopX(), stopY(), getWidth());
     }
 
-    // Width and height of each individual point on the beam, NOT the total width and height of the beam.
+    // Width and height of each individual point on the beam
+    // NOT the width and height of the bounding box
     @Override public int getWidth() { return (int)(3 * weapon.getSizeBonus()); }
     @Override public int getHeight() { return getWidth(); }
-    @Override public boolean collidesWithOwner() { return false; }
-    @Override public Weapon getOwner() { return weapon; }
+
+    public int getLength() { return (int)(15 * weapon.getSizeBonus()); }
 
     @Override
     public Rectangle2D.Double[] getRectMask()
@@ -64,7 +56,10 @@ public class LaserBeam extends Bullet implements MaskedEntity
         double r = getWidth() / 2;
         return new Rectangle2D.Double[] {
             new Rectangle2D.Double(getX() - r, getY() - r, getWidth(), getHeight()),
-            new Rectangle2D.Double(stop.x - r, stop.y - r, getWidth(), getHeight())
+            new Rectangle2D.Double(stopX() - r, stopY() - r, getWidth(), getHeight())
         };
     }
+
+    public double stopX() { return getX() + getLength() * Math.cos(getTheta()); }
+    public double stopY() { return getY() + getLength() * Math.sin(getTheta()); }
 }

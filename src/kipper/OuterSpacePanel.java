@@ -198,16 +198,13 @@ public class OuterSpacePanel extends JComponent implements Runnable
     private void performCollisions()
     {
         // Collide ships with projectiles
-        for (int i = 0; i < players.size(); i++) {
-            Ship player = players.get(i);
-            for (int k = 0; k < projectiles.size(); k++) {
-                Projectile bullet = projectiles.get(k);
+        for (Ship player : players) {
+            for (Projectile bullet : projectiles) {
                 if (Util.intersects(player, bullet)) {
                     boolean canCollide = player != bullet.getOwner().ship() || bullet.collidesWithOwner();
                     if (canCollide) {
                         bullet.getOwner().ship().target = player;
-                        player.hit(bullet.getDamage());
-                        bullet.hit(bullet.getLife());
+                        bullet.collide(player);
                     }
                 }
             }
@@ -230,8 +227,7 @@ public class OuterSpacePanel extends JComponent implements Runnable
                 boolean canCollide = p1.getTeam() != p2.getTeam() && (p1.collidesWithProjectiles() || p2.collidesWithProjectiles());
                 if (canCollide) {
                     if (Util.intersects(p1, p2)) {
-                        p1.hit(p1.getLife());
-                        p2.hit(p2.getLife());
+                        p1.collide(p2);
                     }
                 }
             }
