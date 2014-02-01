@@ -22,7 +22,7 @@ public class RecoilUpgrade extends Upgrade
         Ship s = w.ship();
 
         // if its a bot, make sure it isn't recoiling offscreen
-        if (!s.underControl() && s.getX() + s.getWidth() >= OuterSpacePanel.WIDTH) {
+        if (!s.isUnderControl() && s.getX() + s.getWidth() >= OuterSpacePanel.WIDTH) {
             return;
         }
 

@@ -15,20 +15,20 @@ import kipper.effects.*;
 import kipper.weapons.*;
 import kipper.projectiles.*;
 
-public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
+public class OuterSpacePanel extends JComponent implements Runnable
 {
     public static final int WIDTH = 600;
     public static final int HEIGHT = 300;
     // Frame per second (1000 MS / 60 frames)
     public static long FPS = 1000 / 80;
 
-    LightNoiseBg noiseBg;
-    MarqueeStars starsBg, starsFg;
+    private LightNoiseBg noiseBg;
+    private MarqueeStars starsBg;
+    private MarqueeStars starsFg;
+    private Image bgCache;
 
-    public Ship player1;
-
-    // current scene
-    Scene scene, nextScene;
+    private Ship player1;
+    private Scene scene;
 
     private LinkedList<Ship> players;
     private LinkedList<Projectile> projectiles;
@@ -40,14 +40,22 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     private boolean _drawing = false;
     private boolean _updating = false;
 
-    private int numUpdates = 0, numRepaints = 0, duration = 0;
-
-    private Image bgCache;
+    private int numUpdates = 0;
+    private int numRepaints = 0;
+    private int duration = 0;
 
     public OuterSpacePanel()
     {
         super();
+        setFocusable(true);
         setIgnoreRepaint(true);
+
+        Global.key = new KeyHandler();
+        Global.mouse = new MouseHandler();
+        addKeyListener(Global.key);
+        addMouseListener(Global.mouse);
+        addMouseMotionListener(Global.mouse);
+        addComponentListener(new RepaintAfterResize(this));
 
         players = new LinkedList<Ship>();
         projectiles = new LinkedList<Projectile>();
@@ -86,10 +94,13 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             }
 
             while (lag >= FPS) {
+                handleInput();
                 if (!paused) {
                     update();
                     numUpdates++;
                 }
+                Global.key.update();
+                Global.mouse.update();
                 lag -= FPS;
             }
 
@@ -106,6 +117,29 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         }
     }
 
+    public void handleInput()
+    {
+        if (Global.key.justPressed(KeyEvent.VK_SPACE)) {
+            paused = !paused;
+            Util.instance.playSound("/assets/sounds/Pause.wav");
+        }
+
+        if (paused) {
+            return;
+        }
+
+        if (Global.key.justPressed(KeyEvent.VK_Q)) {
+            if (scene.getName() == "upgrade") {
+                changeScene(new DemoLevel(this));
+            } else {
+                changeScene(new ShipUpgradeScreen(this));
+            }
+        }
+        if (scene != null) {
+            scene.handleInput();
+        }
+    }
+
     public void update()
     {
         if (_updating) {
@@ -116,20 +150,13 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         }
         _updating = true;
 
-        if (nextScene != null) {
-            if (scene != null) {
-                scene.destroyScene();
-            }
-            scene = nextScene;
-            scene.createScene();
-            nextScene = null;
-        }
-
         noiseBg.update();
         starsBg.update();
         starsFg.update();
+
         updateEntities();
         performCollisions();
+
         _updating = false;
     }
 
@@ -139,6 +166,7 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         while (shipsIter.hasNext()) {
             Ship s = shipsIter.next();
             if (s.isAlive()) {
+                s.handleInput();
                 s.update();
             } else {
                 shipsIter.remove();
@@ -280,8 +308,8 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
             g.drawString("Repaints: " + numRepaints, 5, 30);
             g.drawString("Duration: " + duration, 5, 45);
             if (duration > 0) {
-                g.drawString(String.format("Repaints per sec: %.2f", (double)numRepaints/duration*100), 5, 60);
-                g.drawString(String.format("Updates per sec: %.2f", (double)numUpdates/duration*1000), 5, 75);
+                g.drawString(String.format("Repaints per sec: %.2f", (double)numRepaints / duration * 100), 5, 60);
+                g.drawString(String.format("Updates per sec: %.2f", (double)numUpdates / duration * 1000), 5, 75);
             }
         }
 
@@ -301,34 +329,14 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
         g.drawString(text, x, y);
     }
 
-    private void changeScene(Scene s)
+    private void changeScene(Scene nextScene)
     {
-        nextScene = s;
-    }
-
-    /////////////////////////
-    // Keyboard Controls
-
-    @Override public void keyTyped(KeyEvent e) { getPlayer().keyTyped(e); }
-    @Override public void keyReleased(KeyEvent e) { getPlayer().keyReleased(e); }
-
-    @Override
-    public void keyPressed(KeyEvent e)
-    {
-        if (e.getKeyCode() == KeyEvent.VK_Q) {
-            if (scene.name() == "upgrade") {
-                changeScene(new DemoLevel(this));
-            } else {
-                changeScene(new ShipUpgradeScreen(this));
-            }
+        if (scene != null) {
+            scene.destroyScene();
         }
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            paused = !paused;
-            Util.instance.playSound("/assets/sounds/Pause.wav");
-        }
-        getPlayer().keyPressed(e);
+        scene = nextScene;
+        scene.createScene();
     }
-
 
     ////////////////////////
 
@@ -380,8 +388,14 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
 
     ///
 
-    @Override public Dimension getMinimumSize() { return getPreferredSize(); }
-    @Override public Dimension getPreferredSize()
+    @Override
+    public Dimension getMinimumSize()
+    {
+        return getPreferredSize();
+    }
+
+    @Override
+    public Dimension getPreferredSize()
     {
         int zoom = 2;
         return new Dimension(OuterSpacePanel.WIDTH * zoom, OuterSpacePanel.HEIGHT * zoom);
@@ -399,5 +413,21 @@ public class OuterSpacePanel extends JComponent implements Runnable, KeyListener
     public boolean contains(double x, double y)
     {
         return contains((int)x, (int)y);
+    }
+}
+
+class RepaintAfterResize extends ComponentAdapter
+{
+    JComponent component;
+
+    public RepaintAfterResize(JComponent component)
+    {
+        this.component = component;
+    }
+
+    @Override
+	public void componentResized(ComponentEvent e)
+    {
+        component.repaint();
     }
 }

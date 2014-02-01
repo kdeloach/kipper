@@ -1,6 +1,6 @@
 HIGH
-- Sound effects
 - Create SpawnStrategy for emitters (random, everyNTicks)
+- Extend Bolt from bullet and fix weapon mount offset for LightningGun
 
 MED
 - Add collidesWithTeam() to bullet; SpaceMine should be destroyable while it is charging?
@@ -28,3 +28,4 @@ LOW
 - Add "split" upgrade
 - Add "passthrough" upgrade
 - Add homing upgrade
+- Throttle sound clips (too many playing at once will throw an exception)

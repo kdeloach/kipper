@@ -1,7 +1,7 @@
 package kipper.ships;
 
-import java.awt.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.util.ArrayList;
@@ -10,9 +10,7 @@ import kipper.weapons.*;
 import kipper.upgrades.*;
 import kipper.effects.*;
 
-public abstract class Ship implements
-    ImageEntity, PolygonMaskedEntity, Controllable, Upgradable,
-    MouseListener, MouseMotionListener, KeyListener
+public abstract class Ship implements ImageEntity, PolygonMaskedEntity, ControllableEntity, Upgradable
 {
     private static final Color healthBarRed = new Color(136, 0, 21);
     private static final Color healthBarGreen = new Color(34, 177, 76);
@@ -39,7 +37,6 @@ public abstract class Ship implements
     public Ship target = null;
 
     private EntityWobble wobble;
-    private boolean isShiftDown = false;
 
     public Ship()
     {
@@ -55,13 +52,52 @@ public abstract class Ship implements
     }
 
     @Override
+    public void handleInput()
+    {
+        if (!isUnderControl()) {
+            return;
+        }
+
+        // Mouse events
+        Point p = scalePoint(Global.mouse.getPoint());
+        setMouseLocation(p.x, p.y);
+        setMousePressedLocation(p.x, p.y);
+        setDestination(p.x - getWidth() / 2, p.y-getHeight() / 2);
+
+        getWeapon().setMouseLocation(p.x, p.y);
+        if (Global.mouse.isPressed()) {
+            getWeapon().startFiring();
+        } else {
+            getWeapon().stopFiring();
+        }
+
+        // Key events
+        int code = Global.key.justPressed(KeyEvent.VK_1) ? 0
+                 : Global.key.justPressed(KeyEvent.VK_2) ? 1
+                 : Global.key.justPressed(KeyEvent.VK_3) ? 2
+                 : Global.key.justPressed(KeyEvent.VK_4) ? 3
+                 : -1;
+
+        if (code >= 0 && wpnList[code] != getWeapon()) {
+            // resume firing if weapons switches while the fire button is held down
+            if (getWeapon().isFiring()) {
+                getWeapon().stopFiring();
+                selectWeapon(code);
+                getWeapon().startFiring();
+            } else {
+                selectWeapon(code);
+            }
+        }
+    }
+
+    @Override
     public void update()
     {
         if (disabledTicks > 0) {
             disabledTicks--;
         }
         updateWeapons();
-        if (!underControl()) {
+        if (!isUnderControl()) {
             think();
         }
         move();
@@ -78,17 +114,21 @@ public abstract class Ship implements
 
     public void move()
     {
-        if (!isShiftDown) {
+        if (!Global.key.isShiftDown()) {
             double mx = x + (destination.x - x) / getSpeed();
             double my = y + (destination.y - y) / getSpeed();
             setLocation(mx, my);
         }
-
         wobble.move(this);
+        moveWeapon();
+    }
 
-        if (getWeapon() != null) {
+    public void moveWeapon()
+    {
+        Weapon weapon = getWeapon();
+        if (weapon != null) {
             Point mount = getWeaponMountPoint();
-            getWeapon().setLocation(x + mount.x, y + mount.y);
+            weapon.setLocation(x + mount.x, y + mount.y);
         }
     }
 
@@ -114,22 +154,14 @@ public abstract class Ship implements
     }
 
     // NPC logic goes here
-    public void think() {}
+    public void think()
+    {
+    }
 
-    // Used by NPC's to simulate mouse click
+    // Used by NPC's to simulate mouse click (movement and targeting are orthogonal)
     public void targetLocation(int x, int y)
     {
         setMousePressedLocation(x, y);
-    }
-
-    public void equipWeapon(Weapon w)
-    {
-        for (int i = 0; i < wpnList.length; i++) {
-            if (wpnList[i] == null) {
-                wpnList[i] = w;
-                return;
-            }
-        }
     }
 
     @Override
@@ -137,17 +169,6 @@ public abstract class Ship implements
     {
         this.x = x;
         this.y = y;
-    }
-
-    public void selectWeapon(int n)
-    {
-        if (n >= 0 && n < wpnList.length) {
-            if (wpnList[n] == null) {
-                return;
-            }
-            wpn = wpnList[n];
-            wpn.setLocation(x, y);
-        }
     }
 
     public void setMouseLocation(int x, int y)
@@ -162,6 +183,35 @@ public abstract class Ship implements
         mousePressed.y = y;
     }
 
+    public void equipWeapon(Weapon w)
+    {
+        for (int i = 0; i < wpnList.length; i++) {
+            if (wpnList[i] == null) {
+                wpnList[i] = w;
+                return;
+            }
+        }
+    }
+
+    public void selectWeapon(int n)
+    {
+        if (n >= 0 && n < wpnList.length) {
+            if (wpnList[n] == null) {
+                return;
+            }
+            wpn = wpnList[n];
+            moveWeapon();
+        }
+    }
+
+    public Weapon getWeapon(int n)
+    {
+        if(n < 0 || n >= wpnList.length) {
+            throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
+        }
+        return wpnList[n];
+    }
+
     // Returns 0 if facing right, PI if facing left
     public double heading()
     {
@@ -171,9 +221,6 @@ public abstract class Ship implements
     public OuterSpacePanel panel() { return osp; }
 
     /////////////
-
-    @Override abstract public int getWidth();
-    @Override abstract public int getHeight();
 
     @Override
     public void draw(Graphics g)
@@ -202,6 +249,9 @@ public abstract class Ship implements
         g.fillRect(x, y, (int)(w * percentLife()), h);
     }
 
+    @Override abstract public int getWidth();
+    @Override abstract public int getHeight();
+
     // Returns Const.FACE_LEFT or Const.FACE_RIGHT
     abstract public int getOrientation();
     abstract public int getMaxLife();
@@ -213,19 +263,15 @@ public abstract class Ship implements
 
     /////////////
 
-    public Weapon getWeapon(int n)
-    {
-        if(n < 0 || n >= wpnList.length) {
-            throw new IllegalArgumentException("Weapon [" + n + "] does not exist");
-        }
-        return wpnList[n];
-    }
-
     @Override public double getX() { return x; }
     @Override public double getY() { return y; }
     @Override public boolean isAlive() { return dmg < getMaxLife(); }
     @Override public int getLife() { return getMaxLife() - (int)dmg; }
     @Override public int getTeam() { return team; }
+
+    @Override public boolean isUnderControl() { return underControl; }
+    @Override public void gainControl() { underControl = true; }
+    @Override public void releaseControl() { getWeapon().stopFiring(); underControl = false; }
 
     public int getSlotsAmt() { return 6; }
     public Ship getTarget() { return target; }
@@ -285,65 +331,6 @@ public abstract class Ship implements
 
     /////////////
 
-    @Override public boolean underControl() { return underControl; }
-
-    @Override
-    public void gainControl()
-    {
-        osp.addMouseListener(this);
-        osp.addMouseMotionListener(this);
-        underControl = true;
-    }
-
-    @Override
-    public void releaseControl()
-    {
-        osp.removeMouseListener(this);
-        osp.removeMouseMotionListener(this);
-        underControl = false;
-    }
-
-    /////////////
-
-    @Override public void mouseEntered(MouseEvent evt) {}
-    @Override public void mouseExited(MouseEvent evt) {}
-    @Override public void mouseClicked(MouseEvent evt) {}
-
-    @Override
-    public void mousePressed(MouseEvent e)
-    {
-        Point p = scalePoint(e.getPoint());
-        setMousePressedLocation(p.x, p.y);
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            getWeapon().startFiring();
-        }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e)
-    {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            getWeapon().stopFiring();
-        }
-    }
-
-    /////////////
-
-    @Override public void mouseDragged(MouseEvent e)
-    {
-        mousePressed(e);
-        mouseMoved(e);
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e)
-    {
-        Point p = scalePoint(e.getPoint());
-        setMouseLocation(p.x, p.y);
-        getWeapon().setMouseLocation(p.x, p.y);
-        setDestination(p.x - getWidth() / 2, p.y-getHeight() / 2);
-    }
-
     public Point scalePoint(Point p)
     {
         double ratio = Util.getAspectRatio(osp);
@@ -351,43 +338,6 @@ public abstract class Ship implements
         return new Point(
             (int)((p.x - offset.x) * 1 / ratio),
             (int)((p.y - offset.y) * 1 / ratio));
-    }
-
-    /////////////
-
-    @Override public void keyTyped(KeyEvent evt) {}
-
-    @Override
-    public void keyReleased(KeyEvent e)
-    {
-        if (underControl) {
-            isShiftDown = e.isShiftDown();
-            setDestination(mouse.x - getWidth() / 2, mouse.y - getHeight() / 2);
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e)
-    {
-        if (underControl) {
-            int code = e.getKeyCode() - KeyEvent.VK_1;
-            isShiftDown = e.isShiftDown();
-
-            // only need keys 1-5    (0-4)
-            // and abort if weapon request is already selected
-            if (code < 0 || code >= 5 || wpnList[code] == getWeapon()) {
-                return;
-            }
-
-            // resume firing if weapons switches while the fire button is held down
-            if (getWeapon().isFiring()) {
-                getWeapon().stopFiring();
-                selectWeapon(code);
-                getWeapon().startFiring();
-            } else {
-                selectWeapon(code);
-            }
-        }
     }
 
     /////////////

@@ -1,5 +1,6 @@
 package kipper;
 
+import java.awt.Graphics;
 import kipper.ships.*;
 
 public class DemoLevel extends Scene
@@ -51,5 +52,19 @@ public class DemoLevel extends Scene
         osp.removeAllProjectiles();
     }
 
-    @Override public String name() { return "demo"; }
+    @Override
+    public void draw(Graphics g)
+    {
+    }
+
+    @Override
+    public void handleInput()
+    {
+    }
+
+    @Override
+    public String getName()
+    {
+        return "demo";
+    }
 }

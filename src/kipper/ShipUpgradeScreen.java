@@ -46,22 +46,23 @@ public class ShipUpgradeScreen extends Scene
         }
     }
 
+    @Override
     public void createScene()
     {
         player.releaseControl();
         player.setDestination(player.getWidth() * 3 / 4,
                               player.getHeight() * 3 / 4);
-        osp.addMouseListener(this);
     }
 
+    @Override
     public void destroyScene()
     {
-        osp.removeMouseListener(this);
     }
 
+    @Override
     public void draw(Graphics g)
     {
-        // draw upgrade slots
+        // Upgrade slots
         for (int i = 0; i  < player.getWeapon().amountSlots(); i++) {
             Rectangle slot = emptySlotRects[i];
             g.setFont(f);
@@ -77,7 +78,7 @@ public class ShipUpgradeScreen extends Scene
                 drawer.drawIcon(g, slot.x, slot.y, slot.width, slot.height);
             }
         }
-        // draw available upgrades
+        // Available upgrades
         for (int i = 0; i < availableUpgradeRects.length; i++) {
             Rectangle r = availableUpgradeRects[i];
             UpgradeIconDrawer drawer = upgradeInstances[i].getIconDrawer();
@@ -85,26 +86,30 @@ public class ShipUpgradeScreen extends Scene
         }
     }
 
-    public void mousePressed(MouseEvent e)
+    @Override
+    public void handleInput()
     {
-        Point p = scalePoint(e.getPoint());;
-        // if a slot is selected
-        for (int i = 0; i < emptySlotRects.length; i++) {
-            if (emptySlotRects[i].contains(p)) {
-                player.getWeapon().removeUpgrade(i);
-                return;
+        if (Global.mouse.justPressed()) {
+            Point p = scalePoint(Global.mouse.getPoint());
+            // if a slot is selected
+            for (int i = 0; i < emptySlotRects.length; i++) {
+                if (emptySlotRects[i].contains(p)) {
+                    player.getWeapon().removeUpgrade(i);
+                    return;
+                }
             }
-        }
-        // if an upgrade is selected
-        for (int i = 0; i < availableUpgradeRects.length; i++) {
-            if (availableUpgradeRects[i].contains(p)) {
-                Weapon w = player.getWeapon();
-                w.addUpgrade(Upgrade.createInstance(i));
-                return;
+            // if an upgrade is selected
+            for (int i = 0; i < availableUpgradeRects.length; i++) {
+                if (availableUpgradeRects[i].contains(p)) {
+                    Weapon w = player.getWeapon();
+                    w.addUpgrade(Upgrade.createInstance(i));
+                    return;
+                }
             }
         }
     }
 
+    // TODO: Move to Util
     public Point scalePoint(Point p)
     {
         double ratio = Util.getAspectRatio(osp);
@@ -114,5 +119,9 @@ public class ShipUpgradeScreen extends Scene
             (int)((p.y - offset.y) * 1 / ratio));
     }
 
-    @Override public String name() { return "upgrade"; }
+    @Override
+    public String getName()
+    {
+        return "upgrade";
+    }
 }

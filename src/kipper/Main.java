@@ -11,37 +11,16 @@ public class Main
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 JFrame frame = new JFrame("kipper");
-                frame.getContentPane().setLayout(new BorderLayout());
-
+                Container pane = frame.getContentPane();
                 OuterSpacePanel gamePanel = new OuterSpacePanel();
-                frame.addKeyListener(gamePanel);
-                frame.addComponentListener(new RepaintAfterResize(gamePanel));
                 frame.getContentPane().add(gamePanel);
-
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setResizable(true);
                 frame.setVisible(true);
-
                 new Thread(gamePanel).start();
             }
         });
-    }
-}
-
-class RepaintAfterResize extends ComponentAdapter
-{
-    JComponent component;
-
-    public RepaintAfterResize(JComponent component)
-    {
-        this.component = component;
-    }
-
-    @Override
-	public void componentResized(ComponentEvent e)
-    {
-        component.repaint();
     }
 }
