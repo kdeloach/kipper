@@ -23,13 +23,14 @@ import kipper.effects.transitions.*;
 // TODO: Extend from bullet...
 public class Bolt implements MaskedEntity, Projectile
 {
-    // length is the size of 1 segment of the largest tier branches
-    private int branches, length, life, lifespan, thickness;
-
+    private int branches;
+    private int length;
+    private int life;
+    private int lifespan;
+    private int thickness;
     private double damage;
-
-    // bullet trajectory
-    private double theta, offset;
+    private double theta;
+    private double offset;
 
     // start and end of beam
     private Point2D.Double start = new Point2D.Double();

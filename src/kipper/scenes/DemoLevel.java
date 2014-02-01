@@ -1,6 +1,7 @@
-package kipper;
+package kipper.scenes;
 
 import java.awt.Graphics;
+import kipper.*;
 import kipper.ships.*;
 
 public class DemoLevel extends Scene

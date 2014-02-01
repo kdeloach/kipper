@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import kipper.ships.*;
+import kipper.scenes.*;
 import kipper.effects.*;
 import kipper.weapons.*;
 import kipper.projectiles.*;

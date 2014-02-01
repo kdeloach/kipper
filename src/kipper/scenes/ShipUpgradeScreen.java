@@ -1,7 +1,8 @@
-package kipper;
+package kipper.scenes;
 
 import java.awt.*;
 import java.awt.event.*;
+import kipper.*;
 import kipper.ships.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;

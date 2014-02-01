@@ -1,4 +1,4 @@
-package kipper;
+package kipper.scenes;
 
 import java.awt.Graphics;
 
