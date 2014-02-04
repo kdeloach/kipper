@@ -11,11 +11,11 @@ import kipper.*;
 import kipper.effects.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
+import kipper.ships.controllers.*;
 
 public class Kirby extends Ship
 {
     Image img;
-    int ticksUntilFire = 0;
 
     public Kirby(int x, int y, OuterSpacePanel c)
     {
@@ -26,35 +26,7 @@ public class Kirby extends Ship
         w1.addUpgrade(new RotateUpgrade());
         equipWeapon(w1);
         selectWeapon(0);
-        ticksUntilFire = (int)(Math.random() * 500.0);
-    }
-
-    @Override
-    public void think()
-    {
-        //doSomethingSmart();
-    }
-
-    private void doSomethingSmart()
-    {
-        Ship player = osp.getPlayer();
-        if (ticksUntilFire <= 0 && Math.random() < 0.01) {
-            getWeapon().stopFiring();
-            ticksUntilFire = (int)(Math.random() * 75.0);
-        }
-        if (player == null) {
-            getWeapon().stopFiring();
-        } else {
-            // shoot weapon
-            // Add randomization to stagger enemy fire; Won't be needed when enemy emitters are added
-            if (getWeapon() != null && !getWeapon().isFiring() && ticksUntilFire-- <= 0) {
-                getWeapon().startFiring();
-            }
-            // get ready to fire here
-            int px = (int)(player.getX() + player.getWidth() / 2);
-            int py = (int)(player.getY() + player.getHeight() / 2);
-            targetLocation(px, py);
-        }
+        setController(new NpcShipController());
     }
 
     @Override

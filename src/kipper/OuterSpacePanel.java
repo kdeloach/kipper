@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import kipper.ships.*;
+import kipper.ships.controllers.*;
 import kipper.scenes.*;
 import kipper.effects.*;
 import kipper.weapons.*;
@@ -53,6 +54,8 @@ public class OuterSpacePanel extends JComponent implements Runnable
 
         Global.key = new KeyHandler();
         Global.mouse = new MouseHandler();
+        Global.game = this;
+
         addKeyListener(Global.key);
         addMouseListener(Global.mouse);
         addMouseMotionListener(Global.mouse);
@@ -404,7 +407,7 @@ public class OuterSpacePanel extends JComponent implements Runnable
     {
         player1 = new Darkwing(100, 100, this);
         addShip(player1);
-        player1.gainControl();
+        player1.setController(new MouseShipController());
     }
 
     public boolean contains(double x, double y)

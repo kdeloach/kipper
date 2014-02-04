@@ -7,7 +7,7 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.weapons.*;
 
-// Send a ship flying back
+// TODO: Remove
 public class RecoilUpgrade extends Upgrade
 {
     // distance to send ship backwards
@@ -20,11 +20,6 @@ public class RecoilUpgrade extends Upgrade
     public void weaponFired(Weapon w)
     {
         Ship s = w.ship();
-
-        // if its a bot, make sure it isn't recoiling offscreen
-        if (!s.isUnderControl() && s.getX() + s.getWidth() >= OuterSpacePanel.WIDTH) {
-            return;
-        }
 
         s.setDestination(s.getX() - distance * Math.cos(w.getTheta()),
                          s.getY() - distance * Math.sin(w.getTheta()));

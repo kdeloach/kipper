@@ -28,8 +28,8 @@ public class RotateUpgrade extends Upgrade
         Point2D.Double origin = ship.getWeapon().projectileOrigin();
         double x1 = origin.x;
         double y1 = origin.y;
-        double x2 = ship.mousePressed.x;
-        double y2 = ship.mousePressed.y;
+        double x2 = ship.getMousePressedLocation().x;
+        double y2 = ship.getMousePressedLocation().y;
         return Math.atan2(y2 - y1, x2 - x1);
     }
 

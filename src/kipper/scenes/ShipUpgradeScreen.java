@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import kipper.*;
 import kipper.ships.*;
+import kipper.ships.controllers.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
 
@@ -50,7 +51,7 @@ public class ShipUpgradeScreen extends Scene
     @Override
     public void createScene()
     {
-        player.releaseControl();
+        player.setController(new AutoPilotShipController());
         player.setDestination(player.getWidth() * 3 / 4,
                               player.getHeight() * 3 / 4);
     }
@@ -58,6 +59,7 @@ public class ShipUpgradeScreen extends Scene
     @Override
     public void destroyScene()
     {
+        player.setController(null);
     }
 
     @Override

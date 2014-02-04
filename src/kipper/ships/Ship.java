@@ -9,34 +9,28 @@ import kipper.*;
 import kipper.weapons.*;
 import kipper.upgrades.*;
 import kipper.effects.*;
+import kipper.ships.controllers.*;
 
-public abstract class Ship implements ImageEntity, PolygonMaskedEntity, ControllableEntity, Upgradable
+public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradable
 {
     private static final Color healthBarRed = new Color(136, 0, 21);
     private static final Color healthBarGreen = new Color(34, 177, 76);
 
-    public int team;
-    public double x, y;
-
-    // amount of damage taken
-    protected double dmg;
-
-    protected boolean underControl = false;
-    protected int disabledTicks = 0;
-
-    public Point destination = new Point();
-    public Point mouse = new Point();
-    public Point mousePressed = new Point();
-
-    public Weapon wpn;
-    public Weapon[] wpnList = new Weapon[10];
-
-    protected OuterSpacePanel osp;
+    private int team;
+    private double x, y;
+    private Point mouse = new Point();
+    private Point mousePressed = new Point();
+    private Point destination = new Point();
+    private Weapon wpn;
+    private Weapon[] wpnList = new Weapon[10];
+    private EntityWobble wobble;
+    private double dmg;
+    private int disabledTicks = 0;
+    private ShipController controller;
 
     // last ship hit
     public Ship target = null;
-
-    private EntityWobble wobble;
+    protected OuterSpacePanel osp;
 
     public Ship()
     {
@@ -51,42 +45,15 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
         setDestination(getX(), getY());
     }
 
-    @Override
+    public void setController(ShipController controller)
+    {
+        this.controller = controller;
+    }
+
     public void handleInput()
     {
-        if (!isUnderControl()) {
-            return;
-        }
-
-        // Mouse events
-        Point p = scalePoint(Global.mouse.getPoint());
-        setMouseLocation(p.x, p.y);
-        setMousePressedLocation(p.x, p.y);
-        setDestination(p.x - getWidth() / 2, p.y-getHeight() / 2);
-
-        getWeapon().setMouseLocation(p.x, p.y);
-        if (Global.mouse.isPressed()) {
-            getWeapon().startFiring();
-        } else {
-            getWeapon().stopFiring();
-        }
-
-        // Key events
-        int code = Global.key.justPressed(KeyEvent.VK_1) ? 0
-                 : Global.key.justPressed(KeyEvent.VK_2) ? 1
-                 : Global.key.justPressed(KeyEvent.VK_3) ? 2
-                 : Global.key.justPressed(KeyEvent.VK_4) ? 3
-                 : -1;
-
-        if (code >= 0 && wpnList[code] != getWeapon()) {
-            // resume firing if weapons switches while the fire button is held down
-            if (getWeapon().isFiring()) {
-                getWeapon().stopFiring();
-                selectWeapon(code);
-                getWeapon().startFiring();
-            } else {
-                selectWeapon(code);
-            }
+        if (controller != null) {
+            controller.handleInput(this);
         }
     }
 
@@ -97,8 +64,8 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
             disabledTicks--;
         }
         updateWeapons();
-        if (!isUnderControl()) {
-            think();
+        if (controller != null) {
+            controller.update(this);
         }
         move();
     }
@@ -114,10 +81,8 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
 
     public void move()
     {
-        if (!Global.key.isShiftDown()) {
-            double mx = x + (destination.x - x) / getSpeed();
-            double my = y + (destination.y - y) / getSpeed();
-            setLocation(mx, my);
+        if (controller != null) {
+            controller.move(this);
         }
         wobble.move(this);
         moveWeapon();
@@ -153,11 +118,6 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
         destination = new Point((int)mx, (int)my);
     }
 
-    // NPC logic goes here
-    public void think()
-    {
-    }
-
     // Used by NPC's to simulate mouse click (movement and targeting are orthogonal)
     public void targetLocation(int x, int y)
     {
@@ -181,6 +141,11 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
     {
         mousePressed.x = x;
         mousePressed.y = y;
+    }
+
+    public Point getMousePressedLocation()
+    {
+        return mousePressed;
     }
 
     public void equipWeapon(Weapon w)
@@ -273,14 +238,11 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
     @Override public int getLife() { return getMaxLife() - (int)dmg; }
     @Override public int getTeam() { return team; }
 
-    @Override public boolean isUnderControl() { return underControl; }
-    @Override public void gainControl() { underControl = true; }
-    @Override public void releaseControl() { getWeapon().stopFiring(); underControl = false; }
-
     public int getSlotsAmt() { return 6; }
     public Ship getTarget() { return target; }
-    public Point getDesination() { return destination; }
+    public Point getDestination() { return destination; }
     public Weapon getWeapon() { return wpn; }
+    public Weapon getWeaponAt(int index) { return wpnList[index]; }
     public double percentLife() { return (double)getLife() / ( double)getMaxLife(); }
     public boolean isDisabled() { return disabledTicks > 0; }
     public Image getImage() { throw new UnsupportedOperationException("Not implemented"); }
@@ -301,7 +263,7 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Controll
     @Override
     public void die()
     {
-        releaseControl();
+        setController(null);
         dmg += getMaxLife();
         deathExplosion();
         playSound();

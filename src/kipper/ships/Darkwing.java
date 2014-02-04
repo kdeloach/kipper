@@ -22,7 +22,7 @@ public class Darkwing extends Enterprise
         super(x, y, c);
         img = Util.instance.loadImage("/assets/images/darkwing.png");
         trails = new ParticleEmitter(0, 0, new ShipTrails());
-        selectWeapon(3);
+        selectWeapon(0);
     }
 
     @Override

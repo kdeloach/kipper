@@ -3,6 +3,7 @@ package kipper.scenes;
 import java.awt.Graphics;
 import kipper.*;
 import kipper.ships.*;
+import kipper.ships.controllers.*;
 
 public class DemoLevel extends Scene
 {
@@ -18,7 +19,7 @@ public class DemoLevel extends Scene
     @Override
     public void createScene()
     {
-        player.gainControl();
+        player.setController(new MouseShipController());
 
         int x = OuterSpacePanel.WIDTH+50;
         int y = OuterSpacePanel.HEIGHT/2;
@@ -48,7 +49,7 @@ public class DemoLevel extends Scene
     @Override
     public void destroyScene()
     {
-        player.releaseControl();
+        player.setController(null);
         osp.removeManyShips(osp.getNPCs());
         osp.removeAllProjectiles();
     }

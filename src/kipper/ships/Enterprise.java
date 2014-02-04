@@ -8,6 +8,7 @@ import java.awt.geom.*;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 import kipper.*;
+import kipper.ships.controllers.*;
 import kipper.effects.*;
 import kipper.weapons.*;
 
@@ -26,6 +27,8 @@ public class Enterprise extends Ship
         equipWeapon(new MineLauncher(getWidth(), getHeight() / 2, this));
         equipWeapon(new LightningGun(getWidth(), getHeight() / 2, this));
         selectWeapon(0);
+
+        setController(new MouseShipController());
 
         img = Util.instance.loadImage("/assets/images/enterprise.gif");
     }
