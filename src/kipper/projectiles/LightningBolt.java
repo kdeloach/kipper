@@ -117,6 +117,7 @@ public class LightningBolt extends LaserBeam
             float alpha = (float)easer.call(getLife(), 0, 1, getDefaultLife());
             ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             g.drawImage(cacheImage, x, y, null);
+            ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
             return;
         }
         g.setColor(Color.WHITE);
