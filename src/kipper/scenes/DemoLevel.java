@@ -20,7 +20,12 @@ public class DemoLevel extends Scene
     public void createScene()
     {
         player.setController(new MouseShipController());
+        //addBots();
+        return;
+    }
 
+    private void addBots()
+    {
         int x = OuterSpacePanel.WIDTH+50;
         int y = OuterSpacePanel.HEIGHT/2;
 

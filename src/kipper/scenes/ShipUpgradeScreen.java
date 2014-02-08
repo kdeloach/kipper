@@ -93,7 +93,7 @@ public class ShipUpgradeScreen extends Scene
     public void handleInput()
     {
         if (Global.mouse.justPressed()) {
-            Point p = scalePoint(Global.mouse.getPoint());
+            Point p = Util.scalePoint(Global.mouse.getPoint());
             // if a slot is selected
             for (int i = 0; i < emptySlotRects.length; i++) {
                 if (emptySlotRects[i].contains(p)) {
@@ -110,16 +110,6 @@ public class ShipUpgradeScreen extends Scene
                 }
             }
         }
-    }
-
-    // TODO: Move to Util
-    public Point scalePoint(Point p)
-    {
-        double ratio = Util.getAspectRatio(osp);
-        Point offset = Util.boxOffset(osp, ratio);
-        return new Point(
-            (int)((p.x - offset.x) * 1 / ratio),
-            (int)((p.y - offset.y) * 1 / ratio));
     }
 
     @Override

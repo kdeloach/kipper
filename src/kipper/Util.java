@@ -184,4 +184,13 @@ public class Util
             (int)((osp.getWidth() - (double)osp.WIDTH * ratio) / 2.0),
             (int)((osp.getHeight() - (double)osp.HEIGHT * ratio) / 2.0));
     }
+
+    public static Point scalePoint(Point p)
+    {
+        double ratio = Util.getAspectRatio(Global.game);
+        Point offset = Util.boxOffset(Global.game, ratio);
+        return new Point(
+            (int)((p.x - offset.x) * 1 / ratio),
+            (int)((p.y - offset.y) * 1 / ratio));
+    }
 }

@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import kipper.*;
 import kipper.effects.*;
 import kipper.weapons.*;
+import kipper.ships.controllers.*;
 
 public class Darkwing extends Enterprise
 {
@@ -39,6 +40,31 @@ public class Darkwing extends Enterprise
     {
         trails.draw(g);
         super.draw(g);
+        drawRubberBand(g);
+        drawVector(g);
+    }
+
+    public void drawVector(Graphics g)
+    {
+        if (getController() instanceof AutoPilotShipController) {
+            g.setColor(Color.WHITE);
+            AutoPilotShipController c = (AutoPilotShipController)getController();
+            double x1 = getX() + getWidth() / 2;
+            double y1 = getY() + getHeight() / 2;
+            double x2 = x1 + c.vx*10;
+            double y2 = y1 + c.vy*10;
+            Util.drawThickLine(g, (int)x1, (int)y1, (int)x2, (int)y2, 3);
+        }
+    }
+
+    public void drawRubberBand(Graphics g)
+    {
+        Point mouse = Util.scalePoint(Global.mouse.getPoint());
+        g.setColor(Color.GREEN);
+        g.drawLine((int)(getX() + getWidth() / 2),
+                   (int)(getY() + getHeight() / 2),
+                   (int)mouse.x,
+                   (int)mouse.y);
     }
 
     @Override

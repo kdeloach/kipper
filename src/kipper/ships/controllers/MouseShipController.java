@@ -11,7 +11,7 @@ public class MouseShipController extends AutoPilotShipController
     @Override
     public void handleInput(Ship ship)
     {
-        Point p = ship.scalePoint(Global.mouse.getPoint());
+        Point p = Util.scalePoint(Global.mouse.getPoint());
         ship.setMouseLocation(p.x, p.y);
         ship.setMousePressedLocation(p.x, p.y);
         ship.setDestination(p.x - ship.getWidth() / 2,

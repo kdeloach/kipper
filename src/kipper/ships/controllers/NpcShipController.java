@@ -14,6 +14,12 @@ public class NpcShipController extends AutoPilotShipController
     }
 
     @Override
+    public void move(Ship ship)
+    {
+        move_old(ship);
+    }
+
+    @Override
     public void update(Ship ship)
     {
         Ship player = Global.game.getPlayer();

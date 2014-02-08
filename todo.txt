@@ -7,6 +7,7 @@ MED
 - Create enemy emitter
 - Build new weapon upgrade graph screen / weapon balancing
 - Level tool
+- MouseHandler should automatically scale points
 
 LOW
 - Add "set target" upgrade; Allow player to right click to set target, weapons will fire towards this point instead of the mouse when Rotate ability is equiped.
@@ -32,3 +33,29 @@ LOW
 - Add homing upgrade
 - Throttle sound clips (too many playing at once will throw an exception)
 - Mask methods should return LinkedList not array
+
+
+ ant clean run
+Buildfile: C:\Users\kevin\Desktop\kipper\build.xml
+
+clean:
+   [delete] Deleting directory C:\Users\kevin\Desktop\kipper\bin
+
+build:
+    [mkdir] Created dir: C:\Users\kevin\Desktop\kipper\bin\debug
+    [javac] Compiling 62 source files to C:\Users\kevin\Desktop\kipper\bin\debug
+     [copy] Copying 36 files to C:\Users\kevin\Desktop\kipper\bin\debug\assets
+
+exec:
+     [java] Exception in thread "Thread-2" java.util.ConcurrentModificationException
+     [java]     at java.util.LinkedList$ListItr.checkForComodification(LinkedList.java:953)
+     [java]     at java.util.LinkedList$ListItr.next(LinkedList.java:886)
+     [java]     at kipper.OuterSpacePanel.performCollisions(OuterSpacePanel.java:204)
+     [java]     at kipper.OuterSpacePanel.update(OuterSpacePanel.java:162)
+     [java]     at kipper.OuterSpacePanel.run(OuterSpacePanel.java:103)
+     [java]     at java.lang.Thread.run(Thread.java:744)
+
+run:
+
+BUILD SUCCESSFUL
+Total time: 1 minute 23 seconds

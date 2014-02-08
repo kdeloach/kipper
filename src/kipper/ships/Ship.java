@@ -45,10 +45,8 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradab
         setDestination(getX(), getY());
     }
 
-    public void setController(ShipController controller)
-    {
-        this.controller = controller;
-    }
+    public void setController(ShipController controller) { this.controller = controller; }
+    protected ShipController getController() { return controller; }
 
     public void handleInput()
     {
@@ -84,7 +82,7 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradab
         if (controller != null) {
             controller.move(this);
         }
-        wobble.move(this);
+        //wobble.move(this);
         moveWeapon();
     }
 
@@ -293,17 +291,6 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradab
         if (getSoundFile().length() > 0) {
             Util.instance.playSound(getSoundFile());
         }
-    }
-
-    /////////////
-
-    public Point scalePoint(Point p)
-    {
-        double ratio = Util.getAspectRatio(osp);
-        Point offset = Util.boxOffset(osp, ratio);
-        return new Point(
-            (int)((p.x - offset.x) * 1 / ratio),
-            (int)((p.y - offset.y) * 1 / ratio));
     }
 
     /////////////
