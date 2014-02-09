@@ -1,6 +1,6 @@
 HIGH
 - Create SpawnStrategy for emitters (random, everyNTicks)
-- Ship always accelerates towards mouse
+- Separate movement and logic controllers
 
 MED
 - Add collidesWithTeam() to bullet; SpaceMine should be destroyable while it is charging?

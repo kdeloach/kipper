@@ -36,15 +36,6 @@ public class Darkwing extends Enterprise
     }
 
     @Override
-    public void move()
-    {
-        super.move();
-        // Keep ship in screen bounds
-        // setLocation(Math.max(0, Math.min(OuterSpacePanel.WIDTH - getWidth(), getX())),
-                    // Math.max(0, Math.min(OuterSpacePanel.HEIGHT - getHeight(), getY())));
-    }
-
-    @Override
     public void draw(Graphics g)
     {
         trails.draw(g);
@@ -55,9 +46,9 @@ public class Darkwing extends Enterprise
 
     public void drawVector(Graphics g)
     {
-        if (getController() instanceof AutoPilotShipController) {
+        if (getController() instanceof ElasticShipController) {
             g.setColor(Color.WHITE);
-            AutoPilotShipController c = (AutoPilotShipController)getController();
+            ElasticShipController c = (ElasticShipController)getController();
             double x1 = getX() + getWidth() / 2;
             double y1 = getY() + getHeight() / 2;
             double x2 = x1 + c.vx*10;

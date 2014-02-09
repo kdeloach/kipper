@@ -6,7 +6,7 @@ import kipper.*;
 import kipper.ships.*;
 import kipper.weapons.*;
 
-public class MouseShipController extends AutoPilotShipController
+public class MouseShipController extends ElasticShipController
 {
     @Override
     public void handleInput(Ship ship)
