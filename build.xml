@@ -1,13 +1,18 @@
 <project default="run">
 
-    <property name="jython.path" location="./thirdparty/jython-standalone-2.5.3.jar" />
+    <property name="jython.jar" location="./thirdparty/jython-standalone-2.5.3.jar" />
 
     <!-- Aliases -->
     <target name="release" depends="jar" />
     <target name="mtool" depends="masktool" />
     <target name="ptool" depends="particletool" />
 
-    <target name="run" depends="build, exec">
+    <target name="run" depends="checkdeps, build, exec">
+    </target>
+
+    <target name="checkdeps">
+        <available file="${jython.jar}" property="jython.jar.present" />
+        <fail message="Missing dependency: ${jython.jar}" unless="${jython.jar.present}" />
     </target>
 
     <target name="clean">
@@ -21,7 +26,7 @@
                 debug="true"
                 includeAntRuntime="false">
             <classpath>
-                <pathelement location="${jython.path}" />
+                <pathelement location="${jython.jar}" />
             </classpath>
             <!--compilerarg value="-Xlint" /-->
         </javac>
@@ -34,7 +39,7 @@
         <java classname="kipper.Main" fork="true">
             <classpath>
                 <pathelement location="bin/debug" />
-                <pathelement location="${jython.path}" />
+                <pathelement location="${jython.jar}" />
             </classpath>
         </java>
     </target>
@@ -55,7 +60,7 @@
         <java classname="kipper.tools.ParticleTool" fork="true">
             <classpath>
                 <pathelement location="bin/debug" />
-                <pathelement location="${jython.path}" />
+                <pathelement location="${jython.jar}" />
             </classpath>
         </java>
     </target>
