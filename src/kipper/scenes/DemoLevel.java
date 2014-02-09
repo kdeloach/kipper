@@ -20,7 +20,7 @@ public class DemoLevel extends Scene
     public void createScene()
     {
         player.setController(new MouseShipController());
-        //addBots();
+        addBots();
         return;
     }
 

@@ -83,10 +83,9 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradab
             controller.move(this);
         }
         //wobble.move(this);
-        moveWeapon();
     }
 
-    public void moveWeapon()
+    public void updateWeaponLocation()
     {
         Weapon weapon = getWeapon();
         if (weapon != null) {
@@ -127,6 +126,7 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradab
     {
         this.x = x;
         this.y = y;
+        updateWeaponLocation();
     }
 
     public void setMouseLocation(int x, int y)
@@ -163,7 +163,7 @@ public abstract class Ship implements ImageEntity, PolygonMaskedEntity, Upgradab
                 return;
             }
             wpn = wpnList[n];
-            moveWeapon();
+            updateWeaponLocation();
         }
     }
 

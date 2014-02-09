@@ -36,12 +36,21 @@ public class Darkwing extends Enterprise
     }
 
     @Override
+    public void move()
+    {
+        super.move();
+        // Keep ship in screen bounds
+        // setLocation(Math.max(0, Math.min(OuterSpacePanel.WIDTH - getWidth(), getX())),
+                    // Math.max(0, Math.min(OuterSpacePanel.HEIGHT - getHeight(), getY())));
+    }
+
+    @Override
     public void draw(Graphics g)
     {
         trails.draw(g);
         super.draw(g);
-        drawRubberBand(g);
-        drawVector(g);
+        //drawRubberBand(g);
+        //drawVector(g);
     }
 
     public void drawVector(Graphics g)
