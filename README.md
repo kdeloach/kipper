@@ -4,7 +4,7 @@ Kipper is a 2D space shooter video game written in Java.
 
 ### Latest Screenshot
 
-![](https://github.com/kdeloach/kipper/raw/master/images/status 20140202.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/status_20140202.png)
 
 ### Controls
 
@@ -32,7 +32,7 @@ Open the mask tool:
     or
     > java -cp bin/release/kipper.jar kipper.tools.MaskTool
 
-![](https://github.com/kdeloach/kipper/raw/master/images/masktool 20140116.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/masktool_20140116.png)
 
 ## Particle tool
 
@@ -50,5 +50,5 @@ Open the particle tool:
     or
     > java -cp bin/release/kipper.jar;jython.jar kipper.tools.ParticleTool
 
-![](https://github.com/kdeloach/kipper/raw/master/images/particletool 20140123.png)
-![](https://github.com/kdeloach/kipper/raw/master/images/particletool 20140124.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/particletool_20140123.png)
+![](https://github.com/kdeloach/kipper/raw/master/images/particletool_20140124.png)
